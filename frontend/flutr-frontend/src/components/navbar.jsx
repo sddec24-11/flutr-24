@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import  styles from './Navbar.module.css';
 
+
+
 function Navbar() {
     // adding the states 
     const [isActive, setIsActive] = useState(false);
@@ -17,13 +19,13 @@ function Navbar() {
         <header className="App-header">
           <nav className={`${styles.navbar}`}>
             {}
-            <a href='#home' className={`${styles.logo}`}><img src='~/frontend/flutr-frontend/images/flutr-logo.png' alt='flutr-logo'/></a>
+            <a href='/' className={`${styles.logo}`}><img src='./flutr-logo.png' alt='flutr-logo'/></a>
             <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
               <li onClick={removeActive}>
-                <a href='#about' className={`${styles.navLink}`}>About</a>
+                <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
               <li onClick={removeActive}>
-                <a href='#contact' className={`${styles.navLink}`}>Contact</a>
+                <a href='/contact' className={`${styles.navLink}`}>Contact</a>
               </li>
             </ul>
             <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
