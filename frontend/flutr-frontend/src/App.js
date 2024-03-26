@@ -9,15 +9,18 @@ import Stats from './pages/Stats.js';
 const locations = [
     {
         name: 'Reiman Gardens',
-        path: 'reiman-gardens'
+        path: 'reiman-gardens',
+        logo: 'reiman-logo.png'
     },
     {
         name: 'Butterfly Pavilion',
-        path: 'butterfly-pavilion'
+        path: 'butterfly-pavilion',
+        logo: 'reiman-logo.png'
     },
     {
         name: 'Thanksgiving Point',
-        path: 'thanksgiving-point'
+        path: 'thanksgiving-point',
+        logo: 'reiman-logo.png'
     }
 ]
 

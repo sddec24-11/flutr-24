@@ -40,6 +40,11 @@
     align-items: center;
     gap: 60px;
   }
+
+  .navLink {
+    align-items: right;
+  }
+  
   
   /* media queries */
   
@@ -95,4 +100,8 @@
     .navMenu li {
       margin: 16px 0;
     }
+  }
+  img{
+    height: 75px;
+    padding-top: 10px;
   }
