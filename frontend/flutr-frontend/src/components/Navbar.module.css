@@ -16,7 +16,7 @@
   
   /* navbar */
   .navbar {
-    background-color: aliceblue;
+    background-color: rgb(219 234 254);
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
@@ -37,14 +37,18 @@
   .navMenu {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: right;
     gap: 60px;
+    margin-left: auto;
+    margin-right: 0;
+    /* padding-left: 50%; */
   }
 
   .navLink {
     align-items: right;
+    margin-right: 0px;
   }
-  
+
   
   /* media queries */
   
@@ -104,4 +108,5 @@
   img{
     height: 75px;
     padding-top: 10px;
+    padding-left: 5%;
   }
