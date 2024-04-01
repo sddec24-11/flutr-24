@@ -7,25 +7,26 @@ import NotFound from './pages/404.js';
 import LocationHome from './pages/LocationHome.js';
 import Stats from './pages/Stats.js';
 import Neato from './pages/neato.js';
+import Gallery from './pages/Gallery.js';
 
 const locations = [
     {
         name: 'Reiman Gardens',
         path: 'reiman-gardens',
         logo: 'reiman-logo.png',
-        color: '#4ac23a'
+        color: '#22c55e'
     },
     {
         name: 'Butterfly Pavilion',
         path: 'butterfly-pavilion',
-        logo: 'reiman-logo.png',
-        color: 'rgb(219 234 254)'
+        logo: 'bp-logo.svg',
+        color: '#9F2A2A'
     },
     {
         name: 'Thanksgiving Point',
         path: 'thanksgiving-point',
-        logo: 'reiman-logo.png',
-        color: 'rgb(219 234 254)'
+        logo: 'tp-logo.webp',
+        color: '#397fc2'
     }
 ]
 
@@ -34,7 +35,7 @@ export default function App(){
     <div>
         <BrowserRouter basename=''>
             <Routes>
-                <Route index element={<Landing />} />
+                <Route index element={<Landing data={locations} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 {locations.map((r, index) => (
@@ -42,6 +43,9 @@ export default function App(){
                 ))}
                 {locations.map((r, index) => {
                     return<Route path={"/" + r.path + "/stats"} element={<Stats data={r} />} key={`${index} stat`}/>
+                })}
+                {locations.map((r, index) => {
+                    return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
                 })}
 
                 <Route path="*" element={<NotFound />} />

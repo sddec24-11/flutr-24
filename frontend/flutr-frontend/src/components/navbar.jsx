@@ -26,10 +26,10 @@ function Navbar({location}) {
               <a href={'/' + location.path} className={`${styles.logo}`}><img src={require(`../images/${location.logo}`)} alt={location.logo}/></a>
               <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
                 <li onClick={removeActive}>
-                  <a href='/stats' className={`${styles.navLink}`}>Statistics</a>
+                  <a href={'/' + location.path + '/stats'} className={`${styles.navLink}`}>Statistics</a>
                 </li>
                 <li onClick={removeActive}>
-                  <a href='/gallery' className={`${styles.navLink}`}>Gallery</a>
+                  <a href={'/' + location.path + '/gallery'} className={`${styles.navLink}`}>Gallery</a>
                 </li>
               </ul>
               <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
@@ -71,4 +71,4 @@ function Navbar({location}) {
     );
   }
   export default Navbar;
-  ;
+  
