@@ -27,6 +27,12 @@ const locations = [
         path: 'thanksgiving-point',
         logo: 'tp-logo.webp',
         color: '#397fc2'
+    },
+    {
+        name: 'Ames, Iowa',
+        path: 'city-of-ames',
+        logo: 'reiman-logo.png',
+        color: '#9F2A2A'
     }
 ]
 
