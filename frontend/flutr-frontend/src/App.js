@@ -6,8 +6,8 @@ import About from './pages/About.js';
 import NotFound from './pages/404.js';
 import LocationHome from './pages/LocationHome.js';
 import Stats from './pages/Stats.js';
-import Neato from './pages/neato.js';
 import Gallery from './pages/Gallery.js';
+import Login from './pages/Login.js';
 
 const locations = [
     {
@@ -31,8 +31,15 @@ const locations = [
     {
         name: 'Ames, Iowa',
         path: 'city-of-ames',
-        logo: 'reiman-logo.png',
+        logo: 'isu_logo.png',
         color: '#9F2A2A'
+    }
+    ,
+    {
+        name: 'Demo',
+        path: 'demo1',
+        logo: 'isu_logo.png',
+        color: '#9F2A00'
     }
 ]
 
@@ -44,6 +51,7 @@ export default function App(){
                 <Route index element={<Landing data={locations} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
                 {locations.map((r, index) => (
                     <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
                 ))}
