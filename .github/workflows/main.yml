@@ -1,0 +1,31 @@
+name: Deploy to DigitalOcean
+
+on: 
+push:
+  branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3
+      - name: Install dependencies
+        run: |
+          cd frontend/flutr-frontend
+          npm install
+          cd ../../backend
+          npm install
+      - name: Build frontend
+        run: cd frontend/flutr-frontend && npm run build
+
+      - name: Deploy to DigitalOcean
+        uses: actions/ssh-keygen@v2
+        with:
+          key: ${{ secrets.SSH_PRVATE_KEY }}
+          host: 206.81.3.155
+      - name: Deploy frontend
+        run: |
+          ssh ${{ secrets.SSH_PRIVATE_KEY }}@206.81.3.155 'sudo cp -r frontend/build /var/www/html/your-app'
+      - name: Restart Nginx Server
+        run: |
+          ssh ${{ secrets.SSH_PRIVATE_KEY }}@206.81.3.155 'sudo systemctl restart nginx'
