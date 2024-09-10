@@ -43,7 +43,7 @@ function Navbar({location}) {
       );
     }
 
-    const logo = require('../images/flutr-logo.png');
+    const logo = require('../images/invertDebug.png');
     return (
       <div className="App">
         <header className="App-header">

@@ -14,24 +14,32 @@ const locations = [
         name: 'Reiman Gardens',
         path: 'reiman-gardens',
         logo: 'reiman-logo.png',
+        image: 'reiman-thumb.avif',
+        address: 'somehwer',
         color: '#22c55e'
     },
     {
         name: 'Butterfly Pavilion',
         path: 'butterfly-pavilion',
         logo: 'bp-logo.svg',
+        image: 'reiman-thumb.avif',
+        address: 'somehwer',
         color: '#9F2A2A'
     },
     {
         name: 'Thanksgiving Point',
         path: 'thanksgiving-point',
         logo: 'tp-logo.webp',
+        image: 'reiman-thumb.avif',
+        address: 'somehwer',
         color: '#397fc2'
     },
     {
         name: 'Ames, Iowa',
         path: 'city-of-ames',
         logo: 'isu_logo.png',
+        image: 'reiman-thumb.avif',
+        address: 'somehwer',
         color: '#9F2A2A'
     }
     ,
@@ -39,6 +47,8 @@ const locations = [
         name: 'Demo',
         path: 'demo1',
         logo: 'isu_logo.png',
+        image: 'reiman-thumb.avif',
+        address: 'somehwer',
         color: '#9F2A00'
     }
 ]
