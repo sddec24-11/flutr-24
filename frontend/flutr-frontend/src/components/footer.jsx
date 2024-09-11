@@ -28,8 +28,8 @@ function Footer({location}){
     return (
       <div className={`${styles.holder}`}>
         <div className={`${styles.content}`}>
-            <a href="/login"><h3>Organization Login</h3></a>
             <p><span>&#169;</span> {currentYear} Reiman Gardens All Rights Reserved.</p>
+            <a href="/login"><h3 style={{color: 'white'}}>Organization Login</h3></a>
         </div>
       </div>
     );

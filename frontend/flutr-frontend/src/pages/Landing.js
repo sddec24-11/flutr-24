@@ -10,11 +10,22 @@ import "../styles/landingStyles.css";
 export default function Landing({data}){
 
     const [searchInput, setSearchInput] = useState("");
+    const [zipInput, setZip] = useState("");
+    const [stateInput, setState] = useState("")
     const [showExtras, setExtras] = useState(false);
-    const handleChange = (e) => {
+
+    const handleChangeSearch = (e) => {
         e.preventDefault();
         setSearchInput(e.target.value);
     };
+    const handleZip = (e) => {
+        e.preventDefault();
+        setZip(e.target.value);
+    }
+    const handleState = (e) => {
+        e.preventDefault();
+        setState(e.target.value);
+    }
     const toggleTools = () => {
         setExtras(!showExtras);
     }
@@ -31,7 +42,7 @@ export default function Landing({data}){
                             style={{width: '80%'}}
                             type="text"
                             placeholder="    Search for organization..."
-                            onChange={handleChange}
+                            onChange={handleChangeSearch}
                             value={searchInput}
                             id='location-search'
                             className='searches'/>
@@ -45,24 +56,23 @@ export default function Landing({data}){
                             
                         </div>
                     </div>
-                    {showExtras == true && 
+                    {showExtras === true && 
                     <div id='additional-tools'>
-                        <h1>Test</h1>
                         <div id='box-holder'>
                             <input 
                                 style={{width: '80%'}}
                                 type="text"
                                 placeholder="    zip code"
-                                onChange={handleChange}
-                                value={searchInput}
+                                onChange={handleZip}
+                                value={zipInput}
                                 id='zip-search'
                                 className='searches'/>
                             <input 
                                 style={{width: '80%'}}
                                 type="text"
                                 placeholder="    state"
-                                onChange={handleChange}
-                                value={searchInput}
+                                onChange={handleState}
+                                value={stateInput}
                                 id='state-search'
                                 className='searches'/>
                         </div>

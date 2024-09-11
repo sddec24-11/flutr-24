@@ -53,10 +53,10 @@ function Navbar({location}) {
             <a href='/' className={`${styles.logo}`}><img src={logo} alt='flutr-logo'/></a>
             <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
               <li onClick={removeActive}>
-                <a href='/about' className={`${styles.navLink}`}>About</a>
+                <a href='/' className={`${styles.navLink}`}>Home</a>
               </li>
               <li onClick={removeActive}>
-                <a href='/contact' className={`${styles.navLink}`}>Contact</a>
+                <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
               
             </ul>

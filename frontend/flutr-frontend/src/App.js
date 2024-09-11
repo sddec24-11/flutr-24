@@ -15,7 +15,7 @@ const locations = [
         path: 'reiman-gardens',
         logo: 'reiman-logo.png',
         image: 'reiman-thumb.avif',
-        address: 'somehwer',
+        address: '1407 University Blvd. Ames, IA 50011',
         color: '#22c55e'
     },
     {
@@ -23,7 +23,7 @@ const locations = [
         path: 'butterfly-pavilion',
         logo: 'bp-logo.svg',
         image: 'reiman-thumb.avif',
-        address: 'somehwer',
+        address: '6525  W 104th Ave. Westminster, CO 80020',
         color: '#9F2A2A'
     },
     {
@@ -31,7 +31,7 @@ const locations = [
         path: 'thanksgiving-point',
         logo: 'tp-logo.webp',
         image: 'reiman-thumb.avif',
-        address: 'somehwer',
+        address: '3003 N Thanksgiving Way Lehi, UT 84043',
         color: '#397fc2'
     },
     {
@@ -39,7 +39,7 @@ const locations = [
         path: 'city-of-ames',
         logo: 'isu_logo.png',
         image: 'reiman-thumb.avif',
-        address: 'somehwer',
+        address: 'Ames, IA 50014',
         color: '#9F2A2A'
     }
     ,

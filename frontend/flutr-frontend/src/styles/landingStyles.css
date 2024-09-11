@@ -30,15 +30,23 @@
 
 #location-search{
     width: 402px;
-    height: 44px;
+    border-radius: 20px;
 }
 
 .searches{
-    border-radius: 20px;
     border-color:#8ABCD7;
     border-width: 3px;
     background-color: #EFEFF0;
+    height: 44px;
     margin:auto;
+}
+
+#zip-search{
+    border-radius: 15px;
+}
+
+#state-search{
+    border-radius: 15px;
 }
 
 #all-tools{
