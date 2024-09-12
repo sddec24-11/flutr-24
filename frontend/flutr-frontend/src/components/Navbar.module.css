@@ -10,7 +10,7 @@
   
   a {
     text-decoration: none;
-    color: black;
+    color: white;
     font-size: 18px;
   }
   
@@ -23,6 +23,10 @@
     align-items: center;
     gap: 40px;
     min-height: 70px;
+  }
+  .nav-link {
+    color: white;
+    font-size: 18px;
   }
   
   
@@ -112,6 +116,12 @@
       background-color: aliceblue;
       padding: 10px;
     }
+
+    .navLink {
+      align-items: right;
+      margin-right: 0px;
+      color: black;
+    }
   
     .navMenu.active{
       left: 0;
@@ -125,4 +135,8 @@
     height: 75px;
     padding-top: 10px;
     padding-left: 5%;
+  }
+
+  .nav-link{
+    color: white !important;
   }

@@ -1,7 +1,7 @@
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 
-export default function LocationHome({data}){
+export default function LocationSettings({data}){
     return(
         <div>
             <Navbar location={data} authenticated={true}/>
