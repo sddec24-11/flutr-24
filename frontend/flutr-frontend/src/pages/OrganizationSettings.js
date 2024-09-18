@@ -328,8 +328,8 @@ export default function OrganizationSettings() {
         style={{
           width: 179,
           height: 29,
-          left: 102,
-          top: "7.08333333%",
+          left: "7.08333333%",
+          top: 214,
           position: "absolute",
           textAlign: "center",
           color: "#E1EFFE",
