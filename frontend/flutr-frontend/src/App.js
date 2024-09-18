@@ -9,6 +9,8 @@ import Stats from './pages/Stats.js';
 import Gallery from './pages/Gallery.js';
 import Login from './pages/Login.js';
 
+import Shipments from './pages/Shipments.js';
+
 const locations = [
     {
         name: 'Reiman Gardens',
@@ -62,6 +64,9 @@ export default function App(){
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
+
+                <Route path="/shipments" element={<Shipments />} />
+
                 {locations.map((r, index) => (
                     <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
                 ))}

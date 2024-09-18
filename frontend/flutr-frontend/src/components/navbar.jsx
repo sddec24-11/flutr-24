@@ -75,6 +75,10 @@ function Navbar({location, authenticated}) {
               <li onClick={removeActive}>
                 <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
+
+              <li onClick={removeActive}>
+                <a href='/shipments' className={`${styles.navLink}`}>Shipments</a>
+              </li>
               
             </ul>
             <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
