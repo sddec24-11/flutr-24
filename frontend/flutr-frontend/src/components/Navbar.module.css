@@ -10,19 +10,23 @@
   
   a {
     text-decoration: none;
-    color: black;
+    color: white;
     font-size: 18px;
   }
   
   /* navbar */
   .navbar {
-    background-color: aliceblue;
+    background-color: #8ABCD7;
     padding: 10px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 40px;
     min-height: 70px;
+  }
+  .nav-link {
+    color: white;
+    font-size: 18px;
   }
   
   
@@ -37,9 +41,34 @@
   .navMenu {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: right;
     gap: 60px;
+    margin-left: auto;
+    margin-right: 0;
+    /* padding-left: 50%; */
   }
+
+  .navLink {
+    align-items: right;
+    margin-right: 0px;
+    color: white;
+  }
+  a:link {
+    text-decoration: none;
+  }
+  
+  a:visited {
+    text-decoration: none;
+  }
+  
+  a:hover {
+    text-decoration: underline;
+  }
+  
+  a:active {
+    text-decoration: underline;
+  }
+
   
   /* media queries */
   
@@ -87,6 +116,12 @@
       background-color: aliceblue;
       padding: 10px;
     }
+
+    .navLink {
+      align-items: right;
+      margin-right: 0px;
+      color: black;
+    }
   
     .navMenu.active{
       left: 0;
@@ -95,4 +130,13 @@
     .navMenu li {
       margin: 16px 0;
     }
+  }
+  img{
+    height: 75px;
+    padding-top: 10px;
+    padding-left: 5%;
+  }
+
+  .nav-link{
+    color: white !important;
   }
