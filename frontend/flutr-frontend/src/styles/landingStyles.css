@@ -1,0 +1,71 @@
+#landing-header{
+    border-radius: 15px;
+    border: 4px solic #8ABCD7;
+    background-color: #F5F5F5;
+}
+
+.directory-header{
+    color: #469FCE;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2%;
+}
+
+.directory-header h1{
+    font-size: 50px;
+}
+
+.directory-header h4{
+    font-size: 20px;
+}
+
+#filter-tools{
+    margin: auto;
+    width: 100%;
+    padding-left: 8.5%;
+    padding-top: 5%;
+}
+
+#location-search{
+    width: 402px;
+    border-radius: 20px;
+}
+
+.searches{
+    border-color:#8ABCD7;
+    border-width: 3px;
+    background-color: #EFEFF0;
+    height: 44px;
+    margin:auto;
+}
+
+#zip-search{
+    border-radius: 15px;
+}
+
+#state-search{
+    border-radius: 15px;
+}
+
+#all-tools{
+    border-radius: 15px;
+    border: 4px solid #8ABCD7;
+    background: #F5F5F5;
+    width: 542px;
+    margin: auto;
+    margin-top: 10px;
+}
+
+#additional-tools{
+    border-top: 4px solid #8ABCD7;
+    margin: auto;
+}
+
+#box-holder{
+    margin: auto;
+    width: 100%;
+}
+
+
