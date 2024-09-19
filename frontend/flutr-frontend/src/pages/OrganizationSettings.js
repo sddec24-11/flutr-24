@@ -63,17 +63,6 @@ export default function OrganizationSettings() {
     address: "1407 University Blvd. Ames, IA 50011",
     color: "#22c55e",
   }} authenticated={true}/>
-      {/* <div
-        className="Rectangle1"
-        style={{
-          width: 1513,
-          height: 73,
-          left: 0,
-          top: 0,
-          position: "absolute",
-          background: "#8ABCD7",
-        }}
-      /> */}
       <div
         className="About"
         style={{
