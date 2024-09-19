@@ -10,6 +10,7 @@ import Gallery from "./pages/Gallery.js";
 import Login from "./pages/Login.js";
 import Shipment from "./pages/Shipment.js";
 import OrganizationSettings from "./pages/OrganizationSettings.js";
+import Settings from "./pages/Settings.js";
 
 const locations = [
   {
@@ -90,6 +91,7 @@ export default function App() {
           })}
           <Route path="shipment" element={<Shipment />} />
           <Route path="settings" element={<OrganizationSettings />} />
+          <Route path="settingss" element={<Settings />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
