@@ -12,6 +12,8 @@ import Shipment from "./pages/Shipment.js";
 import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
+import Shipments from './pages/Shipments.js';
+
 const locations = [
   {
     name: "Reiman Gardens",
@@ -58,43 +60,29 @@ const locations = [
 export default function App() {
   return (
     <div>
-      <BrowserRouter basename="">
-        <Routes>
-          <Route index element={<Landing data={locations} />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/login" element={<Login />} />
-          {locations.map((r, index) => (
-            <Route
-              path={"/" + r.path}
-              element={<LocationHome data={r} />}
-              key={index}
-            />
-          ))}
-          {locations.map((r, index) => {
-            return (
-              <Route
-                path={"/" + r.path + "/stats"}
-                element={<Stats data={r} />}
-                key={`${index} stat`}
-              />
-            );
-          })}
-          {locations.map((r, index) => {
-            return (
-              <Route
-                path={"/" + r.path + "/gallery"}
-                element={<Gallery data={r} />}
-                key={`${index} gallery`}
-              />
-            );
-          })}
-          <Route path="shipment" element={<Shipment />} />
-          <Route path="settings" element={<OrganizationSettings />} />
-          <Route path="settingss" element={<Settings />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+        <BrowserRouter basename=''>
+            <Routes>
+                <Route index element={<Landing data={locations} />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+
+                <Route path="/shipments" element={<Shipments />} />
+
+                {locations.map((r, index) => (
+                    <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
+                ))}
+                {locations.map((r, index) => {
+                    return<Route path={"/" + r.path + "/stats"} element={<Stats data={r} />} key={`${index} stat`}/>
+                })}
+                {locations.map((r, index) => {
+                    return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
+                })}
+                <Route path="settings" element={<OrganizationSettings />} />
+                <Route path="settingss" element={<Settings />} />
+                <Route path="*" element={<NotFound />} />
+            </Routes>
+        </BrowserRouter>
     </div>
   );
 }
