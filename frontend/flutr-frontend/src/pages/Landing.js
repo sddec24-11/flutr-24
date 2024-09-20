@@ -7,7 +7,6 @@ import Footer from "../components/footer";
 import Button from 'react-bootstrap/Button';
 import "bootstrap/dist/css/bootstrap.css";
 import "../styles/landingStyles.css";
-import RowColLayoutColWidthBreakpointExample from '../components/locationCard';
 
 export default function Landing({data}){
 
@@ -85,7 +84,7 @@ export default function Landing({data}){
                 <div style={{width: '85.72%', margin: 'auto'}}>
                     <Containter>
                         {/* <div class="mx-auto" style={{margin: 'auto'}}> */}
-                            <Row xs={1} sm={2} md={{cols: 3}} lg={3} >
+                            <Row xs={1} sm={2} md={2} lg={3} >
                                 {data.map((r, index) => {
                                     console.log(`${r.name}`)
                                         if(r.name.toLowerCase().includes(searchInput.toLowerCase())){
