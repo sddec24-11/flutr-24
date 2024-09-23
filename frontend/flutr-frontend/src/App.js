@@ -13,6 +13,7 @@ import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
+import MasterButterfly from "./pages/MasterButterfly.js";
 
 const locations = [
   {
@@ -81,6 +82,7 @@ export default function App() {
                 <Route path="settings" element={<OrganizationSettings />} />
                 <Route path="settingss" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="masterbutterfly" element={<MasterButterfly/>}/>
             </Routes>
         </BrowserRouter>
     </div>

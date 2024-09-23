@@ -1,7 +1,18 @@
 import Container from "react-bootstrap/esm/Container";
 import Navbar from "../components/navbar";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import React, {useCallback} from 'react'
+import {useDropzone} from 'react-dropzone'
+import ImageUploader from "../components/ImageUploader";
 
 export default function MasterButterfly(){
+    const onDrop = useCallback(acceptedFiles => {
+        // Do something with the files
+      }, [])
+      const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+    
+
     return(
         <div>
             <Navbar/>
@@ -44,12 +55,22 @@ export default function MasterButterfly(){
                     <Row>
                         <Col></Col>
                         <Col></Col>
-                        <Col>Ausstralia</Col>
+                        <Col>Australia</Col>
                         <Col></Col>
                         <Col>Asia</Col>
                         <Col></Col>
                         <Col>Africa</Col>
                     </Row>
+                    <Row>
+                        <Col>Wings Open</Col>
+                        <Col>Wings Closed</Col>
+                    </Row>
+                    <Row>
+                        <Col><ImageUploader/></Col>
+                        <Col><ImageUploader/></Col>
+                    </Row>
+                    <button>Cancel</button>
+                    <button>Submit</button>
                     
                 </Container>
             </div>
