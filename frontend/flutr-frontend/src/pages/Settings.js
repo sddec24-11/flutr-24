@@ -1,7 +1,6 @@
 import { Button } from "bootstrap"
 import Navbar from "../components/navbar"
 import React, { useState } from 'react';
-import { HexColorPicker } from "react-colorful";
 import ColorPicker from "../components/ColorPick";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -132,7 +131,7 @@ export default function Settings(){
                         </Row>
                     </Container>
                 </div>}
-                <div>
+                <div className="bottomButtons">
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handlePreview}>Preview</button>
                     <button onClick={handleSubmit}>Save and Submit</button>
