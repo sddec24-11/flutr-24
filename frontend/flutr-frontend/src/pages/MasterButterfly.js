@@ -2,9 +2,10 @@ import Container from "react-bootstrap/esm/Container";
 import Navbar from "../components/navbar";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, {useCallback} from 'react'
+import React, {useState, useCallback} from 'react'
 import {useDropzone} from 'react-dropzone'
 import ImageUploader from "../components/ImageUploader";
+import Checkbox from "../components/Checkbox";
 
 export default function MasterButterfly(){
     const onDrop = useCallback(acceptedFiles => {
@@ -12,6 +13,12 @@ export default function MasterButterfly(){
       }, [])
       const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
     
+      const [naState, setNAState] = useState(false);
+      const [euState, setEUState] = useState(false);
+      const [saState, setSAState] = useState(false);
+      const [ausState, setAUSState] = useState(false);
+      const [asiaState, setAsiaState] = useState(false);
+      const [afState, setAFState] = useState(false);
 
     return(
         <div>
@@ -45,20 +52,20 @@ export default function MasterButterfly(){
                     </Row>
                     <Row>
                         <Col>Species range:</Col>
-                        <Col></Col>
+                        <Col><Checkbox state={naState} setState={setNAState}/></Col>
                         <Col>North America</Col>
-                        <Col></Col>
+                        <Col><Checkbox state={euState} setState={setEUState}/></Col>
                         <Col>Europe</Col>
-                        <Col></Col>
+                        <Col><Checkbox state={saState} setState={setSAState}/></Col>
                         <Col>South/Central America</Col>
                     </Row>
                     <Row>
                         <Col></Col>
-                        <Col></Col>
+                        <Col><Checkbox state={ausState} setState={setAUSState}/></Col>
                         <Col>Australia</Col>
-                        <Col></Col>
+                        <Col><Checkbox state={asiaState} setState={setAsiaState}/></Col>
                         <Col>Asia</Col>
-                        <Col></Col>
+                        <Col><Checkbox state={afState} setState={setAFState}/></Col>
                         <Col>Africa</Col>
                     </Row>
                     <Row>
