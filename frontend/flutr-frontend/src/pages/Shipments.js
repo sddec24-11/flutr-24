@@ -55,7 +55,7 @@ const shipmentList = [
                 <table className="table">
                     <thead>
                         <tr>
-                            <th>Shipment Dates</th>
+                            <th>Shipment Date</th>
                             <th>Arrival Date</th>
                             <th>Supplier</th>
                             <th style={{width:'128px'}}></th>
@@ -74,7 +74,7 @@ const shipmentList = [
                         ))}
                     </tbody>
                 </table>
-                </div>
+            </div>
                 <div className="pagination" style={{marginTop:'10px', textAlign:'center', maxWidth:'fit-content', marginLeft:'auto', marginRight:'auto'}}>
                     <button onClick={prevPage} disabled={currentPage === 1}>
                         Previous

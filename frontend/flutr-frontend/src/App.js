@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { useState } from "react";
 import Landing from "./pages/Landing.js";
 import Contact from "./pages/Contact.js";
 import About from "./pages/About.js";
@@ -8,11 +7,11 @@ import LocationHome from "./pages/LocationHome.js";
 import Stats from "./pages/Stats.js";
 import Gallery from "./pages/Gallery.js";
 import Login from "./pages/Login.js";
-import Shipment from "./pages/Shipment.js";
 import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
+import AddShipment from './pages/AddShipment.js'
 
 const locations = [
   {
@@ -68,6 +67,7 @@ export default function App() {
                 <Route path="/login" element={<Login />} />
 
                 <Route path="/shipments" element={<Shipments />} />
+                <Route path="/addshipment" element={<AddShipment />} />
 
                 {locations.map((r, index) => (
                     <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
