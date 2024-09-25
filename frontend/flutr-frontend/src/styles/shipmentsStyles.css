@@ -15,6 +15,7 @@
 .table-container{
     text-align:center;
     height: 506px;
+    overflow-y: auto;
 }
 
 .table {
@@ -24,7 +25,6 @@
     border-spacing: 0;
     border: 2px solid #469FCE;
     border-radius: 10px;
-    overflow: hidden;
 }
 
 .table th{
@@ -35,7 +35,12 @@
     text-align: center;
     font-weight: 700;
     line-height: 28.98px;
+
+    position: sticky;
+    top: 0;
+    z-index: 1;
 }
+
 
 .table tbody tr:nth-child(odd) {
     background-color: #FFFFFF;
@@ -132,3 +137,87 @@
     background-color: #F5F5F5;
     vertical-align: middle;
   }
+
+  .ship-info-input {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width:90%;
+    margin: 0 auto;
+    padding-bottom: 20px;
+    text-align:center;
+}
+
+.input-group {
+    display:flex;
+    flex-direction: column;
+    width:380px;
+}
+
+.ship-info-input label {
+    color: #469FCE;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+.ship-info-input input, select{
+    color: #469FCE;
+    font-size: 20px;
+    padding: 8px;
+    border: 1px solid #469FCE;
+    border-radius: 15px !important;
+    outline-color: #007bff;
+}
+
+.butterfly {
+    justify-content: center;
+    display: flex;
+    padding-bottom: 20px;
+}
+
+.border-all {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 90%;
+    border: 2px solid #469FCE;
+    border-radius: 10px;
+    margin: 0 auto;
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
+}
+
+.submit-cancel-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 100px;
+    margin-top: 15px;
+    margin-bottom: 10px;;
+}
+
+.btn {
+    padding: 10px 100px;
+    font-size: 16px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn {
+    background-color: #469FCE;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #E4976C;
+    color: white;
+}
+
+.cancel-btn:hover {
+    background-color: #ffd4b9;
+}
+
+.submit-btn:hover {
+    background-color: #D1ECFB;
+}
