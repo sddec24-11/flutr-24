@@ -18,7 +18,7 @@ export default function Checkbox({state, setState}){
     return(
         <div>
             <div className="outerBox" onClick={handleChange} style={{width: '40px', height: '40px'}}>
-                <div className="innerBox" style={{backgroundColor: boxColor, width: '68w%', height:'68%',margin: 'auto', marginTop: '16%', borderRadius: '15px'}}></div>
+                <div className="innerBox" style={{backgroundColor: boxColor, width: '68%', height:'68%',margin: 'auto', marginTop: '16%', borderRadius: '15px'}}></div>
             </div>
         </div>
     )

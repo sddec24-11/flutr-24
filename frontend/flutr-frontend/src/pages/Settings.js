@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import "../styles/settingsStyles.css";
+import Checkbox from "../components/Checkbox";
 
 export default function Settings(){
     const [activeTab, setActiveTab] = useState(1);
@@ -28,6 +29,17 @@ export default function Settings(){
     const [rNavVal, setNavR] = useState(Number("0x"+navBarColor[1]+navBarColor[2]));
     const [gNavVal, setNavG] = useState(Number("0x"+navBarColor[3]+navBarColor[4]));
     const [bNavVal, setNavB] = useState(Number("0x"+navBarColor[5]+navBarColor[6]));
+
+    //Checkboxes
+    const [instaState, setInsta] = useState(false);
+    const [faceState, setFace] = useState(false);
+    const [xState, setX] = useState(false);
+    const [ytState, setYT] = useState(false);
+    const [botdState, setBOTD] = useState(false);
+    const [statsState, setStats] = useState(false);
+    const [newsState, setNews] = useState(false);
+
+
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -86,22 +98,22 @@ export default function Settings(){
                             <Col>Social Media Links</Col>
                         </Row>
                         <Row>
-                            <Col xs={1}><div className="checkbox"></div></Col>
+                            <Col xs={1}><Checkbox state={instaState} setState={setInsta}/></Col>
                             <Col xs={2}>Instagram: </Col>
                             <Col xs={9}><input></input></Col>
                         </Row>
                         <Row>
-                            <Col xs={1}><div className="checkbox"></div></Col>
+                            <Col xs={1}><Checkbox state={faceState} setState={setFace}/></Col>
                             <Col xs={2}>Facebook: </Col>
                             <Col xs={9}><input></input></Col>
                         </Row>
                         <Row>
-                            <Col xs={1}><div className="checkbox"></div></Col>
+                            <Col xs={1}><Checkbox state={xState} setState={setX}/></Col>
                             <Col xs={2}>X: </Col>
                             <Col xs={9}><input></input></Col>
                         </Row>
                         <Row>
-                            <Col xs={1}><div className="checkbox"></div></Col>
+                            <Col xs={1}><Checkbox state={ytState} setState={setYT}/></Col>
                             <Col xs={2}>YouTube: </Col>
                             <Col xs={9}><input></input></Col>
                         </Row>
@@ -120,11 +132,11 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 3 && <div id="home">
-                    <h4>Panels</h4>
-                    <div><div></div> Butterfly of the Day </div>
-                    <div><div></div> Statistics </div>
-                    <div><div></div> News </div>
                     <Container>
+                        <Row><Col><h4>Panels</h4></Col></Row>
+                        <Row><Col><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
+                        <Row><Col><Checkbox state={statsState} setState={setStats}/></Col><Col>Statistics</Col></Row>
+                        <Row><Col><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
                         <Row>
                             <Col xs={5}><input placeholder="news..."></input></Col>
                             <Col><div>Upload Image (Optional)</div></Col>

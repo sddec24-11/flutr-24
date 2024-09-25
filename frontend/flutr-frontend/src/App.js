@@ -14,6 +14,7 @@ import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
 import MasterButterfly from "./pages/MasterButterfly.js";
+import EditButterflies from "./pages/EditButterflies.js";
 
 const locations = [
   {
@@ -22,7 +23,7 @@ const locations = [
     logo: "reiman-logo.png",
     image: "reiman-thumb.avif",
     address: "1407 University Blvd. Ames, IA 50011",
-    color: "#22c55e",
+    color: "#087648",
   },
   {
     name: "Butterfly Pavilion",
@@ -83,6 +84,7 @@ export default function App() {
                 <Route path="settingss" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="masterbutterfly" element={<MasterButterfly/>}/>
+                <Route path="/admin/butterfly" element={<EditButterflies/>}/>
             </Routes>
         </BrowserRouter>
     </div>
