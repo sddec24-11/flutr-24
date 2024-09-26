@@ -24,6 +24,11 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "1407 University Blvd. Ames, IA 50011",
     color: "#087648",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    }
   },
   {
     name: "Butterfly Pavilion",
@@ -32,6 +37,11 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "6525  W 104th Ave. Westminster, CO 80020",
     color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    }
   },
   {
     name: "Thanksgiving Point",
@@ -40,6 +50,11 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "3003 N Thanksgiving Way Lehi, UT 84043",
     color: "#397fc2",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    }
   },
   {
     name: "Ames, Iowa",
@@ -48,6 +63,11 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "Ames, IA 50014",
     color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    }
   },
   {
     name: "Demo",
@@ -56,6 +76,11 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "somehwer",
     color: "#9F2A00",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    }
   },
 ];
 
