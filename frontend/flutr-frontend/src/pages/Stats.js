@@ -9,7 +9,7 @@ export default function Stats({data}){
                     <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: data.colorScheme.primary}}><strong>Statistics</strong></h2>
                 </div>
                 <div style={{backgroundColor: "#FFFFFF", borderRadius: "15px", width: "50%"}}>
-
+                    
                 </div>
             <Footer location={data}/>
         </div>
