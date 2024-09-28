@@ -1,13 +1,13 @@
 package com.flutr.backend.controller;
 
-import com.flutr.backend.dto.*;
 import com.flutr.backend.model.Shipment;
-import com.flutr.backend.model.Supplier;
 import com.flutr.backend.service.ShipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/shipments")
@@ -20,62 +20,45 @@ public class ShipmentController {
         this.shipmentService = shipmentService;
     }
 
+    // Add a new shipment
     @PostMapping("/add")
     public Shipment addShipment(@RequestBody Shipment shipment) {
         return shipmentService.addShipment(shipment);
     }
 
-    @DeleteMapping("/delete")
-    public void deleteShipmentById(@RequestBody DeleteShipmentRequest request) {
-        shipmentService.deleteShipmentById(request.getId());
+    // Edit an existing shipment
+    @PutMapping("/edit/{id}")
+    public Optional<Shipment> editShipment(@PathVariable String id, @RequestBody Shipment updatedShipment) {
+        return shipmentService.editShipment(id, updatedShipment);
     }
 
-    @PutMapping("/edit")
-    public Shipment editShipment(@RequestBody EditShipmentRequest request) {
-        return shipmentService.editShipment(request.getId(), request.getShipment());
+    // Delete a shipment by ID
+    @DeleteMapping("/delete/{id}")
+    public void deleteShipmentById(@PathVariable String id) {
+        shipmentService.deleteShipmentById(id);
     }
 
+    // View shipments by date and supplier
     @GetMapping("/view/date-supplier")
-    public List<Shipment> viewShipmentsByDateAndSupplier(@RequestBody ShipmentDateSupplierRequest request) {
-        return shipmentService.viewShipmentsByDateAndSupplier(request.getDate(), request.getSupplier());
+    public List<Shipment> viewShipmentsByDateAndSupplier(@RequestParam Date date, @RequestParam String supplier) {
+        return shipmentService.viewShipmentsByDateAndSupplier(date, supplier);
     }
 
+    // Overview shipments by date range and supplier
+    @GetMapping("/overview")
+    public List<Shipment> overviewShipments(@RequestParam Date startDate, @RequestParam Date endDate, @RequestParam(required = false) String supplier) {
+        return shipmentService.overviewShipments(startDate, endDate, supplier);
+    }
 
-    @GetMapping("/all")
+    // Delete shipments by date and supplier
+    @DeleteMapping("/delete/date-supplier")
+    public void deleteShipmentsByDateAndSupplier(@RequestParam Date date, @RequestParam String supplier) {
+        shipmentService.deleteShipmentsByDateAndSupplier(date, supplier);
+    }
+
+    // View all shipments (optional for debugging purposes)
+    @GetMapping("/view/all")
     public List<Shipment> viewAllShipments() {
         return shipmentService.viewAllShipments();
     }
-
-    @GetMapping("/overview")
-    public List<Shipment> getShipmentsOverview(@RequestBody ShipmentOverviewRequest request) {
-        return shipmentService.overviewShipments(request.getStartDate(), request.getEndDate(), request.getSupplier());
-    }
-
-    @PostMapping("/import")
-    public String importShipment() {
-        // Placeholder 
-        return "placeholder import";
-    }
-
-    @GetMapping("/export")
-    public String exportShipment() {
-        // Placeholder 
-        return "placeholder export";
-    }
-
-
-    @PostMapping("/supplier/add")
-public Supplier addSupplier(@RequestBody Supplier supplier) {
-    return shipmentService.addSupplier(supplier);
-}
-
-@PutMapping("/supplier/edit")
-public Supplier editSupplier(@RequestBody SupplierEditRequest editRequest) {
-    return shipmentService.editSupplier(editRequest.getOldSupplier(), editRequest.getNewSupplier());
-}
-
-@DeleteMapping("/supplier/delete")
-public void deleteSupplier(@RequestBody Supplier supplier) {
-    shipmentService.deleteSupplier(supplier.getSupplier());
-}
 }

@@ -28,7 +28,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @DeleteMapping("/delete")
+   /*  @DeleteMapping("/delete")
     public void deleteUser(@RequestBody DeleteUserRequest request) {
         userService.deleteUser(request.getId());
     }
@@ -37,5 +37,5 @@ public class UserController {
     public User editUser(@RequestBody EditUserRequest request) {
         return userService.editUser(request.getId(), request.getUser())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
-    }
+    } */
 }

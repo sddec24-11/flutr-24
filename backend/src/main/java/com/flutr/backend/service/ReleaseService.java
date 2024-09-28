@@ -1,58 +1,65 @@
 package com.flutr.backend.service;
 
-import com.flutr.backend.model.Release;
-import com.flutr.backend.model.ReleasedSpecies;
-import com.flutr.backend.repository.ReleaseRepository;
-import com.flutr.backend.dto.*;
+import com.flutr.backend.dto.ReleaseRequest;
+import com.flutr.backend.model.Shipment;
+import com.flutr.backend.repository.ShipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+
+import java.util.Optional;
 
 @Service
 public class ReleaseService {
 
+    private final ShipmentRepository shipmentRepository;
+    private final LoggingService loggingService;
+
     @Autowired
-    private ReleaseRepository releaseRepository;
-
-    public Release createRelease(Release release) {
-        release.setReleaseDateTime(new Date());
-        release.setLastUpdated(new Date());
-        return releaseRepository.save(release);
+    public ReleaseService(ShipmentRepository shipmentRepository, LoggingService loggingService) {
+        this.shipmentRepository = shipmentRepository;
+        this.loggingService = loggingService;
     }
 
-    public void deleteRelease(ReleaseOperationRequest request) {
-        releaseRepository.deleteById(request.getReleaseId());
-    }
+    public void handleRelease(ReleaseRequest request) {
+        loggingService.log("HANDLE_RELEASE", "START", "Releasing butterflies for shipment ID: " + request.getShipmentId());
+        try {
+            Optional<Shipment> shipmentOpt = shipmentRepository.findById(request.getShipmentId());
 
-    public Release editRelease(EditReleaseRequest request) {
-        return releaseRepository.findById(request.getReleaseId()).map(release -> {
-            for (ReleasedSpeciesUpdate update : request.getSpeciesUpdates()) {
-                for (ReleasedSpecies species : release.getSpeciesDetails()) {
-                    if (species.getScientificName().equals(update.getScientificName())) {
-                        if (update.getNumberReleased() != null) species.setNumberReleased(update.getNumberReleased());
-                        if (update.getEmergedInTransit() != null) species.setEmergedInTransit(update.getEmergedInTransit());
-                        if (update.getDamagedInTransit() != null) species.setDamagedInTransit(update.getDamagedInTransit());
-                        if (update.getDiseased() != null) species.setDiseased(update.getDiseased());
-                        if (update.getParasitized() != null) species.setParasitized(update.getParasitized());
-                        if (update.getPoorEmergence() != null) species.setPoorEmergence(update.getPoorEmergence());
-                        if (update.getNoEmergence() != null) species.setNoEmergence(update.getNoEmergence());
-                    }
-                }
+            if (shipmentOpt.isEmpty()) {
+                loggingService.log("HANDLE_RELEASE", "FAILURE", "Shipment not found with ID: " + request.getShipmentId());
+                throw new RuntimeException("Shipment not found with ID: " + request.getShipmentId());
             }
-            release.setLastUpdated(new Date());
-            return releaseRepository.save(release);
-        }).orElse(null);
-    }
 
-    public void deleteSpecies(DeleteSpeciesRequest request) {
-        releaseRepository.findById(request.getReleaseId()).ifPresent(release -> {
-            List<ReleasedSpecies> updatedSpecies = release.getSpeciesDetails().stream()
-                .filter(species -> !request.getScientificNames().contains(species.getScientificName()))
-                .collect(Collectors.toList());
-            release.setSpeciesDetails(updatedSpecies);
-            releaseRepository.save(release);
-        });
+            Shipment shipment = shipmentOpt.get();
+
+            // Update butterfly details with release info
+            request.getButterflyUpdates().forEach(update -> {
+                shipment.getButterflyDetails().forEach(detail -> {
+                    if (detail.getButterflyId().equals(update.getButterflyId())) {
+                        // Update release-related fields
+                        detail.setNumberReleased(detail.getNumberReleased() + update.getNumberReleased());
+                        detail.setPoorEmergence(detail.getPoorEmergence() + update.getPoorEmergence());
+                        detail.setDamaged(detail.getDamaged() + update.getDamagedDuringRelease());
+                        detail.setDiseased(detail.getDiseased() + update.getDiseasedDuringRelease());
+
+                        // Recalculate total remaining
+                        int totalRemaining = detail.getNumberReceived() -
+                                (detail.getNumberReleased() + 
+                                 detail.getEmergedInTransit() + 
+                                 detail.getDamaged() + 
+                                 detail.getDiseased() + 
+                                 detail.getPoorEmergence());
+                        detail.setTotalRemaining(totalRemaining);
+                    }
+                });
+            });
+
+            shipmentRepository.save(shipment);
+
+            loggingService.log("HANDLE_RELEASE", "SUCCESS", "Release operation completed for shipment ID: " + request.getShipmentId());
+        } catch (Exception e) {
+            loggingService.log("HANDLE_RELEASE", "FAILURE", e.getMessage());
+            throw new RuntimeException("Error releasing butterflies: " + e.getMessage());
+        }
     }
 }

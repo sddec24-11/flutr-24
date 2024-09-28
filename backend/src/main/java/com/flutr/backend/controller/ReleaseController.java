@@ -1,35 +1,23 @@
 package com.flutr.backend.controller;
 
-import com.flutr.backend.dto.*;
-import com.flutr.backend.model.Release;
+import com.flutr.backend.dto.ReleaseRequest;
 import com.flutr.backend.service.ReleaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/release")
+@RequestMapping("/releases")
 public class ReleaseController {
 
+    private final ReleaseService releaseService;
+
     @Autowired
-    private ReleaseService releaseService;
-
-    @PostMapping("/create")
-    public Release createRelease(@RequestBody Release release) {
-        return releaseService.createRelease(release);
+    public ReleaseController(ReleaseService releaseService) {
+        this.releaseService = releaseService;
     }
 
-    @PostMapping("/delete")
-    public void deleteRelease(@RequestBody ReleaseOperationRequest request) {
-        releaseService.deleteRelease(request);
-    }
-
-    @PostMapping("/edit")
-    public Release editRelease(@RequestBody EditReleaseRequest request) {
-        return releaseService.editRelease(request);
-    }
-
-    @PostMapping("/deleteSpecies")
-    public void deleteSpecies(@RequestBody DeleteSpeciesRequest request) {
-        releaseService.deleteSpecies(request);
+    @PostMapping("/release")
+    public void handleRelease(@RequestBody ReleaseRequest releaseRequest) {
+        releaseService.handleRelease(releaseRequest);
     }
 }
