@@ -46,6 +46,7 @@ export default function Gallery({data}){
 
     return(
         <div style={{backgroundColor: data.colorScheme.background}}>
+            <PageTitle title={data.name + "'s Gallery"}/>
             <Navbar location={data} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: data.colorScheme.primary}}><strong>Gallery</strong></h2>

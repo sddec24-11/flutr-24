@@ -5,6 +5,7 @@ import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import News from "../components/News";
+import PageTitle from "../components/PageTitle";
 
 const butterfly = {
     common_name: "Common Name",
@@ -24,6 +25,7 @@ const stats = {butterflyCount: 123, speciesCount: 45}
 export default function LocationHome({data}){
     return(
         <div style={{backgroundColor: colorScheme.background}}>
+            <PageTitle title={data.name + "'s Home"}/>
             <Navbar location={data} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
@@ -37,7 +39,7 @@ export default function LocationHome({data}){
                             <div>
                                 <News colorScheme={colorScheme} content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas sapien ac ligula efficitur rhoncus. Sed faucibus augue ultricies sagittis ultricies. Sed nec suscipit leo. In imperdiet vestibulum quam. Proin vel mi scelerisque, eleifend lacus ut, sodales erat. Phasellus mattis ultricies elit et cursus. Nam finibus nisi sed elit placerat ornare. Suspendisse eu consectetur ex, eu tincidunt odio. Fusce pretium purus non congue varius. "}/>
                                 <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF'}}>
-                                    <h3>Statistics</h3>
+                                    <h3 style={{color: colorScheme.primary}}>Statistics</h3>
                                     <div style={{backgroundColor: colorScheme.secondary}}>
                                         <h1 style={{color: colorScheme.primary}}>{stats.butterflyCount}</h1>
                                         <h4 style={{color: colorScheme.primary}}>butterflies in flight</h4>
@@ -45,7 +47,7 @@ export default function LocationHome({data}){
                                         <h4 style={{color: colorScheme.primary}}>species in flight</h4>
                                     </div>
                                     <div>
-                                        <button style={{backgroundColor: colorScheme.primary}}>See More</button>
+                                        <button style={{backgroundColor: colorScheme.primary, color: "#FFFFFF"}}>See More</button>
                                     </div>
                                 </div>
                             </div>
