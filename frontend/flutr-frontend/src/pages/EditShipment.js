@@ -1,10 +1,19 @@
 import { useState } from "react";
+import React, { useRef } from 'react';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 import { useLocation } from "react-router-dom";
 
 export default function EditShipment() {
+
+    const butterflyOptions = [
+        {value: "Butterfly 1" },
+        {value: "Butterfly 2" },
+        {value: "Butterfly 3" },
+        {value: "Butterfly 4" },
+        {value: "Butterfly 5" },
+    ];
 
     const location = useLocation();
     const shipment = location.state;
@@ -13,8 +22,6 @@ export default function EditShipment() {
     const [data, setData] = useState(butterflyDetail);
 
     const incrementVal = (butterflyId, key) => {
-        console.log(shipment.shipmentDate);
-        console.log(typeof shipment.shipmentDate);
         setData(data.map(item =>
             item.butterflyId === butterflyId ? { ...item, [key]: item[key] + 1 } : item
         ));
@@ -26,6 +33,47 @@ export default function EditShipment() {
         ));
     };
 
+    const shipDateInputRef = useRef(null);
+    const arriveDateInputRef = useRef(null);
+    const supplierDateInputRef = useRef(null);
+
+
+    const addButterfly = (speciesIn) => {
+        const exists = data.some(butterfly => butterfly.species === speciesIn);
+        if (exists) {
+            console.log(`Butterfly with species '${speciesIn}' already exists.`);
+            return;
+        }
+
+        const newButterfly = {
+            butterflyId: data.length + 1,
+            species: speciesIn,
+            numberReceived: 0,
+            numberReleased: 0,
+            emergedInTransit: 0,
+            damaged: 0,
+            diseased: 0,
+            parasites: 0,
+            poorEmergence: 0,
+            totalRemaining: 0,
+        };
+
+        setData(prev => [...prev, newButterfly]);
+        console.log(data);
+    };
+
+    const submit = () => {
+        const newShipment = {
+            id: 40,
+            shipmentDate: shipDateInputRef.current.value,
+            arrivalDate: arriveDateInputRef.current.value,
+            supplier: supplierDateInputRef.current.value,
+            butterflyDetail: data
+        };
+
+        console.log(newShipment);
+    };
+
 return (
         <div class="main-container">
             <Navbar />
@@ -34,15 +82,15 @@ return (
                     <div className="ship-info-input">
                         <div class="input-group">
                             <label for="shipdate">Shipment Date: </label>
-                            <input type="date" id="shipdate" name="shipment-date" defaultValue={shipment.shipmentDate}/>
+                            <input type="date" id="shipdate" name="shipment-date" defaultValue={shipment.shipmentDate} ref={shipDateInputRef}/>
                         </div>
                         <div class="input-group">
                             <label for="arrivedate">Arrival Date: </label>
-                            <input type="date" id="arrivedate" name="arrival-date" defaultValue={shipment.arrivalDate}/>
+                            <input type="date" id="arrivedate" name="arrival-date" defaultValue={shipment.arrivalDate} ref={arriveDateInputRef}/>
                         </div>
                         <div class="input-group">
                             <label for="suppliers">Supplier: </label>
-                            <select id="suppliers" name="suppliers" defaultValue={shipment.supplier}>
+                            <select id="suppliers" name="suppliers" defaultValue={shipment.supplier} ref={supplierDateInputRef}>
                                 <option disabled selected value></option>
                                 <option value="ship1">ship1</option>
                                 <option value="ship2">ship2</option>
@@ -61,11 +109,14 @@ return (
                     </div>
 
                     <div class="butterfly">
-                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}>
+                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                                onChange={(e) => addButterfly(e.target.value)}>
                             <option disabled selected value>Add Butterfly</option>
-                            <option value="but1">but1</option>
-                            <option value="but2">but2</option>
-                            <option value="but3">but3</option>
+                            {butterflyOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.value}
+                            </option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -127,7 +178,10 @@ return (
 
             <div class="submit-cancel-buttons">
                 <button type="button" class="btn cancel-btn">Cancel</button>
-                <button type="submit" class="btn submit-btn">Submit</button>
+                <button type="submit" class="btn submit-btn" 
+                        onClick={() => submit()}>
+                            Submit
+                </button>
             </div>
 
             <Footer />

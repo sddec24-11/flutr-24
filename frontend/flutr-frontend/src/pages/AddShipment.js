@@ -1,30 +1,73 @@
 import { useState } from "react";
+import React, { useRef } from 'react';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 
-// TODO 
-// -fix wonky border
-// -add butterfly
-// -make sure user cant add same butterfly species
-// -fix negative total remaining
-// -auto-populate when editing shipment data
-
 export default function AddShipment() {
+
+    const butterflyOptions = [
+        {value: "Butterfly 1" },
+        {value: "Butterfly 2" },
+        {value: "Butterfly 3" },
+        {value: "Butterfly 4" },
+        {value: "Butterfly 5" },
+    ];
+
+    const shipDateInputRef = useRef(null);
+    const arriveDateInputRef = useRef(null);
+    const supplierDateInputRef = useRef(null);
 
     const [data, setData] = useState([]);
 
-    const incrementVal = (id, key) => {
+    const addButterfly = (speciesIn) => {
+        const exists = data.some(butterfly => butterfly.species === speciesIn);
+        if (exists) {
+            console.log(`Butterfly with species '${speciesIn}' already exists.`);
+            return;
+        }
+
+        const newButterfly = {
+            butterflyId: data.length + 1,
+            species: speciesIn,
+            numberReceived: 0,
+            numberReleased: 0,
+            emergedInTransit: 0,
+            damaged: 0,
+            diseased: 0,
+            parasites: 0,
+            poorEmergence: 0,
+            totalRemaining: 0,
+        };
+
+        setData(prev => [...prev, newButterfly]);
+        console.log(data);
+    };
+
+    const submit = () => {
+        const newShipment = {
+            id: 40,
+            shipmentDate: shipDateInputRef.current.value,
+            arrivalDate: arriveDateInputRef.current.value,
+            supplier: supplierDateInputRef.current.value,
+            butterflyDetail: data
+        };
+
+        console.log(newShipment);
+    };
+
+    const incrementVal = (butterflyId, key) => {
         setData(data.map(item =>
-            item.id === id ? { ...item, [key]: item[key] + 1 } : item
+            item.butterflyId === butterflyId ? { ...item, [key]: item[key] + 1 } : item
         ));
     };
 
-    const decrementVal = (id, key) => {
+    const decrementVal = (butterflyId, key) => {
         setData(data.map(item =>
-            item.id === id && (item[key] > 0) ? { ...item, [key]: item[key] - 1 } : item
+            item.butterflyId === butterflyId && (item[key] > 0) ? { ...item, [key]: item[key] - 1 } : item
         ));
     };
+
 
 return (
         <div class="main-container">
@@ -34,15 +77,15 @@ return (
                     <div className="ship-info-input">
                         <div class="input-group">
                             <label for="shipdate">Shipment Date: </label>
-                            <input type="date" id="shipdate" name="shipment-date" />
+                            <input type="date" id="shipdate" name="shipment-date" ref={shipDateInputRef}/>
                         </div>
                         <div class="input-group">
                             <label for="arrivedate">Arrival Date: </label>
-                            <input type="date" id="arrivedate" name="arrival-date" />
+                            <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef}/>
                         </div>
                         <div class="input-group">
                             <label for="suppliers">Supplier: </label>
-                            <select id="suppliers" name="suppliers">
+                            <select id="suppliers" name="suppliers" ref={supplierDateInputRef}>
                                 <option disabled selected value></option>
                                 <option value="ship1">ship1</option>
                                 <option value="ship2">ship2</option>
@@ -61,11 +104,14 @@ return (
                     </div>
 
                     <div class="butterfly">
-                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}>
+                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                                onChange={(e) => addButterfly(e.target.value)}>
                             <option disabled selected value>Add Butterfly</option>
-                            <option value="but1">but1</option>
-                            <option value="but2">but2</option>
-                            <option value="but3">but3</option>
+                            {butterflyOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.value}
+                            </option>
+                            ))}
                         </select>
                     </div>
                 </div>
@@ -86,32 +132,32 @@ return (
                     </thead>
                     <tbody>
                         {data.map(item => (
-                        <tr key={item.id}>
-                            <td>null</td>
+                        <tr key={item.butterflyId}>
+                            <td>{item.species}</td>
                             <td>
-                                <button onClick={() => incrementVal(item.id, 'numberReceived')}>+</button>
+                                <button onClick={() => incrementVal(item.butterflyId, 'numberReceived')}>+</button>
                                 <div className="value-box">{item.numberReceived}</div>
-                                <button onClick={() => decrementVal(item.id, 'numberReceived')}>-</button>
+                                <button onClick={() => decrementVal(item.butterflyId, 'numberReceived')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.id, 'emergedInTransit')}>+</button>
+                                <button onClick={() => incrementVal(item.butterflyId, 'emergedInTransit')}>+</button>
                                 <div className="value-box">{item.emergedInTransit}</div>
-                                <button onClick={() => decrementVal(item.id, 'emergedInTransit')}>-</button>
+                                <button onClick={() => decrementVal(item.butterflyId, 'emergedInTransit')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.id, 'damaged')}>+</button>
+                                <button onClick={() => incrementVal(item.butterflyId, 'damaged')}>+</button>
                                 <div className="value-box">{item.damaged}</div>
-                                <button onClick={() => decrementVal(item.id, 'damaged')}>-</button>
+                                <button onClick={() => decrementVal(item.butterflyId, 'damaged')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.id, 'diseased')}>+</button>
+                                <button onClick={() => incrementVal(item.butterflyId, 'diseased')}>+</button>
                                 <div className="value-box">{item.diseased}</div>
-                                <button onClick={() => decrementVal(item.id, 'diseased')}>-</button>
+                                <button onClick={() => decrementVal(item.butterflyId, 'diseased')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.id, 'parasites')}>+</button>
+                                <button onClick={() => incrementVal(item.butterflyId, 'parasites')}>+</button>
                                 <div className="value-box">{item.parasites}</div>
-                                <button onClick={() => decrementVal(item.id, 'parasites')}>-</button>
+                                <button onClick={() => decrementVal(item.butterflyId, 'parasites')}>-</button>
                             </td>
                             <td style={{background:'#469FCE',color:'#E1EFFE'}}>
                                 {item.numberReceived - (item.emergedInTransit+item.damaged+item.diseased+item.parasites)}
@@ -127,7 +173,10 @@ return (
 
             <div class="submit-cancel-buttons">
                 <button type="button" class="btn cancel-btn">Cancel</button>
-                <button type="submit" class="btn submit-btn">Submit</button>
+                <button type="submit" class="btn submit-btn" 
+                        onClick={() => submit()}>
+                            Submit
+                </button>
             </div>
 
             <Footer />
