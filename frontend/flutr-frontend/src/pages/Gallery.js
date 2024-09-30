@@ -5,6 +5,9 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import React, { useState } from "react";
 import Button from 'react-bootstrap/Button';
+import PageTitle from "../components/PageTitle";
+import Footer from "../components/footer";
+import SocialModal from "../components/SocialModal";
 
 
 const butterflies = [
@@ -30,7 +33,7 @@ const butterflies = [
       image: "reiman-logo.png",
     },
   ];
-export default function Gallery({data}){
+export default function Gallery({data, kioskMode}){
     const [searchInput, setSearchInput] = useState("");
     const [showExtras, setExtras] = useState(false);
 
@@ -44,10 +47,31 @@ export default function Gallery({data}){
         setExtras(!showExtras);
     }
 
+    const [insta, setInsta] = useState(false);
+    const [fb, setFB] = useState(false);
+    const [x, setX] = useState(false);
+    const [yt, setYT] = useState(false);
+
+
+  const handleClose = () => {
+    setInsta(false);
+    setFB(false);
+    setX(false);
+    setYT(false);
+  }
+  const handleInsta = () => setInsta(true);
+  const handleFB = () => setFB(true);
+  const handleX = () => setX(true);
+  const handleYT = () => setYT(true);
+
     return(
         <div style={{backgroundColor: data.colorScheme.background}}>
             <PageTitle title={data.name + "'s Gallery"}/>
-            <Navbar location={data} authenticated={true}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
+            <Navbar location={data} authenticated={true} kioskMode={kioskMode}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: data.colorScheme.primary}}><strong>Gallery</strong></h2>
             </div>
@@ -71,6 +95,7 @@ export default function Gallery({data}){
                     </Row>
                 </Container>
             </div>
+            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
 }

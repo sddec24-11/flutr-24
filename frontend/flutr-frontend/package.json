@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@headlessui/react": "^2.1.8",
     "@mui/material": "^6.0.2",
     "@react-map/continents": "^1.0.5",
     "@testing-library/jest-dom": "^5.17.0",
@@ -19,6 +20,7 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.51.2",
     "react-images-uploading": "^3.1.7",
+    "react-qr-code": "^2.0.15",
     "react-router-dom": "^6.22.3",
     "react-scripts": "^5.0.1",
     "web-vitals": "^2.1.4"

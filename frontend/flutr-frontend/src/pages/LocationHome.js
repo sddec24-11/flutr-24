@@ -6,6 +6,13 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import News from "../components/News";
 import PageTitle from "../components/PageTitle";
+import { useState } from 'react';
+
+import Button from 'react-bootstrap/Button';
+
+import Modal from 'react-bootstrap/Modal';
+import SocialModal from "../components/SocialModal";
+
 
 const butterfly = {
     common_name: "Common Name",
@@ -22,11 +29,33 @@ const colorScheme = {
 
 const stats = {butterflyCount: 123, speciesCount: 45}
 
-export default function LocationHome({data}){
+
+
+export default function LocationHome({data, kioskMode}){
+    const [insta, setInsta] = useState(false);
+    const [fb, setFB] = useState(false);
+    const [x, setX] = useState(false);
+    const [yt, setYT] = useState(false);
+
+
+  const handleClose = () => {
+    setInsta(false);
+    setFB(false);
+    setX(false);
+    setYT(false);
+  }
+  const handleInsta = () => setInsta(true);
+  const handleFB = () => setFB(true);
+  const handleX = () => setX(true);
+  const handleYT = () => setYT(true);
     return(
         <div style={{backgroundColor: colorScheme.background}}>
             <PageTitle title={data.name + "'s Home"}/>
-            <Navbar location={data} authenticated={true}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
+            <Navbar location={data} kioskMode={kioskMode} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
                 <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.secondary}}>Subheading?</p>
@@ -55,7 +84,7 @@ export default function LocationHome({data}){
                     </Row>
                 </Container>
             </div>
-            <Footer location={data}/>
+            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
 }

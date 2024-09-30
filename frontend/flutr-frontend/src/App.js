@@ -28,6 +28,12 @@ const locations = [
       primary: "#087648",
       secondary: "#7DAD87",
       background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "https://youtube.com/randomalex_guy",
+      facebook: "https://youtube.com/randomalex_guy",
+      x: "https://youtube.com/randomalex_guy",
+      youtube: "https://youtube.com/randomalex_guy"
     }
   },
   {
@@ -41,6 +47,12 @@ const locations = [
       primary: "#087648",
       secondary: "#7DAD87",
       background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
     }
   },
   {
@@ -54,6 +66,12 @@ const locations = [
       primary: "#087648",
       secondary: "#7DAD87",
       background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
     }
   },
   {
@@ -67,6 +85,12 @@ const locations = [
       primary: "#087648",
       secondary: "#7DAD87",
       background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
     }
   },
   {
@@ -80,6 +104,12 @@ const locations = [
       primary: "#087648",
       secondary: "#7DAD87",
       background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
     }
   },
 ];
@@ -105,8 +135,10 @@ export default function App() {
                 {locations.map((r, index) => {
                     return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
                 })}
-                <Route path="settings" element={<OrganizationSettings />} />
-                <Route path="settingss" element={<Settings />} />
+                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0]} kioskMode={true}/>} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="masterbutterfly" element={<MasterButterfly/>}/>
                 <Route path="/admin/butterfly" element={<EditButterflies/>}/>
