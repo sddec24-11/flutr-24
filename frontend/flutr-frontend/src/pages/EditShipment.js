@@ -29,6 +29,11 @@ export default function EditShipment() {
         {value: "Butterfly 9" },
     ];
 
+    //TEMP
+    function generateRandomId() {
+        return Math.random().toString(36).substr(2, 9);
+      }
+
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.species === speciesIn);
         if (exists) {
@@ -37,7 +42,7 @@ export default function EditShipment() {
         }
 
         const newButterfly = {
-            butterflyId: data.length + 1,
+            butterflyId: generateRandomId(),
             species: speciesIn,
             numberReceived: 0,
             numberReleased: 0,
@@ -52,23 +57,29 @@ export default function EditShipment() {
         setData(prev => [...prev, newButterfly]);
     };
     
+    const removeButterfly = (speciesOut) => {
+        setData(data.filter(item => item.species !== speciesOut));
+    }
+    
     const incrementVal = (butterflyId, key) => {
         setData(data.map(item => {
             if (item.butterflyId === butterflyId) {
-                if (key === 'numberReceived') {
+                if (key !== 'numberReceived') {
+                    if (item.totalRemaining <= 0) {return item;}
+                    else {
+                        return {
+                            ...item,
+                            [key]: item[key] + 1,
+                            totalRemaining: item.totalRemaining - 1
+                        }
+                    }
+                }
+                else {
                     return {
                         ...item,
                         [key]: item[key] + 1,
                         totalRemaining: item.totalRemaining + 1
                     };
-                }
-                else 
-                {
-                    return {
-                        ...item,
-                        [key]: item[key] + 1,
-                        totalRemaining: item.totalRemaining - 1
-                    }
                 }
             }
             return item;
@@ -78,7 +89,15 @@ export default function EditShipment() {
     const decrementVal = (butterflyId, key) => {
         setData(data.map(item => {
             if (item.butterflyId === butterflyId) {
+                if (item[key] <= 0) {
+                    return item;
+                }
+
                 if (key === 'numberReceived') {
+                    if (item.totalRemaining <= 0) {
+                        return item;
+                    }
+                    
                     return {
                         ...item,
                         [key]: item[key] - 1,
@@ -98,6 +117,7 @@ export default function EditShipment() {
         }));
     };
 
+    //post to shipmentList
     const submit = () => {
         const newShipment = {
             id: 40,
@@ -201,10 +221,13 @@ return (
                                 <button onClick={() => decrementVal(item.butterflyId, 'parasites')}>-</button>
                             </td>
                             <td style={{background:'#469FCE',color:'#E1EFFE'}}>
-                                {item.numberReceived - (item.emergedInTransit+item.damaged+item.diseased+item.parasites)}
+                                {item.totalRemaining}
                             </td>
-                            <td style={{background:'#E4976C',color:'#E1EFFE'}}>
-                                remove
+                            <td style={{background:'#E4976C'}}>
+                                <p style={{color:'#E1EFFE', margin:"0"}}
+                                    onClick={() => removeButterfly(item.species)}>
+                                    remove
+                                </p>
                             </td>
                         </tr>
                         ))}
