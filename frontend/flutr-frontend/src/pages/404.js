@@ -3,7 +3,7 @@ import Footer from "../components/footer";
 
 export default function NotFound(){
     return(
-        <div>
+        <div class="main-container">
             <Navbar />
             <h1>404: Not Found</h1>
             <Footer />

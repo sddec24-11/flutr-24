@@ -3,7 +3,7 @@ import Footer from "../components/footer";
 
 export default function Contact(){
     return(
-        <div>
+        <div class="main-container">
             <Navbar />
             <h1>Contact Page</h1>
             <Footer />

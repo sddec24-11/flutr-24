@@ -23,7 +23,7 @@ export default function Settings(){
     const [navBarColor, setNavBarColor] = useState("#aabbcc");
 
     return (
-        <div>
+        <div class="main-container">
             <Navbar />
             <h1>Organization Settings</h1>
             <div className="tabs">

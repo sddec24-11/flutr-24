@@ -31,7 +31,7 @@ export default function Landing({data}){
     }
 
     return(
-        <div style={{width: "100%"}}>
+        <div class="main-container">
                 <Navbar />
                 <div id='all-tools'>
                      <div id="landing-header" style={{width: '100%', height: '206px',margin: 'auto', marginTop: '24px'}}>

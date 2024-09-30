@@ -34,7 +34,7 @@ export default function Login(){
         
     }
     return(
-        <div>
+        <div class="main-container">
             <Navbar />
             <div style={{margin: '8%'}}>
                 <div style={{width:'33%', margin: 'auto', border: '4px solid #469FCE', borderRadius: '15px'}}>

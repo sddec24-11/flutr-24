@@ -12,6 +12,7 @@ import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
 import AddShipment from './pages/AddShipment.js'
+import MasterEdit from "./pages/MasterEdit.js";
 
 const locations = [
   {
@@ -68,6 +69,7 @@ export default function App() {
 
                 <Route path="/shipments" element={<Shipments />} />
                 <Route path="/addshipment" element={<AddShipment />} />
+                <Route path="/masteredit" element={<MasterEdit />} />
 
                 {locations.map((r, index) => (
                     <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>

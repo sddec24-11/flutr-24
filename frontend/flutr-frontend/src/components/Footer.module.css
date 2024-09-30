@@ -1,14 +1,14 @@
-
 .holder{
     display: flex;
     justify-content: space-between;
-    align-items: left;
     gap: 60px;
     margin-left: auto;
     margin-right: 0;
-    /* padding-left: 50%; */
-    height: 1000;
     background-color: #8ABCD7;
+    height: 60px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
 }
 
 .content{
