@@ -28,7 +28,7 @@ const shipmentList = [
 ];
 
     const[currentPage, setCurrentPage] = useState(1);
-    const rowsPerPage = 8;
+    const rowsPerPage = 9;
     const totalPages = Math.ceil(shipmentList.length / rowsPerPage);
 
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -48,17 +48,19 @@ const shipmentList = [
     };
 
     return (
-        <div style={{width: "100%"}}>
+        <div class="main-container">
             <Navbar />
+
             <h1 className="shipments-header">Shipments</h1>
-            <div className="table-container">
-                <table className="table">
+            
+            <div className="shipments-table-container">
+                <table className="paging-table">
                     <thead>
                         <tr>
                             <th>Shipment Date</th>
                             <th>Arrival Date</th>
                             <th>Supplier</th>
-                            <th style={{width:'128px'}}></th>
+                            <th style={{width:"100px"}}></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -75,17 +77,27 @@ const shipmentList = [
                     </tbody>
                 </table>
             </div>
-                <div className="pagination" style={{marginTop:'10px', textAlign:'center', maxWidth:'fit-content', marginLeft:'auto', marginRight:'auto'}}>
-                    <button onClick={prevPage} disabled={currentPage === 1}>
+
+            <div className="paging-row">
+                <div className="paging-column">
+                    <button onClick={prevPage} disabled={currentPage === 1}
+                        style={{marginLeft:"70%"}}>
                         Previous
                     </button>
+                </div>
+                <div className="paging-column" style={{width:"14%"}}>
                     <span>
                         Page {currentPage} of {totalPages}
                     </span>
-                    <button onClick={nextPage} disabled={currentPage === totalPages}>
+                </div>
+               <div className="paging-column">
+                    <button onClick={nextPage} disabled={currentPage === totalPages}
+                    style={{marginRight:"70%"}}>
                         Next
                     </button>
                 </div>
+            </div>
+
             <Footer />
         </div>
     );
