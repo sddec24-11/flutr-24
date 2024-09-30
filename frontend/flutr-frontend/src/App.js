@@ -11,7 +11,8 @@ import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
-import AddShipment from './pages/AddShipment.js'
+import AddShipment from './pages/AddShipment.js';
+import EditShipment from './pages/EditShipment.js'
 import MasterEdit from "./pages/MasterEdit.js";
 
 const locations = [
@@ -69,6 +70,7 @@ export default function App() {
 
                 <Route path="/shipments" element={<Shipments />} />
                 <Route path="/addshipment" element={<AddShipment />} />
+                <Route path="/editshipment" element={<EditShipment />} />
                 <Route path="/masteredit" element={<MasterEdit />} />
 
                 {locations.map((r, index) => (

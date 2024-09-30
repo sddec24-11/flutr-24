@@ -15,6 +15,7 @@
     width: 100%;
     text-align: center;
     min-height: 555px;
+    max-height: 555px;
 }
 
 .paging-table {
@@ -24,9 +25,8 @@
     border-spacing: 0;
     border: 2px solid #469FCE;
     border-radius: 10px;
-    line-height: 55px;
+    line-height: 60px;
     table-layout: fixed;
-    overflow: hidden;
 }
 
 .paging-table thead{
@@ -34,6 +34,7 @@
     background-color: #469FCE;
     font-size: 24px;
     font-weight: 700;
+    line-height: 65px;
 }
 
 .paging-table tbody {

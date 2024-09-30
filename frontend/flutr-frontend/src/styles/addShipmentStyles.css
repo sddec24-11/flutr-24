@@ -13,6 +13,7 @@
     width: 100%;
     text-align: center;
     max-height: 490px;
+    min-height: 490px;
     overflow-y: scroll;
 }
 
