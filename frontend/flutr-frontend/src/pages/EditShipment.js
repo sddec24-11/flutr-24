@@ -7,36 +7,27 @@ import { useLocation } from "react-router-dom";
 
 export default function EditShipment() {
 
+    const location = useLocation();
+    const shipment = location.state;
+    const {butterflyDetail} = shipment || {};
+
+    const [data, setData] = useState(butterflyDetail);
+    
+    const shipDateInputRef = useRef(null);
+    const arriveDateInputRef = useRef(null);
+    const supplierDateInputRef = useRef(null);
+
     const butterflyOptions = [
         {value: "Butterfly 1" },
         {value: "Butterfly 2" },
         {value: "Butterfly 3" },
         {value: "Butterfly 4" },
         {value: "Butterfly 5" },
+        {value: "Butterfly 6" },
+        {value: "Butterfly 7" },
+        {value: "Butterfly 8" },
+        {value: "Butterfly 9" },
     ];
-
-    const location = useLocation();
-    const shipment = location.state;
-    const {butterflyDetail} = shipment || {};
-
-    const [data, setData] = useState(butterflyDetail);
-
-    const incrementVal = (butterflyId, key) => {
-        setData(data.map(item =>
-            item.butterflyId === butterflyId ? { ...item, [key]: item[key] + 1 } : item
-        ));
-    };
-
-    const decrementVal = (butterflyId, key) => {
-        setData(data.map(item =>
-            item.butterflyId === butterflyId && (item[key] > 0) ? { ...item, [key]: item[key] - 1 } : item
-        ));
-    };
-
-    const shipDateInputRef = useRef(null);
-    const arriveDateInputRef = useRef(null);
-    const supplierDateInputRef = useRef(null);
-
 
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.species === speciesIn);
@@ -59,7 +50,52 @@ export default function EditShipment() {
         };
 
         setData(prev => [...prev, newButterfly]);
-        console.log(data);
+    };
+    
+    const incrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (key === 'numberReceived') {
+                    return {
+                        ...item,
+                        [key]: item[key] + 1,
+                        totalRemaining: item.totalRemaining + 1
+                    };
+                }
+                else 
+                {
+                    return {
+                        ...item,
+                        [key]: item[key] + 1,
+                        totalRemaining: item.totalRemaining - 1
+                    }
+                }
+            }
+            return item;
+        }));
+    };
+
+    const decrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (key === 'numberReceived') {
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining - 1
+                    };
+                }
+                else 
+                {
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining + 1
+                    }
+                }
+            }
+            return item;
+        }));
     };
 
     const submit = () => {
@@ -70,7 +106,6 @@ export default function EditShipment() {
             supplier: supplierDateInputRef.current.value,
             butterflyDetail: data
         };
-
         console.log(newShipment);
     };
 
@@ -78,48 +113,49 @@ return (
         <div class="main-container">
             <Navbar />
             <h1 className="add-shipments-header">Edit Shipment</h1>
-                <div class="border-all">
-                    <div className="ship-info-input">
-                        <div class="input-group">
-                            <label for="shipdate">Shipment Date: </label>
-                            <input type="date" id="shipdate" name="shipment-date" defaultValue={shipment.shipmentDate} ref={shipDateInputRef}/>
-                        </div>
-                        <div class="input-group">
-                            <label for="arrivedate">Arrival Date: </label>
-                            <input type="date" id="arrivedate" name="arrival-date" defaultValue={shipment.arrivalDate} ref={arriveDateInputRef}/>
-                        </div>
-                        <div class="input-group">
-                            <label for="suppliers">Supplier: </label>
-                            <select id="suppliers" name="suppliers" defaultValue={shipment.supplier} ref={supplierDateInputRef}>
-                                <option disabled selected value></option>
-                                <option value="ship1">ship1</option>
-                                <option value="ship2">ship2</option>
-                                <option value="ship3">ship3</option>
-                                <option value="ship4">ship4</option>
-                                <option value="ship5">ship5</option>
-                                <option value="ship6">ship6</option>
-                                <option value="ship7">ship7</option>
-                                <option value="ship8">ship8</option>
-                                <option value="ship9">ship9</option>
-                                <option value="ship10">ship10</option>
-                                <option value="ship11">ship11</option>
-                                <option value="ship12">ship12</option>
-                            </select>
-                        </div>
-                    </div>
 
-                    <div class="butterfly">
-                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
-                                onChange={(e) => addButterfly(e.target.value)}>
-                            <option disabled selected value>Add Butterfly</option>
-                            {butterflyOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.value}
-                            </option>
-                            ))}
+            <div class="border-all">
+                <div className="ship-info-input">
+                    <div class="input-group">
+                        <label for="shipdate">Shipment Date: </label>
+                        <input type="date" id="shipdate" name="shipment-date" ref={shipDateInputRef} defaultValue={shipment.shipmentDate} />
+                    </div>
+                    <div class="input-group">
+                        <label for="arrivedate">Arrival Date: </label>
+                        <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef} defaultValue={shipment.arrivalDate} />
+                    </div>
+                    <div class="input-group">
+                        <label for="suppliers">Supplier: </label>
+                        <select id="suppliers" name="suppliers" ref={supplierDateInputRef} defaultValue={shipment.supplier} >
+                            <option disabled selected value></option>
+                            <option value="ship1">ship1</option>
+                            <option value="ship2">ship2</option>
+                            <option value="ship3">ship3</option>
+                            <option value="ship4">ship4</option>
+                            <option value="ship5">ship5</option>
+                            <option value="ship6">ship6</option>
+                            <option value="ship7">ship7</option>
+                            <option value="ship8">ship8</option>
+                            <option value="ship9">ship9</option>
+                            <option value="ship10">ship10</option>
+                            <option value="ship11">ship11</option>
+                            <option value="ship12">ship12</option>
                         </select>
                     </div>
                 </div>
+
+                <div class="butterfly">
+                    <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                            onChange={(e) => addButterfly(e.target.value)}>
+                        <option disabled selected value>Add Butterfly</option>
+                        {butterflyOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.value}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
 
             <div className="add-shipments-table-container">
                 <table className="add-table">

@@ -4,7 +4,18 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 
+
 export default function AddShipment() {
+    
+    
+
+
+    
+    const [data, setData] = useState([]);
+    
+    const shipDateInputRef = useRef(null);
+    const arriveDateInputRef = useRef(null);
+    const supplierDateInputRef = useRef(null);
 
     const butterflyOptions = [
         {value: "Butterfly 1" },
@@ -12,13 +23,11 @@ export default function AddShipment() {
         {value: "Butterfly 3" },
         {value: "Butterfly 4" },
         {value: "Butterfly 5" },
+        {value: "Butterfly 6" },
+        {value: "Butterfly 7" },
+        {value: "Butterfly 8" },
+        {value: "Butterfly 9" },
     ];
-
-    const shipDateInputRef = useRef(null);
-    const arriveDateInputRef = useRef(null);
-    const supplierDateInputRef = useRef(null);
-
-    const [data, setData] = useState([]);
 
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.species === speciesIn);
@@ -41,7 +50,52 @@ export default function AddShipment() {
         };
 
         setData(prev => [...prev, newButterfly]);
-        console.log(data);
+    };
+    
+    const incrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (key === 'numberReceived') {
+                    return {
+                        ...item,
+                        [key]: item[key] + 1,
+                        totalRemaining: item.totalRemaining + 1
+                    };
+                }
+                else 
+                {
+                    return {
+                        ...item,
+                        [key]: item[key] + 1,
+                        totalRemaining: item.totalRemaining - 1
+                    }
+                }
+            }
+            return item;
+        }));
+    };
+
+    const decrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (key === 'numberReceived') {
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining - 1
+                    };
+                }
+                else 
+                {
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining + 1
+                    }
+                }
+            }
+            return item;
+        }));
     };
 
     const submit = () => {
@@ -50,71 +104,58 @@ export default function AddShipment() {
             shipmentDate: shipDateInputRef.current.value,
             arrivalDate: arriveDateInputRef.current.value,
             supplier: supplierDateInputRef.current.value,
-            butterflyDetail: data
+            butterflyDetail: data,
         };
-
         console.log(newShipment);
     };
 
-    const incrementVal = (butterflyId, key) => {
-        setData(data.map(item =>
-            item.butterflyId === butterflyId ? { ...item, [key]: item[key] + 1 } : item
-        ));
-    };
-
-    const decrementVal = (butterflyId, key) => {
-        setData(data.map(item =>
-            item.butterflyId === butterflyId && (item[key] > 0) ? { ...item, [key]: item[key] - 1 } : item
-        ));
-    };
-
-
-return (
+    return (
         <div class="main-container">
             <Navbar />
             <h1 className="add-shipments-header">Add Shipment</h1>
-                <div class="border-all">
-                    <div className="ship-info-input">
-                        <div class="input-group">
-                            <label for="shipdate">Shipment Date: </label>
-                            <input type="date" id="shipdate" name="shipment-date" ref={shipDateInputRef}/>
-                        </div>
-                        <div class="input-group">
-                            <label for="arrivedate">Arrival Date: </label>
-                            <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef}/>
-                        </div>
-                        <div class="input-group">
-                            <label for="suppliers">Supplier: </label>
-                            <select id="suppliers" name="suppliers" ref={supplierDateInputRef}>
-                                <option disabled selected value></option>
-                                <option value="ship1">ship1</option>
-                                <option value="ship2">ship2</option>
-                                <option value="ship3">ship3</option>
-                                <option value="ship4">ship4</option>
-                                <option value="ship5">ship5</option>
-                                <option value="ship6">ship6</option>
-                                <option value="ship7">ship7</option>
-                                <option value="ship8">ship8</option>
-                                <option value="ship9">ship9</option>
-                                <option value="ship10">ship10</option>
-                                <option value="ship11">ship11</option>
-                                <option value="ship12">ship12</option>
-                            </select>
-                        </div>
+            
+            <div class="border-all">
+                <div className="ship-info-input">
+                    <div class="input-group">
+                        <label for="shipdate">Shipment Date: </label>
+                        <input type="date" id="shipdate" name="shipment-date" ref={shipDateInputRef}/>
                     </div>
-
-                    <div class="butterfly">
-                        <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
-                                onChange={(e) => addButterfly(e.target.value)}>
-                            <option disabled selected value>Add Butterfly</option>
-                            {butterflyOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.value}
-                            </option>
-                            ))}
+                    <div class="input-group">
+                        <label for="arrivedate">Arrival Date: </label>
+                        <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef}/>
+                    </div>
+                    <div class="input-group">
+                        <label for="suppliers">Supplier: </label>
+                        <select id="suppliers" name="suppliers" ref={supplierDateInputRef}>
+                            <option disabled selected value></option>
+                            <option value="ship1">ship1</option>
+                            <option value="ship2">ship2</option>
+                            <option value="ship3">ship3</option>
+                            <option value="ship4">ship4</option>
+                            <option value="ship5">ship5</option>
+                            <option value="ship6">ship6</option>
+                            <option value="ship7">ship7</option>
+                            <option value="ship8">ship8</option>
+                            <option value="ship9">ship9</option>
+                            <option value="ship10">ship10</option>
+                            <option value="ship11">ship11</option>
+                            <option value="ship12">ship12</option>
                         </select>
                     </div>
                 </div>
+
+                <div class="butterfly">
+                    <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                            onChange={(e) => addButterfly(e.target.value)}>
+                        <option disabled selected value>Add Butterfly</option>
+                        {butterflyOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.value}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
 
             <div className="add-shipments-table-container">
                 <table className="add-table">
@@ -159,7 +200,7 @@ return (
                                 <div className="value-box">{item.parasites}</div>
                                 <button onClick={() => decrementVal(item.butterflyId, 'parasites')}>-</button>
                             </td>
-                            <td style={{background:'#469FCE',color:'#E1EFFE'}}>
+                            <td id="total-remaining" style={{background:'#469FCE',color:'#E1EFFE'}}>
                                 {item.numberReceived - (item.emergedInTransit+item.damaged+item.diseased+item.parasites)}
                             </td>
                             <td style={{background:'#E4976C',color:'#E1EFFE'}}>
