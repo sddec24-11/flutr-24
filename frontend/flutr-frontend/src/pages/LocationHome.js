@@ -67,16 +67,16 @@ export default function LocationHome({data, kioskMode}){
                         <Col style={{paddingTop: '16px'}}>
                             <div>
                                 <News colorScheme={colorScheme} content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas sapien ac ligula efficitur rhoncus. Sed faucibus augue ultricies sagittis ultricies. Sed nec suscipit leo. In imperdiet vestibulum quam. Proin vel mi scelerisque, eleifend lacus ut, sodales erat. Phasellus mattis ultricies elit et cursus. Nam finibus nisi sed elit placerat ornare. Suspendisse eu consectetur ex, eu tincidunt odio. Fusce pretium purus non congue varius. "}/>
-                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF'}}>
+                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center'}}>
                                     <h3 style={{color: colorScheme.primary}}>Statistics</h3>
-                                    <div style={{backgroundColor: colorScheme.secondary}}>
+                                    <div style={{backgroundColor: colorScheme.secondary, width: '75%', margin: 'auto'}}>
                                         <h1 style={{color: colorScheme.primary}}>{stats.butterflyCount}</h1>
                                         <h4 style={{color: colorScheme.primary}}>butterflies in flight</h4>
                                         <h1 style={{color: colorScheme.primary}}>{stats.speciesCount}</h1>
                                         <h4 style={{color: colorScheme.primary}}>species in flight</h4>
                                     </div>
                                     <div>
-                                        <button style={{backgroundColor: colorScheme.primary, color: "#FFFFFF"}}>See More</button>
+                                        <button style={{backgroundColor: colorScheme.primary, color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
                                     </div>
                                 </div>
                             </div>

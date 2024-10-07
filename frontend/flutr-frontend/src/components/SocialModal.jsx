@@ -1,10 +1,19 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
 
 import QRCode from "react-qr-code";
 
 export default function SocialModal({show, handleClose, type, link}) {
+    // useEffect(() => {
+    //   // Set a timeout to close the modal after 30 seconds
+    //   const timeoutId = setTimeout(() => {
+    //     handleClose();
+    //   }, 30000); // 30 seconds in milliseconds
+
+    //   // Clear the timeout on unmount to avoid memory leaks
+    //   return () => clearTimeout(timeoutId);
+    // }, []);
     return(
         <div>
             <Modal show={show} onHide={handleClose}>

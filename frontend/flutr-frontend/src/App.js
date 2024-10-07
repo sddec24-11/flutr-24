@@ -30,10 +30,10 @@ const locations = [
       background: "#96C09F"
     },
     socialMedia: {
-      instagram: "https://youtube.com/randomalex_guy",
-      facebook: "https://youtube.com/randomalex_guy",
-      x: "https://youtube.com/randomalex_guy",
-      youtube: "https://youtube.com/randomalex_guy"
+      instagram: "https://reimangardens.com/",
+      facebook: "https://reimangardens.com/",
+      x: "https://reimangardens.com/",
+      youtube: ""
     }
   },
   {
