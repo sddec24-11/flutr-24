@@ -4,6 +4,7 @@ import {useState} from "react";
 import {Link} from "react-router-dom"
 import "../styles/shipmentsStyles.css";
 
+
 export default function Shipments(){
 
     const shipmentList = [

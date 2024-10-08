@@ -19,7 +19,7 @@
 
 .add-table {
     margin: auto;
-    width: 90%;
+    width: 95%;
     border-collapse: separate;
     border-spacing: 0;
     border: 2px solid #469FCE;
@@ -75,6 +75,10 @@
 .add-table td button:hover {
     background-color: #D1ECFB;
     border-color: #D1ECFB;
+}
+
+.add-table td p:hover {
+    text-decoration: underline;
 }
 
 .value-box {
