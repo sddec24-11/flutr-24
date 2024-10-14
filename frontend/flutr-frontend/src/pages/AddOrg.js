@@ -6,10 +6,32 @@ import Col from "react-bootstrap/esm/Col";
 import React, {useState} from "react";
 
 export default function AddOrg(){
+    const [orgName, setOrgName] = useState();
+    const [orgAddress, setOrgAddress] = useState();
+    const [orgEmail, setOrgEmail] = useState();
     const [file, setFile] = useState();
     const handleUpload = (e) => {
         console.log(e.target.files);
         setFile(URL.createObjectURL(e.target.files[0]));
+    }
+    const handleName = (e) => {
+        setOrgName(e.target.value);
+    }
+    const handleAddress = (e) => {
+        setOrgAddress(e.target.value);
+    }
+    const handleEmail = (e) => {
+        setOrgEmail(e.target.value);
+    }
+
+    const handleCancel = (e) => {
+        e.preventDefault();
+        document.location.href = `/`;
+    }
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+
     }
 
     return(
@@ -25,15 +47,15 @@ export default function AddOrg(){
                         <Container style={{width: '100%'}}>
                             <Row style={{width: '100%'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Organization name:</Col>
-                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
+                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgName} onChange={handleName}></input></Col>
                             </Row>
                             <Row style={{width: '100%'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Organization address:</Col>
-                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
+                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgAddress} onChange={handleAddress}></input></Col>
                             </Row>
                             <Row style={{width: '100%'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Organization e-mail:</Col>
-                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
+                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgEmail} onChange={handleEmail}></input></Col>
                             </Row>
                             <Row style={{width: '100%'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Facility image:</Col>
@@ -41,8 +63,8 @@ export default function AddOrg(){
                                 <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={file}/></Col>
                             </Row>
                             <Row>
-                                <Col><button style={{width: '100%',height: '55px',color:"#FFFFFF", border: '0px', backgroundColor: '#469FCE', borderRadius: '15px'}}>Cancel</button></Col>
-                                <Col><button style={{width: '100%',height: '55px',color:"#FFFFFF", border: '0px', backgroundColor: '#E4976C', borderRadius: '15px'}}>Submit</button></Col>
+                                <Col><button style={{width: '100%',height: '55px',color:"#FFFFFF", border: '0px', backgroundColor: '#469FCE', borderRadius: '15px'}} onClick={handleCancel}>Cancel</button></Col>
+                                <Col><button style={{width: '100%',height: '55px',color:"#FFFFFF", border: '0px', backgroundColor: '#E4976C', borderRadius: '15px'}} onClick={handleSubmit}>Submit</button></Col>
                             </Row>
                         </Container>
                     </div>
