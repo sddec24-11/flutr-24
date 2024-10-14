@@ -107,7 +107,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
     const logo = require('../images/flutr-logo.png');
     return (
       <div className="holder">
-        <div className="content">
+        <div className="contentFooter">
             <p><span>&#169;</span> {currentYear} Reiman Gardens All Rights Reserved.</p>
             <a href="/login"><h3 style={{color: 'white'}}>Organization Login</h3></a>
         </div>

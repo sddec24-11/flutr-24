@@ -6,36 +6,61 @@ import React, {useState, useEffect} from 'react'
 
 function ColorPicker({currentColor, setColor}){
     
-    const [rVal, setR] = useState(Number("0x"+currentColor[1]+currentColor[2]));
-    const [gVal, setG] = useState(Number("0x"+currentColor[3]+currentColor[4]));
-    const [bVal, setB] = useState(Number("0x"+currentColor[5]+currentColor[6]));
+    const [rVal, setR] = useState(hexToRgb(currentColor).r);
+    const [gVal, setG] = useState(hexToRgb(currentColor).g);
+    const [bVal, setB] = useState(hexToRgb(currentColor).b);
+
+    function componentToHex(c) {
+        var hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+    
+    function rgbToHex(r, g, b) {
+        return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+    function hexToRgb(hex) {
+        var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+    }
 
     const setHexFromRGB = () => {
-        let r = rVal.toString(16);
-        let g = gVal.toString(16);
-        let b = bVal.toString(16);
-        if (r.length === 1)
-            r = "0" + r;
-        if (g.length === 1)
-            g = "0" + g;
-        if (b.length === 1)
-            b = "0" + b;
-        setColor("#" + r + g + b);
+        setColor(rgbToHex(rVal,gVal,bVal));
     }
+
+
+    const setRBGFromHex = () => {
+        setR(hexToRgb(currentColor.r));
+        setG(hexToRgb(currentColor.g));
+        setB(hexToRgb(currentColor.b));
+    }
+
+
     const handleHexChange = (e) => {
         e.preventDefault();
+        console.log(e.target.value);
         setColor(e.target.value);
+        setRBGFromHex();
     }
     const handleRChange = (e) => {
         e.preventDefault();
+        console.log(e.target.value);
         setR(e.target.value);
+        setHexFromRGB();
     }
     const handleGChange = (e) => {
         e.preventDefault();
+        console.log(e.target.value);
         setG(e.target.value);
+        setHexFromRGB();
     }
     const handleBChange = (e) => {
         e.preventDefault();
+        console.log(e.target.value);
         setB(e.target.value);
         setHexFromRGB();
     }

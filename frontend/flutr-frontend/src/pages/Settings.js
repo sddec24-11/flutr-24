@@ -13,22 +13,28 @@ export default function Settings(){
 
     const handleInfo = (e) => {
         e.preventDefault();
-        setActiveTab(1)
+        setActiveTab(1);
     }
     const handleStyles = (e) => {
         e.preventDefault();
-        setActiveTab(2)
+        setActiveTab(2);
     }
     const handleHome = (e) => {
         e.preventDefault();
-        setActiveTab(3)
+        setActiveTab(3);
+    }
+    const handleEmployees = (e) => {
+        e.preventDefault();
+        setActiveTab(4);
+    }
+    const handleSuppliers = (e) => {
+        e.preventDefault();
+        setActiveTab(5);
     }
 
-    const [navBarColor, setNavBarColor] = useState("#E89623");
+    const [primaryColor, setPrimaryColor] = useState("#E89623");
+    const [secondaryColor, setSecondaryColor] = useState("#6e4306");
     const [backgroundColor, setBackgroundColor] = useState("#E89623");
-    const [rNavVal, setNavR] = useState(Number("0x"+navBarColor[1]+navBarColor[2]));
-    const [gNavVal, setNavG] = useState(Number("0x"+navBarColor[3]+navBarColor[4]));
-    const [bNavVal, setNavB] = useState(Number("0x"+navBarColor[5]+navBarColor[6]));
 
     //Checkboxes
     const [instaState, setInsta] = useState(false);
@@ -56,10 +62,12 @@ export default function Settings(){
         console.log("Preview");
     }
 
+    
+
     return (
         <div>
-            <Navbar />
-            <div style={{width: "100%", margin: 'auto', height: '50px', height: 'auto'}}>
+            <Navbar authenticated={true}/>
+            <div style={{width: "100%", margin: 'auto', height: '50px', height: 'auto', textAlign: 'center'}}>
                 <h3 style={{paddingTop: '50px', paddingBottom: '50px', color:'#469FCE'}}>Organization Settings</h3>
             </div>
             <div className="tab-holder">
@@ -67,32 +75,34 @@ export default function Settings(){
                     <div className="tabButtons" onClick={handleInfo}>Info</div>
                     <div className="tabButtons" onClick={handleStyles}>Styles</div>
                     <div className="tabButtons" onClick={handleHome}>Home</div>
+                    <div className="tabButtons" onClick={handleEmployees}>Employees</div>
+                    <div className="tabButtons" onClick={handleSuppliers}>Suppliers</div>
                 </div>
             </div>
             
             <div className="content">
                 {activeTab === 1 && 
-                <div id="info">
+                <div id="info" style={{width: '62%', margin: 'auto'}}>
                     <Container>
                         <Row>
                             <div>Organization Information</div>
                         </Row>
                         <Row>
                             <Col xs={3}>Organization name:</Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={3}>Organization website: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={3}>Organization address: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={3}><div id="label">Logo: <p>Please upload a PNG with a transparent background no greater than 250 x 150 pixels.</p></div></Col>
-                            <Col xs={2}><div id="buttons"><button>Upload File</button><button>Remove File</button></div></Col>
-                            <Col xs={7}><div id="viewer"></div></Col>
+                            <Col xs={2}><div id="buttons" style={{margin: 'auto', textAlign: 'center'}}><button style={{borderRadius: '10px', backgroundColor: '#469FCE'}}>Upload File</button><button style={{borderRadius: '10px', backgroundColor: '#E4976C'}}>Remove File</button></div></Col>
+                            <Col xs={7}><div id="viewer" style={{width: '250px', height: '150px', borderRadius: '10px', border: '4px solid #8ABCD7', margin: 'auto'}}></div></Col>
                         </Row>
                         <Row>
                             <Col>Social Media Links</Col>
@@ -100,34 +110,40 @@ export default function Settings(){
                         <Row>
                             <Col xs={1}><Checkbox state={instaState} setState={setInsta}/></Col>
                             <Col xs={2}>Instagram: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={1}><Checkbox state={faceState} setState={setFace}/></Col>
                             <Col xs={2}>Facebook: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={1}><Checkbox state={xState} setState={setX}/></Col>
                             <Col xs={2}>X: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                         <Row>
                             <Col xs={1}><Checkbox state={ytState} setState={setYT}/></Col>
                             <Col xs={2}>YouTube: </Col>
-                            <Col xs={9}><input></input></Col>
+                            <Col xs={9}><input style={{width: '100%'}}></input></Col>
                         </Row>
                     </Container>
                 </div>}
                 {activeTab === 2 && <div id="styles">
                     <Container>
                         <Row>
-                            <Col>Navigation bar color</Col>
-                            <Col>Background color</Col>
+                            <Col>Primary Color</Col>
+                            <Col>Secondary Color</Col>
+                            <Col>Background Color</Col>
+
                         </Row>
                         <Row>
-                            <Col><ColorPicker currentColor={navBarColor} setColor={setNavBarColor}/></Col>
-                            <Col><ColorPicker currentColor={backgroundColor} setColor={setBackgroundColor}/></Col>
+                            <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={primaryColor} onChange={(e) => {setPrimaryColor(e.target.value)}}></input></Col>
+                            <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={secondaryColor} onChange={(e) => {setSecondaryColor(e.target.value)}}></input></Col>
+                            <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px' }} value={backgroundColor} onChange={(e) => {setBackgroundColor(e.target.value)}}></input></Col>
+                            {/* <Col><ColorPicker currentColor={primaryColor} setColor={setPrimaryColor}/></Col>
+                            <Col><ColorPicker currentColor={secondaryColor} setColor={setSecondaryColor}/></Col>
+                            <Col><ColorPicker currentColor={backgroundColor} setColor={setBackgroundColor}/></Col> */}
                         </Row>
                     </Container>
                 </div>}

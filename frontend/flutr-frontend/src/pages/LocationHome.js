@@ -37,6 +37,16 @@ export default function LocationHome({data, kioskMode}){
     const [x, setX] = useState(false);
     const [yt, setYT] = useState(false);
 
+    const handleStats = (e) => {
+        e.preventDefault();
+        document.location.href = `/${data.path}/stats`;
+    }
+
+    const handleGallery = (e) => {
+        e.preventDefault();
+        document.location.href = `/${data.path}/gallery`;
+    }
+
 
   const handleClose = () => {
     setInsta(false);
@@ -58,25 +68,24 @@ export default function LocationHome({data, kioskMode}){
             <Navbar location={data} kioskMode={kioskMode} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
-                <p style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.secondary}}>Subheading?</p>
             </div>
             <div style={{width: "90%", margin: "auto"}}>
                 <Container>
                     <Row xs={1} sm={2} md={2}>
-                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={butterfly} colorScheme={colorScheme}/></Col>
+                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={butterfly} colorScheme={colorScheme} buttonFunction={handleGallery}/></Col>
                         <Col style={{paddingTop: '16px'}}>
                             <div>
                                 <News colorScheme={colorScheme} content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas sapien ac ligula efficitur rhoncus. Sed faucibus augue ultricies sagittis ultricies. Sed nec suscipit leo. In imperdiet vestibulum quam. Proin vel mi scelerisque, eleifend lacus ut, sodales erat. Phasellus mattis ultricies elit et cursus. Nam finibus nisi sed elit placerat ornare. Suspendisse eu consectetur ex, eu tincidunt odio. Fusce pretium purus non congue varius. "}/>
-                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center'}}>
-                                    <h3 style={{color: colorScheme.primary}}>Statistics</h3>
+                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
+                                    <h3 style={{color: colorScheme.primary, paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
                                     <div style={{backgroundColor: colorScheme.secondary, width: '75%', margin: 'auto'}}>
-                                        <h1 style={{color: colorScheme.primary}}>{stats.butterflyCount}</h1>
-                                        <h4 style={{color: colorScheme.primary}}>butterflies in flight</h4>
-                                        <h1 style={{color: colorScheme.primary}}>{stats.speciesCount}</h1>
-                                        <h4 style={{color: colorScheme.primary}}>species in flight</h4>
+                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.butterflyCount}</h1>
+                                        <h4 style={{color: colorScheme.primary, fontSize: '28px'}}>butterflies in flight</h4>
+                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.speciesCount}</h1>
+                                        <h4 style={{color: colorScheme.primary, fontSize: '28px', paddingBottom: '10px'}}>species in flight</h4>
                                     </div>
                                     <div>
-                                        <button style={{backgroundColor: colorScheme.primary, color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
+                                        <button onClick={handleStats} style={{backgroundColor: colorScheme.primary, color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
                                     </div>
                                 </div>
                             </div>
