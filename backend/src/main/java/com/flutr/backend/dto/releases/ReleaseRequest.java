@@ -1,4 +1,4 @@
-package com.flutr.backend.dto;
+package com.flutr.backend.dto.releases;
 
 import java.util.List;
 

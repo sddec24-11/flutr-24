@@ -1,6 +1,6 @@
 package com.flutr.backend.service;
 
-import com.flutr.backend.dto.ReleaseRequest;
+import com.flutr.backend.dto.releases.ReleaseRequest;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.repository.ShipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;

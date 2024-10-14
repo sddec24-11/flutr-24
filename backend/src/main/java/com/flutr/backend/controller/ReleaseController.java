@@ -1,6 +1,6 @@
 package com.flutr.backend.controller;
 
-import com.flutr.backend.dto.ReleaseRequest;
+import com.flutr.backend.dto.releases.ReleaseRequest;
 import com.flutr.backend.service.ReleaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
