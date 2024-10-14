@@ -1,0 +1,260 @@
+{
+	"info": {
+		"_postman_id": "7fe46ea9-86a3-45e1-9d4d-a994d9a28441",
+		"name": "Flutr Project API Collection",
+		"description": "Collection for testing Shipment, Release, and Supplier APIs on localhost:8080",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "25583809"
+	},
+	"item": [
+		{
+			"name": "Add Shipment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shipmentDate\": \"2024-09-28T10:00:00\",\n  \"arrivalDate\": \"2024-09-29T10:00:00\",\n  \"supplier\": \"Supplier A\",\n  \"butterflyDetails\": [\n    {\n      \"butterflyId\": \"BF123\",\n      \"numberReceived\": 100,\n      \"numberReleased\": 0,\n      \"emergedInTransit\": 5,\n      \"damagedInTransit\": 3,\n      \"diseased\": 2,\n      \"poorEmergence\": 1,\n      \"totalRemaining\": 89\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/shipments/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipments",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Shipment",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shipmentDate\": \"2024-09-28T10:00:00\",\n  \"arrivalDate\": \"2024-09-29T10:00:00\",\n  \"supplier\": \"Supplier A\",\n  \"butterflyDetails\": [\n    {\n      \"butterflyId\": \"BF123\",\n      \"numberReceived\": 100,\n      \"numberReleased\": 10,\n      \"emergedInTransit\": 5,\n      \"damagedInTransit\": 3,\n      \"diseased\": 2,\n      \"poorEmergence\": 1,\n      \"totalRemaining\": 79\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/shipments/edit/64fe5a8f7a6f4931b06c4f3e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipments",
+						"edit",
+						"64fe5a8f7a6f4931b06c4f3e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Shipment",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/shipments/delete/64fe5a8f7a6f4931b06c4f3e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipments",
+						"delete",
+						"64fe5a8f7a6f4931b06c4f3e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View Shipments by Date and Supplier",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/shipments/view/date-supplier?date=2024-09-28&supplier=Supplier A",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"shipments",
+						"view",
+						"date-supplier"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2024-09-28"
+						},
+						{
+							"key": "supplier",
+							"value": "Supplier A"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Supplier",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"supplier\": \"Supplier A\"\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/suppliers/add",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"suppliers",
+						"add"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Edit Supplier",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/suppliers/edit?oldSupplierName=Supplier A&newSupplierName=Supplier B",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"suppliers",
+						"edit"
+					],
+					"query": [
+						{
+							"key": "oldSupplierName",
+							"value": "Supplier A"
+						},
+						{
+							"key": "newSupplierName",
+							"value": "Supplier B"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Supplier",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/suppliers/delete?supplierName=Supplier B",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"suppliers",
+						"delete"
+					],
+					"query": [
+						{
+							"key": "supplierName",
+							"value": "Supplier B"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Release Butterflies",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"shipmentId\": \"64fe5a8f7a6f4931b06c4f3e\",\n  \"butterflyUpdates\": [\n    {\n      \"butterflyId\": \"BF123\",\n      \"numberReleased\": 10,\n      \"poorEmergence\": 2,\n      \"damagedDuringRelease\": 1,\n      \"diseasedDuringRelease\": 0\n    }\n  ]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/releases/release",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"releases",
+						"release"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View All Shipments",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "View All Suppliers",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}
