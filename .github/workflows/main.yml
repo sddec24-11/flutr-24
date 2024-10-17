@@ -25,7 +25,7 @@ jobs:
           host: 206.81.3.155
       - name: Deploy frontend
         run: |
-          ssh ${{ secrets.SSH_PRIVATE_KEY }}@206.81.3.155 'sudo cp -r frontend/build /var/www/html/your-app'
+          ssh ${{ secrets.SSH_PRIVATE_KEY }}@206.81.3.155 'sudo cp -r $HOME/reiman-butterfly/flutr-24/frontend/flutr-frontend/build/* /var/www/flutr'
       - name: Restart Nginx Server
         run: |
           ssh ${{ secrets.SSH_PRIVATE_KEY }}@206.81.3.155 'sudo systemctl restart nginx'
