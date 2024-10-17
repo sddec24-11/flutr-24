@@ -1,7 +1,8 @@
-import React, {useState} from 'react'
+import React, {useState} from 'react';
 import Navbar from "../components/navbar";
 import Location_card from "../components/locationCard";
 import Row from 'react-bootstrap/Row';
+import Containter from 'react-bootstrap/Container';
 import Footer from "../components/footer";
 import Button from 'react-bootstrap/Button';
 import "bootstrap/dist/css/bootstrap.css";
@@ -80,19 +81,23 @@ export default function Landing({data}){
                     }
                 </div>
                
-                <div style={{width: '80%', margin: 'auto'}}>
-                    <div class="mx-auto" style={{margin: 'auto'}}>
-                        <Row xs={1} md={3} className="g-4" style={{alignContent: 'center', justifyContent: 'center'}}>
-                            {data.map((r, index) => {
-                                console.log(`${r.name}`)
-                                if(r.name.toLowerCase().includes(searchInput.toLowerCase())){
-                                    return(
-                                        <Location_card location={r} index={index}/>
-                                    )
-                                }
-                            })}
-                        </Row>
-                    </div>
+                <div style={{width: '85.72%', margin: 'auto'}}>
+                    <Containter>
+                        {/* <div class="mx-auto" style={{margin: 'auto'}}> */}
+                            <Row xs={1} sm={2} md={2} lg={3} >
+                                {data.map((r, index) => {
+                                    console.log(`${r.name}`)
+                                        if(r.name.toLowerCase().includes(searchInput.toLowerCase())){
+                                            return(
+                                                <Location_card location={r} index={index}/>
+                                            )
+                                    }
+                                })}
+                            </Row>
+                        {/* </div> */}
+                    </Containter>
+                    {/* <RowColLayoutColWidthBreakpointExample/> */}
+                    
                 </div>
                 <Footer />
         </div>

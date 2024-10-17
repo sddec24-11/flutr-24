@@ -14,6 +14,9 @@ import Shipments from './pages/Shipments.js';
 import AddShipment from './pages/AddShipment.js';
 import EditShipment from './pages/EditShipment.js'
 import MasterEdit from "./pages/MasterEdit.js";
+import MasterButterfly from "./pages/MasterButterfly.js";
+import EditButterflies from "./pages/EditButterflies.js";
+import AddOrg from "./pages/AddOrg.js";
 
 const locations = [
   {
@@ -22,7 +25,18 @@ const locations = [
     logo: "reiman-logo.png",
     image: "reiman-thumb.avif",
     address: "1407 University Blvd. Ames, IA 50011",
-    color: "#22c55e",
+    color: "#087648",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "https://reimangardens.com/",
+      facebook: "https://reimangardens.com/",
+      x: "https://reimangardens.com/",
+      youtube: ""
+    }
   },
   {
     name: "Butterfly Pavilion",
@@ -31,6 +45,17 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "6525  W 104th Ave. Westminster, CO 80020",
     color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
   },
   {
     name: "Thanksgiving Point",
@@ -39,6 +64,17 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "3003 N Thanksgiving Way Lehi, UT 84043",
     color: "#397fc2",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
   },
   {
     name: "Ames, Iowa",
@@ -47,6 +83,17 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "Ames, IA 50014",
     color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
   },
   {
     name: "Demo",
@@ -55,6 +102,17 @@ const locations = [
     image: "reiman-thumb.avif",
     address: "somehwer",
     color: "#9F2A00",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
   },
 ];
 
@@ -82,9 +140,14 @@ export default function App() {
                 {locations.map((r, index) => {
                     return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
                 })}
-                <Route path="settings" element={<OrganizationSettings />} />
-                <Route path="settingss" element={<Settings />} />
+                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0]} kioskMode={true}/>} />
+                <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
+                <Route path="masterbutterfly" element={<MasterButterfly/>}/>
+                <Route path="/edit/butterfly" element={<EditButterflies/>}/>
+                <Route path="/addOrg" element={<AddOrg/>}/>
             </Routes>
         </BrowserRouter>
     </div>

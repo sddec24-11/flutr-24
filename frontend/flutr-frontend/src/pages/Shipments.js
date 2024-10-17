@@ -737,8 +737,7 @@ export default function Shipments(){
 
     return (
         <div class="main-container">
-            <Navbar />
-
+            <Navbar authenticated={true}/>
             <h1 className="shipments-header">Shipments</h1>
             
             <div className="shipments-table-container">

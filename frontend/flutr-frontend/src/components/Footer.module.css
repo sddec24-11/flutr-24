@@ -22,3 +22,13 @@
     padding: 10px;
     /* padding-left: 50%; */
 }
+
+.socialHolder{
+    width: 33%;
+}
+
+@media screen and (max-width: 780px){
+    .socialHolder{
+        width: 33%;
+    }
+}

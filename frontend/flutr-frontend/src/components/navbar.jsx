@@ -5,7 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
-function Navbar({location, authenticated}) {
+function Navbar({location, authenticated, kioskMode}) {
     // adding the states 
     const [isActive, setIsActive] = useState(false);
     //add the active class
@@ -20,19 +20,23 @@ function Navbar({location, authenticated}) {
     // const [pickColor, setPickColor] = useState("#dbeafe");
     if(location != null){
       // setPickColor(location.color);
+      var opener = '/';
+      if(kioskMode){
+        opener = '/kiosk/';
+      }
       return (
         <div className="App">
           <header className="App-header">
             <nav className={`${styles.navbar}`}style={{backgroundColor: location.color}}>
               {}
               
-              <a href={'/' + location.path} className={`${styles.logo}`}><img src={require(`../images/${location.logo}`)} alt={location.logo}/></a>
+              <a href={opener + location.path} className={`${styles.logo}`}><img src={require(`../images/${location.logo}`)} alt={location.logo}/></a>
               <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
                 <li onClick={removeActive}>
-                  <a href={'/' + location.path + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
+                  <a href={opener + location.path + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
                 </li>
                 <li onClick={removeActive}>
-                  <a href={'/' + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
+                  <a href={opener + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
                 </li>
 
                 {authenticated && 
@@ -41,12 +45,12 @@ function Navbar({location, authenticated}) {
                   title="Administration"
                 >
                   <Dropdown.Item href="">Add Release</Dropdown.Item>
-                  <Dropdown.Item href="">View Shipments</Dropdown.Item>
+                  <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
                   <Dropdown.Item href="">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
-                  <Dropdown.Item href="">Edit Butterflies</Dropdown.Item>
-                  <Dropdown.Item href="">Settings</Dropdown.Item>
-                  <Dropdown.Item href="">Logout</Dropdown.Item>
+                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
+                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                  <Dropdown.Item href="/">Logout</Dropdown.Item>
                 </NavDropdown>}
               </ul>
               <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
@@ -60,7 +64,7 @@ function Navbar({location, authenticated}) {
       );
     }
 
-    const logo = require('../images/invertDebug.png');
+    const logo = require('../images/flutr-logo.png');
     return (
       <div className="App">
         <header className="App-header">
@@ -85,6 +89,19 @@ function Navbar({location, authenticated}) {
               <li onClick={removeActive}>
                 <a href='/masteredit' className={`${styles.navLink}`}>Master Edit</a>
               </li>
+              {authenticated && 
+              <NavDropdown
+                  id="nav-dropdown"
+                  title="Administration"
+                >
+                  <Dropdown.Item href="">Add Release</Dropdown.Item>
+                  <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
+                  <Dropdown.Item href="">Add Shipment</Dropdown.Item>
+                  <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
+                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
+                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                  <Dropdown.Item href="/">Logout</Dropdown.Item>
+                </NavDropdown>}
               
             </ul>
             <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
