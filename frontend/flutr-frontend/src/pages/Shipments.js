@@ -49,7 +49,7 @@ export default function Shipments(){
 
     return (
         <div style={{width: "100%"}}>
-            <Navbar />
+            <Navbar authenticated={true}/>
             <h1 className="shipments-header">Shipments</h1>
             <div className="table-container">
                 <table className="table">

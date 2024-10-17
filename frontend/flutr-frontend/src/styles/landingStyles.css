@@ -68,4 +68,10 @@
     width: 100%;
 }
 
+@media screen and (max-width: 534px){
+    #all-tools{
+        width:100%;
+    }
+}
+
 

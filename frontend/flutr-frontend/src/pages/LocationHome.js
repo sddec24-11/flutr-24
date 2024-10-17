@@ -1,12 +1,99 @@
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
+import BOTD from "../components/BOTD";
+import Container from "react-bootstrap/esm/Container";
+import Row from "react-bootstrap/esm/Row";
+import Col from "react-bootstrap/esm/Col";
+import News from "../components/News";
+import PageTitle from "../components/PageTitle";
+import { useState } from 'react';
 
-export default function LocationHome({data}){
+import Button from 'react-bootstrap/Button';
+
+import Modal from 'react-bootstrap/Modal';
+import SocialModal from "../components/SocialModal";
+
+
+const butterfly = {
+    common_name: "Common Name",
+    sci_name: "Scientific Name",
+    fun_fact: "Something fun",
+    coo: ["Bermuda","Jamaica"]
+}
+
+const colorScheme = {
+    primary: "#087648",
+    secondary: "#7DAD87",
+    background: "#96C09F"
+}
+
+const stats = {butterflyCount: 123, speciesCount: 45}
+
+
+
+export default function LocationHome({data, kioskMode}){
+    const [insta, setInsta] = useState(false);
+    const [fb, setFB] = useState(false);
+    const [x, setX] = useState(false);
+    const [yt, setYT] = useState(false);
+
+    const handleStats = (e) => {
+        e.preventDefault();
+        document.location.href = `/${data.path}/stats`;
+    }
+
+    const handleGallery = (e) => {
+        e.preventDefault();
+        document.location.href = `/${data.path}/gallery`;
+    }
+
+
+  const handleClose = () => {
+    setInsta(false);
+    setFB(false);
+    setX(false);
+    setYT(false);
+  }
+  const handleInsta = () => setInsta(true);
+  const handleFB = () => setFB(true);
+  const handleX = () => setX(true);
+  const handleYT = () => setYT(true);
     return(
-        <div>
-            <Navbar location={data} authenticated={true}/>
-            <h1>{data.name} Home</h1>
-            <Footer location={data}/>
+        <div style={{backgroundColor: colorScheme.background}}>
+            <PageTitle title={data.name + "'s Home"}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
+            <Navbar location={data} kioskMode={kioskMode} authenticated={true}/>
+            <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
+                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
+            </div>
+            <div style={{width: "90%", margin: "auto"}}>
+                <Container>
+                    <Row xs={1} sm={2} md={2}>
+                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={butterfly} colorScheme={colorScheme} buttonFunction={handleGallery}/></Col>
+                        <Col style={{paddingTop: '16px'}}>
+                            <div>
+                                <News colorScheme={colorScheme} content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas sapien ac ligula efficitur rhoncus. Sed faucibus augue ultricies sagittis ultricies. Sed nec suscipit leo. In imperdiet vestibulum quam. Proin vel mi scelerisque, eleifend lacus ut, sodales erat. Phasellus mattis ultricies elit et cursus. Nam finibus nisi sed elit placerat ornare. Suspendisse eu consectetur ex, eu tincidunt odio. Fusce pretium purus non congue varius. "}/>
+                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
+                                    <h3 style={{color: colorScheme.primary, paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
+                                    <div style={{backgroundColor: colorScheme.secondary, width: '75%', margin: 'auto'}}>
+                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.butterflyCount}</h1>
+                                        <h4 style={{color: colorScheme.primary, fontSize: '28px'}}>butterflies in flight</h4>
+                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.speciesCount}</h1>
+                                        <h4 style={{color: colorScheme.primary, fontSize: '28px', paddingBottom: '10px'}}>species in flight</h4>
+                                    </div>
+                                    <div>
+                                        <button onClick={handleStats} style={{backgroundColor: colorScheme.primary, color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </Col> 
+                    </Row>
+                </Container>
+            </div>
+            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
 }
