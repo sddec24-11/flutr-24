@@ -6,92 +6,98 @@
     align-items: center;
     padding-top: 2%;
     padding-bottom: 2%;
-}
-
-.shipments-header h1{
     font-size: 28px;
+    padding-top: 2%;
+    padding-bottom: 2%;
 }
 
-.table-container{
-    text-align:center;
-    height: 506px;
+.shipments-table-container{
+    width: 100%;
+    text-align: center;
+    min-height: 555px;
+    max-height: 555px;
 }
 
-.table {
-    display: inline-table;
+.paging-table {
+    margin: auto;
     width: 80%;
     border-collapse: separate;
     border-spacing: 0;
     border: 2px solid #469FCE;
     border-radius: 10px;
-    overflow: hidden;
+    line-height: 60px;
+    table-layout: fixed;
 }
 
-.table th{
+.paging-table thead{
     color: #E1EFFE;
-    font-size: 24px;
     background-color: #469FCE;
-    width: 373px;
-    text-align: center;
+    font-size: 24px;
     font-weight: 700;
-    line-height: 28.98px;
+    line-height: 65px;
 }
 
-.table tbody tr:nth-child(odd) {
+.paging-table tbody {
+    color: #469FCE;
+    background-color: transparent;
+    font-size: 20px;
+    font-weight: 400;
+    border: none; 
+}
+
+.paging-table tbody tr:nth-child(odd) {
     background-color: #FFFFFF;
 }
 
-.table tbody tr:nth-child(even) {
+.paging-table tbody tr:nth-child(even) {
     background-color: #D1ECFB;
 }
 
-.table td {
-    color: #469FCE;
-    font-weight: 400;
-    height: 55px;
-    padding: 10px;
-    vertical-align: middle;
-    font-size: 20px;
-    border: none; 
-    background-color: transparent;
-}
-
-.pagination {
-    margin-top: 20px;
+.paging-row {
     text-align: center;
-    font-weight: 400;
     font-size: 20px;
-    line-height: 24px;
-    color: #333333;
-    padding-bottom: 72px;
-    padding-top: 30px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    width: 100%;
 }
 
-.pagination button {
+.paging-column {
+    float: left;
+    width: 43%;
+    height: 54.5px;
+}
+
+.paging-column span {
+    color: #469FCE;
+    line-height:54.5px;
+}
+
+.paging-column button {
     background-color: #469FCE;
     color: white;
-    border: 1px solid #007bff;
-    border-radius: 4px;
+    border: 2px solid #469FCE;
+    border-radius: 10px;
     padding: 8px 16px;
     font-size: 23px;
     cursor: pointer;
     transition: background-color 0.3s, border-color 0.3s;
-    width: 115px;
+    width: 30%;
 }
 
-.pagination button:hover {
+.paging-column button:hover {
     background-color: #D1ECFB;
     border-color: #D1ECFB;
 }
 
-.pagination button:disabled {
+.paging-column button:disabled {
     background-color: #D1ECFB;
     border-color: #D1ECFB;
     color: #FFFFFF;
     cursor: not-allowed;
 }
 
-.pagination span {
-    color: #469FCE;
-    padding: 15px;
-}
+.paging-row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
