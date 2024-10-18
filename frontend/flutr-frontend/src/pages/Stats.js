@@ -74,7 +74,6 @@ export default function Stats({data, kioskMode}){
                     </div>
                 </div>
                 <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
-
         </div>
     )
 }
