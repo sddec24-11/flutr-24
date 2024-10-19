@@ -737,7 +737,7 @@ export default function Shipments(){
 
     return (
         <div class="main-container">
-            <Navbar authenticated={true}/>
+            <Navbar authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <h1 className="shipments-header">Shipments</h1>
             
             <div className="shipments-table-container">

@@ -41,6 +41,7 @@ export default function Login(){
     }
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+    const [errorMessage, setError] = useState("");
 
     const handleUsername = (e) => {
         setUsername(e.target.value);
@@ -48,30 +49,11 @@ export default function Login(){
     const handlePassword = (e) => {
         setPassword(e.target.value);
     }
-
     
-
-    const handleSubmit2 = (e) => {
-        e.preventDefault();
-        console.log("Username: " + username + ", Password: " + password);
-        console.log("I want to die");
-        fetch("http://206.81.3.155:8282/api/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            }),
-        })
-        .then((r) => r.json())
-        .then((r) => console.log(r));
-    }
 
     const handleSubmit = async () => {
         try{
-            const response = await fetch("http://206.81.3.155:8282/api/login", {
+            const response = await fetch("http://206.81.3.155:8282/api/users/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,11 +64,20 @@ export default function Login(){
                 }),
             });
             const message = await response.json();
-            console.log(message);
+            if(message.error == null){
+                window.sessionStorage.setItem("accessKey", message.payload);
+                window.sessionStorage.setItem("authorizationLevel", true);
+                window.sessionStorage.setItem("test","test")
+                document.location.href = "/";
+            }
+            else{
+                setError(message.error);
+            }
+
         } catch (error) {
             console.log('Failed to fetch', error);
         }
-    };
+    }
 
     const handleCancel = (e) => {
         e.preventDefault();
@@ -103,6 +94,7 @@ export default function Login(){
                         <Container>
                             <Row><input value={username} onChange={handleUsername} placeholder="username"></input></Row>
                             <Row><input type="password" value={password} onChange={handlePassword} placeholder="password"></input></Row>
+                            {/* <Row><p>{errorMessage}</p></Row> */}
                             <Row>
                                 <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
                                 <Col ><button onClick={handleSubmit} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Login</button></Col>

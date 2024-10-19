@@ -62,7 +62,7 @@ export default function OrganizationSettings() {
     image: "reiman-thumb.avif",
     address: "1407 University Blvd. Ames, IA 50011",
     color: "#22c55e",
-  }} authenticated={true}/>
+  }} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
       <div
         className="About"
         style={{

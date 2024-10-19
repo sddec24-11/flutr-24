@@ -66,7 +66,7 @@ export default function Settings(){
 
     return (
         <div>
-            <Navbar authenticated={true}/>
+            <Navbar authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <div style={{width: "100%", margin: 'auto', height: '50px', height: 'auto', textAlign: 'center'}}>
                 <h3 style={{paddingTop: '50px', paddingBottom: '50px', color:'#469FCE'}}>Organization Settings</h3>
             </div>
