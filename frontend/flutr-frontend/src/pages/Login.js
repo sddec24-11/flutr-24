@@ -47,7 +47,7 @@ export default function Login(){
         <div class="main-container">
             <Navbar />
             <div style={{margin: '8%'}}>
-                <div style={{width:'33%', margin: 'auto', border: '4px solid #469FCE', borderRadius: '15px'}}>
+                <div style={{width:'33%', margin: 'auto', border: '4px solid #469FCE', borderRadius: '15px', backgroundColor: '#F5F5F5'}}>
                     <h3 style={{margin: 'auto', paddingLeft:'30%', paddingTop: '7%', color:'#469FCE'}}>Login to Flutr</h3>
                     <div className={styles.formLook} style={{padding:'1%'}}>
                         <form onSubmit={handleSubmit(onSubmit)} className="container mt-5">
@@ -60,8 +60,8 @@ export default function Login(){
                         <div className={styles.buttons} style={{marginTop: '15px'}}>
                             <Container>
                                 <Row style={{textAlign: 'center'}}>
-                                    <Col><button onClick={handleCancel} style={{backgroundColor: '#469FCE'}} className="btn btn-secondary">Cancel</button></Col>
-                                    <Col><button type="submit" style={{backgroundColor: "#E4976C"}} className="btn btn-primary">Login</button></Col>
+                                    <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
+                                    <Col ><button type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Login</button></Col>
                                 </Row>
                             </Container>
                         </div>
