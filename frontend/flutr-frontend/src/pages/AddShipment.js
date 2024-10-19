@@ -7,10 +7,6 @@ import "../styles/addShipmentStyles.css";
 
 export default function AddShipment() {
     
-    
-
-
-    
     const [data, setData] = useState([]);
     
     const shipDateInputRef = useRef(null);
@@ -183,14 +179,14 @@ export default function AddShipment() {
                 <table className="add-table">
                     <thead>
                         <tr>
-                            <th style={{width:"350px"}}>Species</th>
+                            <th style={{width:"25%"}}>Species</th>
                             <th>Received</th>
                             <th>Emerged in Transit</th>
                             <th>Damaged in Transit</th>
                             <th>Diseased</th>
                             <th>Parasites</th>
-                            <th style={{width:"94px"}}>Total</th>
-                            <th style={{width:'94px', background:'#E4976C', border:'none'}}></th>
+                            <th style={{width:'6%'}}>Total</th>
+                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
                         </tr>
                     </thead>
                     <tbody>

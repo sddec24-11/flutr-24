@@ -87,7 +87,7 @@ function Navbar({location, authenticated, kioskMode}) {
                 <a href='/addshipment' className={`${styles.navLink}`}>Add Shipment</a>
               </li>
               <li onClick={removeActive}>
-                <a href='/masteredit' className={`${styles.navLink}`}>Master Edit</a>
+                <a href='/addrelease' className={`${styles.navLink}`}>Add Release</a>
               </li>
               {authenticated && 
               <NavDropdown

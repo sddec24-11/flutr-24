@@ -35,6 +35,7 @@
     position: sticky;
     top:0;
     z-index: 1;
+    letter-spacing: 0.5px;
 }
 
 .add-table tbody {
@@ -175,3 +176,14 @@
 .submit-btn:hover {
     background-color: #D1ECFB;
 }
+
+button.tab-btn {
+    color: #E1EFFE;
+    padding: 5px 30px;
+    width: 150px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+

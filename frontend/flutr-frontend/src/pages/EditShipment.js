@@ -183,7 +183,7 @@ return (
                 <table className="add-table">
                     <thead>
                         <tr>
-                            <th style={{width:"250px"}}>Species</th>
+                            <th style={{width:'15%'}}>Species</th>
                             <th>Received</th>
                             <th>Released</th>
                             <th>Poor Emergence</th>
@@ -191,8 +191,8 @@ return (
                             <th>Damaged in Transit</th>
                             <th>Diseased</th>
                             <th>Parasites</th>
-                            <th style={{width:"94px"}}>Total</th>
-                            <th style={{width:'94px', background:'#E4976C', border:'none'}}></th>
+                            <th style={{width:'6%'}}>Total</th>
+                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
                         </tr>
                     </thead>
                     <tbody>
