@@ -2,22 +2,61 @@ package com.flutr.backend.service;
 
 import com.flutr.backend.model.Org;
 import com.flutr.backend.model.OrgInfo;
+import com.flutr.backend.model.User;
+import com.flutr.backend.model.UserRole;
 import com.flutr.backend.repository.OrgRepository;
+import com.flutr.backend.repository.UserRepository;
+import com.flutr.backend.util.JwtUtil;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @Service
 public class OrgService {
 
     @Autowired
     private OrgRepository orgRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private HttpServletRequest request;
+
+    private MongoTemplate getMongoTemplate() {
+        String houseId = getCurrentHouseId();
+        return new MongoTemplate(MongoClients.create(), houseId + "_DB");
+    }
+
+    private String getCurrentHouseId() {
+        final String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            try {
+                return jwtUtil.extractHouseId(jwt);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to extract house ID from JWT", e);
+            }
+        } else {
+            throw new SecurityException("No JWT token found in request headers");
+        }
+    }
 
     public String createOrg(Org org) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -30,11 +69,12 @@ public class OrgService {
         }
 
         orgRepository.save(org);
-
         initializeNewOrgDatabase(org);
+        createInitialAdminUser(org);
 
         return "Organization created successfully with ID: " + org.getHouseId();
     }
+
 
     private void initializeNewOrgDatabase(Org org) {
         MongoClient mongoClient = MongoClients.create();
@@ -66,5 +106,47 @@ public class OrgService {
         orgInfo.setSocials(socials);
 
         orgMongoTemplate.insert(orgInfo, "org_info");
+    }
+
+    private void createInitialAdminUser(Org org) {
+        User adminUser = new User();
+        adminUser.setUsername(org.getAdminEmail());
+        adminUser.setPassword(passwordEncoder.encode("butterfly123"));
+        adminUser.setHouseId(org.getHouseId());
+        adminUser.setRole(UserRole.ADMIN);
+
+        userRepository.save(adminUser);
+    }
+
+    public OrgInfo editOrg(OrgInfo updatedOrgInfo) {
+        MongoTemplate mongoTemplate = getMongoTemplate();
+        OrgInfo existingOrgInfo = mongoTemplate.findById(updatedOrgInfo.getHouseId(), OrgInfo.class, "org_info");
+        if (existingOrgInfo == null) {
+            throw new IllegalArgumentException("Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
+        }
+
+        existingOrgInfo.setName(updatedOrgInfo.getName());
+        existingOrgInfo.setAddress(updatedOrgInfo.getAddress());
+        existingOrgInfo.setLogoUrl(updatedOrgInfo.getLogoUrl());
+        existingOrgInfo.setColors(updatedOrgInfo.getColors());
+        existingOrgInfo.setWebsite(updatedOrgInfo.getWebsite());
+        existingOrgInfo.setSocials(updatedOrgInfo.getSocials());
+        existingOrgInfo.setSubheading(updatedOrgInfo.getSubheading());
+        existingOrgInfo.setOtd(updatedOrgInfo.getOtd());
+        existingOrgInfo.setNews(updatedOrgInfo.getNews());
+        existingOrgInfo.setTimezone(updatedOrgInfo.getTimezone());
+
+        mongoTemplate.save(existingOrgInfo, "org_info");
+
+        return existingOrgInfo;
+    }
+
+    public OrgInfo getOrgInfo(String houseId) {
+        MongoTemplate mongoTemplate = getMongoTemplate();
+        OrgInfo orgInfo = mongoTemplate.findById(houseId, OrgInfo.class, "org_info");
+        if (orgInfo == null) {
+            throw new IllegalArgumentException("Organization with ID: " + houseId + " not found.");
+        }
+        return orgInfo;
     }
 }
