@@ -21,17 +21,20 @@ public class User implements UserDetails{
     private String password;
     private String houseId; 
     private UserRole role;
+    private boolean isActive; 
 
 
     
     public User() {
     }
-    public User(String id, String username, String houseId, String password, UserRole role) {
+
+    public User(String id, String username, String houseId, String password, UserRole role, boolean isActive) {
         this.id = id;
         this.username = username;
         this.houseId = houseId;
         this.password = password;
         this.role = role;
+        this.isActive = isActive;
     }
     public String getId() {
         return id;
@@ -94,6 +97,14 @@ public class User implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
    
 }

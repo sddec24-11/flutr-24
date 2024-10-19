@@ -2,23 +2,27 @@ package com.flutr.backend.model;
 
 public class ButterflyDetail {
     private String butterflyId;
+    private String species;
     private int numberReceived;
     private int numberReleased;
     private int emergedInTransit;
     private int damaged;
     private int diseased;
+    private int parasite;
     private int poorEmergence;
     private int totalRemaining;
 
     public ButterflyDetail() {}
 
-    public ButterflyDetail(String butterflyId, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int poorEmergence, int totalRemaining) {
+    public ButterflyDetail(String butterflyId, String species, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int parasite, int poorEmergence, int totalRemaining) {
         this.butterflyId = butterflyId;
+        this.species = species;
         this.numberReceived = numberReceived;
         this.numberReleased = numberReleased;
         this.emergedInTransit = emergedInTransit;
         this.damaged = damaged;
         this.diseased = diseased;
+        this.parasite = parasite;
         this.poorEmergence = poorEmergence;
         this.totalRemaining = totalRemaining;
     }
@@ -31,6 +35,14 @@ public class ButterflyDetail {
 
     public void setButterflyId(String butterflyId) {
         this.butterflyId = butterflyId;
+    }
+
+    public String getSpecies() {
+        return species;
+    }
+
+    public void setSpecies(String species) {
+        this.species = species;
     }
 
     public int getNumberReceived() {
@@ -71,6 +83,14 @@ public class ButterflyDetail {
 
     public void setDiseased(int diseased) {
         this.diseased = diseased;
+    }
+
+    public int getParasite() {
+        return parasite;
+    }
+
+    public void setParasite(int parasite) {
+        this.parasite = parasite;
     }
 
     public int getPoorEmergence() {
