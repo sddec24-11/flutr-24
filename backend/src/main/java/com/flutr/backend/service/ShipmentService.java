@@ -1,6 +1,7 @@
 package com.flutr.backend.service;
 
 import com.flutr.backend.model.Shipment;
+import com.flutr.backend.model.Supplier;
 import com.flutr.backend.repository.ShipmentRepository;
 import com.flutr.backend.util.JwtUtil;
 import com.mongodb.client.MongoClients;
@@ -57,7 +58,7 @@ public class ShipmentService {
         MongoTemplate mongoTemplate = getMongoTemplate();
         loggingService.log("ADD_SHIPMENT", "START", "Adding shipment for supplier: " + shipment.getAbbreviation());
         
-        if (!mongoTemplate.exists(query(where("abbreviation").is(shipment.getAbbreviation())), Shipment.class, "shipments")) {
+        if (!mongoTemplate.exists(query(where("abbreviation").is(shipment.getAbbreviation())), Supplier.class, "suppliers")) {
             loggingService.log("ADD_SHIPMENT", "FAILURE", "No supplier found with abbreviation: " + shipment.getAbbreviation());
             throw new IllegalStateException("Supplier does not exist for abbreviation: " + shipment.getAbbreviation());
         }
@@ -104,7 +105,7 @@ public class ShipmentService {
             if (updatedShipment.getButterflyDetails() != null) {
                 existingShipment.getButterflyDetails().forEach(existingDetail -> {
                     updatedShipment.getButterflyDetails().stream()
-                        .filter(updatedDetail -> updatedDetail.getButterflyId().equals(existingDetail.getButterflyId()))
+                        .filter(updatedDetail -> updatedDetail.getButtId().equals(existingDetail.getButtId()))
                         .findFirst()
                         .ifPresent(updatedDetail -> {
                             existingDetail.setNumberReceived(updatedDetail.getNumberReceived());

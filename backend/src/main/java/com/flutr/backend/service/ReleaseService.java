@@ -57,7 +57,7 @@ public class ReleaseService {
             // Update butterfly details with release info
             request.getButterflyUpdates().forEach(update -> {
                 shipment.getButterflyDetails().forEach(detail -> {
-                    if (detail.getButterflyId().equals(update.getButterflyId())) {
+                    if (detail.getButtId().equals(update.getButtId())) {
                         // Update release-related fields
                         detail.setNumberReleased(detail.getNumberReleased() + update.getNumberReleased());
                         detail.setPoorEmergence(detail.getPoorEmergence() + update.getPoorEmergence());
