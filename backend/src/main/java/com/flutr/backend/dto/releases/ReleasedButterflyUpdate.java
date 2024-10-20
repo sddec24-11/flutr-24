@@ -2,7 +2,7 @@ package com.flutr.backend.dto.releases;
 
 public 
 class ReleasedButterflyUpdate {
-    private String butterflyId;
+    private String buttId;
     private int numberReleased;
     private int poorEmergence;
     private int damagedDuringRelease;
@@ -13,12 +13,12 @@ class ReleasedButterflyUpdate {
 
     // Getters and Setters
 
-    public String getButterflyId() {
-        return butterflyId;
+    public String getButtId() {
+        return buttId;
     }
 
-    public void setButterflyId(String butterflyId) {
-        this.butterflyId = butterflyId;
+    public void setButtId(String buttId) {
+        this.buttId = buttId;
     }
 
     public int getNumberReleased() {

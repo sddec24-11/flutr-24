@@ -1,8 +1,7 @@
 package com.flutr.backend.model;
 
 public class ButterflyDetail {
-    private String butterflyId;
-    private String species;
+    private String buttId;
     private int numberReceived;
     private int numberReleased;
     private int emergedInTransit;
@@ -14,9 +13,8 @@ public class ButterflyDetail {
 
     public ButterflyDetail() {}
 
-    public ButterflyDetail(String butterflyId, String species, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int parasite, int poorEmergence, int totalRemaining) {
-        this.butterflyId = butterflyId;
-        this.species = species;
+    public ButterflyDetail(String buttId, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int parasite, int poorEmergence, int totalRemaining) {
+        this.buttId = buttId;
         this.numberReceived = numberReceived;
         this.numberReleased = numberReleased;
         this.emergedInTransit = emergedInTransit;
@@ -29,20 +27,12 @@ public class ButterflyDetail {
 
     // Getters and Setters
 
-    public String getButterflyId() {
-        return butterflyId;
+    public String getButtId() {
+        return buttId;
     }
 
-    public void setButterflyId(String butterflyId) {
-        this.butterflyId = butterflyId;
-    }
-
-    public String getSpecies() {
-        return species;
-    }
-
-    public void setSpecies(String species) {
-        this.species = species;
+    public void setButtId(String buttId) {
+        this.buttId = buttId;
     }
 
     public int getNumberReceived() {
