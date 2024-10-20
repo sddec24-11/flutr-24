@@ -29,9 +29,26 @@ export default function AddOrg(){
         document.location.href = `/`;
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
+        if(orgName !== "" && orgAddress !== "" && orgEmail !== ""){
+            try{
+                const response = await fetch("http://206.81.3.155:8282/api/orgs/create", {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    },
+                    body: JSON.stringify({
+                        name: orgName,
+                        address: orgAddress,
+                        adminEmail: orgEmail
+                    }),
+                })
+            } catch(error) {
+                console.log('Failed to fetch', error);
+            }
+        }
+        
     }
 
     return(

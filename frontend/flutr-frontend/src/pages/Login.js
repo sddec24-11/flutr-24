@@ -65,7 +65,7 @@ export default function Login(){
             });
             const message = await response.json();
             if(message.error == null){
-                window.sessionStorage.setItem("accessKey", message.payload);
+                window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
                 window.sessionStorage.setItem("authorizationLevel", true);
                 window.sessionStorage.setItem("test","test")
                 document.location.href = "/";
@@ -92,10 +92,10 @@ export default function Login(){
                     <h3 style={{margin: 'auto', paddingLeft:'30%', paddingTop: '7%', color:'#469FCE'}}>Login to Flutr</h3>
                     <div className={styles.formLook} style={{padding:'1%'}}>
                         <Container>
-                            <Row><input value={username} onChange={handleUsername} placeholder="username"></input></Row>
-                            <Row><input type="password" value={password} onChange={handlePassword} placeholder="password"></input></Row>
+                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px'}} value={username} onChange={handleUsername} placeholder="username"></input></Row>
+                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px', marginBottom: '10px'}} type="password" value={password} onChange={handlePassword} placeholder="password"></input></Row>
                             {/* <Row><p>{errorMessage}</p></Row> */}
-                            <Row>
+                            <Row style={{marginTop: '10px', width: '85%', margin: 'auto'}}>
                                 <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
                                 <Col ><button onClick={handleSubmit} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Login</button></Col>
                             </Row>
