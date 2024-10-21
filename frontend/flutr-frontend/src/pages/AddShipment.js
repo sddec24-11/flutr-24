@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import React, { useRef } from 'react';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
@@ -8,10 +8,59 @@ import "../styles/addShipmentStyles.css";
 export default function AddShipment() {
     
     const [data, setData] = useState([]);
+    const [error, setError] = useState(null);
+    const [suppliers, setSuppliers] = useState([])
     
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
-    const supplierDateInputRef = useRef(null);
+    const supplierInputRef = useRef(null);
+
+//     try{
+//         const response = await fetch("/api/users/all", {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization' : window.sessionStorage.getItem("accessKey")
+//                 //window.sessionStorage.setItem("accessKey", "Bearer " + message.payload)
+//             }
+//         });
+//         const message = await response.json();
+//         if(message.error == null){
+//             console.log(message);
+//         }
+//         else{
+//             console.log(message.error);
+//         }
+
+//     } catch (error) {
+//         console.log('Failed to fetch', error);
+//     }
+// }
+
+    useEffect(() => {
+        const fetchOptions = async () => {
+            try {
+                const response = await fetch("/api/suppliers/view/active", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization' : window.sessionStorage.getItem("accessKey")
+                    }
+                });
+                const message = await response.json();
+                if (message.error == null)
+                {
+                    setSuppliers(message.payload);
+                }
+                else {
+                    console.log(message.error);
+                }
+            } catch (error) {
+                setError('Failed to load suppliers: ', error);
+            }
+        };
+    fetchOptions();
+}, []);
 
     const butterflyOptions = [
         {value: "Butterfly 1" },
@@ -24,11 +73,10 @@ export default function AddShipment() {
         {value: "Butterfly 8" },
         {value: "Butterfly 9" },
     ];
-    
-    //TEMP
-    function generateRandomId() {
-        return Math.random().toString(36).substr(2, 9);
-      }
+
+
+
+
 
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.species === speciesIn);
@@ -38,14 +86,13 @@ export default function AddShipment() {
         }
 
         const newButterfly = {
-            butterflyId: generateRandomId(),
-            species: speciesIn,
+            buttId: speciesIn,
             numberReceived: 0,
             numberReleased: 0,
             emergedInTransit: 0,
             damaged: 0,
             diseased: 0,
-            parasites: 0,
+            parasite: 0,
             poorEmergence: 0,
             totalRemaining: 0,
         };
@@ -54,12 +101,12 @@ export default function AddShipment() {
     };
     
     const removeButterfly = (speciesOut) => {
-        setData(data.filter(item => item.species !== speciesOut));
+        setData(data.filter(item => item.buttId !== speciesOut));
     }
 
-    const incrementVal = (butterflyId, key) => {
+    const incrementVal = (buttIdIn, key) => {
         setData(data.map(item => {
-            if (item.butterflyId === butterflyId) {
+            if (item.buttId === buttIdIn) {
                 if (key !== 'numberReceived') {
                     if (item.totalRemaining <= 0) {return item;}
                     else {
@@ -82,9 +129,9 @@ export default function AddShipment() {
         }));
     };
 
-    const decrementVal = (butterflyId, key) => {
+    const decrementVal = (buttIdIn, key) => {
         setData(data.map(item => {
-            if (item.butterflyId === butterflyId) {
+            if (item.buttId === buttIdIn) {
                 if (item[key] <= 0) {
                     return item;
                 }
@@ -113,19 +160,37 @@ export default function AddShipment() {
         }));
     };
 
-    //post to shipmentList
-    const submit = () => {
-        const newShipment = {
-            id: 40,
-            shipmentDate: shipDateInputRef.current.value,
-            arrivalDate: arriveDateInputRef.current.value,
-            supplier: supplierDateInputRef.current.value,
-            butterflyDetail: data,
-        };
-        console.log(newShipment);
-    };
+    const handleSubmit = async () => {
+        try{
+            console.log(window.sessionStorage.getItem("accessKey"));
+            const response = await fetch("/api/shipments/add", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization' : window.sessionStorage.getItem("accessKey")
+                },
+                body: JSON.stringify({
+                    shipmentDate: shipDateInputRef.current.value,
+                    arrivalDate: arriveDateInputRef.current.value,
+                    abbreviation: supplierInputRef.current.value,
+                    butterflyDetails: data
+                })
+            });
+            const message = await response.json();
+            if(message.error == null){
+                console.log(message);
+            }
+            else{
+                setError(message.error);
+            }
+        } catch (error) {
+            console.log('Failed to fetch', error);
+        }
+    }
 
+    const handleCancel = () => {
 
+    }
 
     return (
         <div class="main-container">
@@ -144,21 +209,14 @@ export default function AddShipment() {
                     </div>
                     <div class="input-group">
                         <label for="suppliers">Supplier: </label>
-                        <select id="suppliers" name="suppliers" ref={supplierDateInputRef}>
-                            <option disabled selected value></option>
-                            <option value="ship1">ship1</option>
-                            <option value="ship2">ship2</option>
-                            <option value="ship3">ship3</option>
-                            <option value="ship4">ship4</option>
-                            <option value="ship5">ship5</option>
-                            <option value="ship6">ship6</option>
-                            <option value="ship7">ship7</option>
-                            <option value="ship8">ship8</option>
-                            <option value="ship9">ship9</option>
-                            <option value="ship10">ship10</option>
-                            <option value="ship11">ship11</option>
-                            <option value="ship12">ship12</option>
-                        </select>
+                        <select id="suppliers" name="suppliers" ref={supplierInputRef}>
+                                <option disabled selected value></option>
+                                {suppliers.map((supplier) => (
+                                    <option key={supplier.abbreviation} value={supplier.abbreviation}>
+                                        {supplier.abbreviation}
+                                    </option>
+                                ))}
+                    </select>
                     </div>
                 </div>
 
@@ -166,10 +224,10 @@ export default function AddShipment() {
                     <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
-                        {butterflyOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.value}
-                        </option>
+                            {butterflyOptions.map((option) => (
+                                <option key={option.value} value={option.value}>
+                                    {option.value}
+                                 </option>
                         ))}
                     </select>
                 </div>
@@ -191,39 +249,39 @@ export default function AddShipment() {
                     </thead>
                     <tbody>
                         {data.map(item => (
-                        <tr key={item.butterflyId}>
-                            <td>{item.species}</td>
+                        <tr key={item.buttId}>
+                            <td>{item.buttId}</td>
                             <td>
-                                <button onClick={() => incrementVal(item.butterflyId, 'numberReceived')}>+</button>
+                                <button onClick={() => incrementVal(item.buttId, 'numberReceived')}>+</button>
                                 <div className="value-box">{item.numberReceived}</div>
-                                <button onClick={() => decrementVal(item.butterflyId, 'numberReceived')}>-</button>
+                                <button onClick={() => decrementVal(item.buttId, 'numberReceived')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.butterflyId, 'emergedInTransit')}>+</button>
+                                <button onClick={() => incrementVal(item.buttId, 'emergedInTransit')}>+</button>
                                 <div className="value-box">{item.emergedInTransit}</div>
-                                <button onClick={() => decrementVal(item.butterflyId, 'emergedInTransit')}>-</button>
+                                <button onClick={() => decrementVal(item.buttId, 'emergedInTransit')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.butterflyId, 'damaged')}>+</button>
+                                <button onClick={() => incrementVal(item.buttId, 'damaged')}>+</button>
                                 <div className="value-box">{item.damaged}</div>
-                                <button onClick={() => decrementVal(item.butterflyId, 'damaged')}>-</button>
+                                <button onClick={() => decrementVal(item.buttId, 'damaged')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.butterflyId, 'diseased')}>+</button>
+                                <button onClick={() => incrementVal(item.buttId, 'diseased')}>+</button>
                                 <div className="value-box">{item.diseased}</div>
-                                <button onClick={() => decrementVal(item.butterflyId, 'diseased')}>-</button>
+                                <button onClick={() => decrementVal(item.buttId, 'diseased')}>-</button>
                             </td>
                             <td>
-                                <button onClick={() => incrementVal(item.butterflyId, 'parasites')}>+</button>
-                                <div className="value-box">{item.parasites}</div>
-                                <button onClick={() => decrementVal(item.butterflyId, 'parasites')}>-</button>
+                                <button onClick={() => incrementVal(item.buttId, 'parasite')}>+</button>
+                                <div className="value-box">{item.parasite}</div>
+                                <button onClick={() => decrementVal(item.buttId, 'parasite')}>-</button>
                             </td>
                             <td id="total-remaining" style={{background:'#469FCE',color:'#E1EFFE'}}>
                                 {item.totalRemaining}
                             </td>
                             <td style={{background:'#E4976C'}}>
                                 <p style={{color:'#E1EFFE', margin:"0"}}
-                                    onClick={() => removeButterfly(item.species)}>
+                                    onClick={() => removeButterfly(item.buttId)}>
                                     remove
                                 </p>
                             </td>
@@ -234,9 +292,12 @@ export default function AddShipment() {
             </div>
 
             <div class="submit-cancel-buttons">
-                <button type="button" class="btn cancel-btn">Cancel</button>
+                <button type="button" class="btn cancel-btn"
+                        onClick={() => handleCancel()}>
+                            Cancel
+                </button>
                 <button type="submit" class="btn submit-btn" 
-                        onClick={() => submit()}>
+                        onClick={() => handleSubmit()}>
                             Submit
                 </button>
             </div>

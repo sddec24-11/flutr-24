@@ -44,9 +44,9 @@ function Navbar({location, authenticated, kioskMode}) {
                   id="nav-dropdown"
                   title="Administration"
                 >
-                  <Dropdown.Item href="">Add Release</Dropdown.Item>
+                  <Dropdown.Item href="/addrelease">Add Release</Dropdown.Item>
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
-                  <Dropdown.Item href="">Add Shipment</Dropdown.Item>
+                  <Dropdown.Item href="/addshipment">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>
@@ -78,16 +78,6 @@ function Navbar({location, authenticated, kioskMode}) {
               </li>
               <li onClick={removeActive}>
                 <a href='/about' className={`${styles.navLink}`}>About</a>
-              </li>
-
-              <li onClick={removeActive}>
-                <a href='/shipments' className={`${styles.navLink}`}>Shipments</a>
-              </li>
-              <li onClick={removeActive}>
-                <a href='/addshipment' className={`${styles.navLink}`}>Add Shipment</a>
-              </li>
-              <li onClick={removeActive}>
-                <a href='/addrelease' className={`${styles.navLink}`}>Add Release</a>
               </li>
               {authenticated && 
               <NavDropdown
