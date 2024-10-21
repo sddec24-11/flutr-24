@@ -22,7 +22,7 @@ export default function MasterOrgAdd(){
 
     const handleCancel = (e) => {
         e.preventDefault();
-        history.back();
+        window.history.back();
     }
 
     const handleSubmit = (e) => {

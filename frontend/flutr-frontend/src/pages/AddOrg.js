@@ -26,7 +26,7 @@ export default function AddOrg(){
 
     const handleCancel = (e) => {
         e.preventDefault();
-        document.location.href = `/`;
+        window.history.back();
     }
 
     const handleSubmit = async () => {
