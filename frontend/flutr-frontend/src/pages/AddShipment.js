@@ -4,39 +4,58 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 
+const NotificationModal = ({ isVisible, onClose }) => {
+    if (!isVisible) return null;
+
+    const handleAnotherShipment = () => {
+        onClose();
+        console.log('new shipment');
+        window.location.href = "/addshipment";
+    };
+
+    const handleReturnHome = () => {
+        onClose();
+        console.log('return home');
+        window.location.href = '/';
+    };
+
+    return (
+        <div className='notification-modal'>
+            <div className='modal-content'>
+                <h2>Successfully submitted!</h2>
+                <p>Would you like to do another shipment or return home?</p>
+                <button onClick={handleAnotherShipment}>Another Shipment</button>
+                <button onClick={handleReturnHome}>Return Home</button>
+            </div>
+        </div>
+    );
+};
 
 export default function AddShipment() {
     
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
-    const [suppliers, setSuppliers] = useState([])
+    const [suppliers, setSuppliers] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
     const supplierInputRef = useRef(null);
 
-//     try{
-//         const response = await fetch("/api/users/all", {
-//             method: 'GET',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Authorization' : window.sessionStorage.getItem("accessKey")
-//                 //window.sessionStorage.setItem("accessKey", "Bearer " + message.payload)
-//             }
-//         });
-//         const message = await response.json();
-//         if(message.error == null){
-//             console.log(message);
-//         }
-//         else{
-//             console.log(message.error);
-//         }
+    //TEMP
+    const butterflyOptions = [
+        {value: "Butterfly 1" },
+        {value: "Butterfly 2" },
+        {value: "Butterfly 3" },
+        {value: "Butterfly 4" },
+        {value: "Butterfly 5" },
+        {value: "Butterfly 6" },
+        {value: "Butterfly 7" },
+        {value: "Butterfly 8" },
+        {value: "Butterfly 9" },
+    ];
 
-//     } catch (error) {
-//         console.log('Failed to fetch', error);
-//     }
-// }
-
+    //set supplier dropdown
     useEffect(() => {
         const fetchOptions = async () => {
             try {
@@ -62,22 +81,7 @@ export default function AddShipment() {
     fetchOptions();
 }, []);
 
-    const butterflyOptions = [
-        {value: "Butterfly 1" },
-        {value: "Butterfly 2" },
-        {value: "Butterfly 3" },
-        {value: "Butterfly 4" },
-        {value: "Butterfly 5" },
-        {value: "Butterfly 6" },
-        {value: "Butterfly 7" },
-        {value: "Butterfly 8" },
-        {value: "Butterfly 9" },
-    ];
-
-
-
-
-
+    //create new empty butterfly obj and add to list of butterflies in shipment
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.species === speciesIn);
         if (exists) {
@@ -100,10 +104,13 @@ export default function AddShipment() {
         setData(prev => [...prev, newButterfly]);
     };
     
+    //remove butterfly from list of butterflies in shipment
     const removeButterfly = (speciesOut) => {
         setData(data.filter(item => item.buttId !== speciesOut));
     }
 
+    //increase key attribute of butterfly
+    //total remaining based on which attribute is being increased
     const incrementVal = (buttIdIn, key) => {
         setData(data.map(item => {
             if (item.buttId === buttIdIn) {
@@ -129,6 +136,8 @@ export default function AddShipment() {
         }));
     };
 
+    //decrease key attribute of butterfly
+    //total remaining based on which attribute is being decreased
     const decrementVal = (buttIdIn, key) => {
         setData(data.map(item => {
             if (item.buttId === buttIdIn) {
@@ -160,6 +169,7 @@ export default function AddShipment() {
         }));
     };
 
+    //create json obj of current shipment and submit to backend
     const handleSubmit = async () => {
         try{
             console.log(window.sessionStorage.getItem("accessKey"));
@@ -179,6 +189,7 @@ export default function AddShipment() {
             const message = await response.json();
             if(message.error == null){
                 console.log(message);
+                setIsModalVisible(true);
             }
             else{
                 setError(message.error);
@@ -188,9 +199,14 @@ export default function AddShipment() {
         }
     }
 
+    //TODO: return user to home page?
     const handleCancel = () => {
 
     }
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+    };
 
     return (
         <div class="main-container">
@@ -302,6 +318,7 @@ export default function AddShipment() {
                 </button>
             </div>
 
+            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
             <Footer />
         </div>
     );
