@@ -7,7 +7,6 @@ import LocationHome from "./pages/LocationHome.js";
 import Stats from "./pages/Stats.js";
 import Gallery from "./pages/Gallery.js";
 import Login from "./pages/Login.js";
-import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';

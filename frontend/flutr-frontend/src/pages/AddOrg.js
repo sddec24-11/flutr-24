@@ -33,17 +33,27 @@ export default function AddOrg(){
         if(orgName !== "" && orgAddress !== "" && orgEmail !== ""){
             try{
                 const response = await fetch("http://206.81.3.155:8282/api/orgs/create", {
-                    method: "POST",
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': window.sessionStorage.getItem("accessKey")
+                        'Authorization': window.sessionStorage.getItem("accessKey"),
                     },
                     body: JSON.stringify({
                         name: orgName,
                         address: orgAddress,
-                        adminEmail: orgEmail
+                        adminEmail: orgEmail,
                     }),
-                })
+                });
+                const message = await response.json();
+                if(message.error == null){
+                    if(message.success){
+                        console.log("Success! " + message.payload);
+                        document.location.href = "/";
+                    }
+                }
+                else{
+                    throw new Error(console.error);
+                }
             } catch(error) {
                 console.log('Failed to fetch', error);
             }
