@@ -41,10 +41,8 @@ export default function Login(){
                 window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
                 window.sessionStorage.setItem("authenticated", true);
                 window.sessionStorage.setItem("authorizationLevel", "ADMIN");
-                window.sessionStorage.setItem("test","test");
-
                 window.sessionStorage.setItem("houseID", jose.decodeJwt(message.payload).houseId);
-                document.location.href = "/";
+                document.location.href = `/${window.sessionStorage.getItem("houseID")}`;
             }
             else{
                 setError(message.error);

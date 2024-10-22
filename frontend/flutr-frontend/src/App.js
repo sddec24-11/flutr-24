@@ -16,6 +16,7 @@ import MasterEdit from "./pages/MasterEdit.js";
 import MasterButterfly from "./pages/MasterButterfly.js";
 import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
+import ChangePassword from "./pages/ChangePassword.js";
 
 const locations = [
   {
@@ -124,6 +125,7 @@ export default function App() {
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/changePassword" element={<ChangePassword/>} />
 
                 <Route path="/shipments" element={<Shipments />} />
                 <Route path="/addshipment" element={<AddShipment />} />
