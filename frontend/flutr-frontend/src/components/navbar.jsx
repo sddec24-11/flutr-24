@@ -52,7 +52,8 @@ function Navbar({location, kioskMode}) {
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>}
                   {window.sessionStorage.getItem("authorizationLevel" ) === "ADMIN" &&
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>}
-                  
+                  <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
+                
                   <Dropdown.Item href="/logout">Logout</Dropdown.Item>
                 </NavDropdown>}
               </ul>
@@ -96,6 +97,7 @@ function Navbar({location, kioskMode}) {
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                  <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
                   <Dropdown.Item href="/logout">Logout</Dropdown.Item>
                 </NavDropdown>}
               
