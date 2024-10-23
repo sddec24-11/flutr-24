@@ -18,7 +18,10 @@ import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
 import ChangePassword from "./pages/ChangePassword.js";
 
+import { RotatingLines } from "react-loader-spinner";
+
 import React, {useState, useEffect, useRef, useMemo} from "react";
+import Logout from "./pages/Logout.js";
 
 export default function App() {
   const [locations, setLocations] = useState([]);
@@ -62,6 +65,7 @@ const AppRouter = ({locations}) => {
                 <Route index element={<Landing data={locations} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
+                <Route path="/logout" element={<Logout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/changePassword" element={<ChangePassword/>} />
 
@@ -96,7 +100,7 @@ const AppRouter = ({locations}) => {
   //   return <div>Loading...</div>;  // Or use a fancier loader
   // }
   if (loading) {
-    return <div>Loading...</div>;
+    return <RotatingLines strokeColor="grey" strokeWidth="5" animationDuration="0.75" width="96" visible={true} />;
   }
   return (
     <div>
