@@ -171,33 +171,54 @@ export default function AddShipment() {
 
     //create json obj of current shipment and submit to backend
     const handleSubmit = async () => {
-        try{
-            console.log(window.sessionStorage.getItem("accessKey"));
-            const response = await fetch("/api/shipments/add", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization' : window.sessionStorage.getItem("accessKey")
-                },
-                body: JSON.stringify({
-                    shipmentDate: shipDateInputRef.current.value,
-                    arrivalDate: arriveDateInputRef.current.value,
-                    abbreviation: supplierInputRef.current.value,
-                    butterflyDetails: data
-                })
-            });
-            const message = await response.json();
-            if(message.error == null){
-                console.log(message);
-                setIsModalVisible(true);
-            }
-            else{
-                setError(message.error);
-            }
-        } catch (error) {
-            console.log('Failed to fetch', error);
+        const shipDate = shipDateInputRef.current?.value;
+        const arrivalDate = arriveDateInputRef.current?.value;
+        const supplier = supplierInputRef.current?.value;
+    
+        console.log(data);
+    
+        if (!shipDate || !arrivalDate || supplier === 'true' || data.length === 0) {
+            alert("Please fill in all required fields: shipment date, arrival date, supplier, and at least one butterfly");
+            return;
         }
-    }
+    
+        let retries = 3;
+    
+        while (retries > 0) {
+            try {
+                const response = await fetch("/api/shipments/add", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    },
+                    body: JSON.stringify({
+                        shipmentDate: shipDate,
+                        arrivalDate: arrivalDate,
+                        abbreviation: supplier,
+                        butterflyDetails: data
+                    })
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    console.log(message);
+                    setIsModalVisible(true);
+                    return; // Exit after successful submission
+                } else {
+                    setError(message.error);
+                    return; // Exit on error message
+                }
+            } catch (error) {
+                console.log('Failed to fetch', error);
+                retries -= 1; // Decrease the retry count
+                if (retries === 0) {
+                    alert('Failed to submit after 3 attempts. Please try again later.');
+                }
+            }
+        }
+    };
 
     //TODO: return user to home page?
     const handleCancel = () => {
@@ -232,7 +253,7 @@ export default function AddShipment() {
                                         {supplier.abbreviation}
                                     </option>
                                 ))}
-                    </select>
+                        </select>
                     </div>
                 </div>
 
