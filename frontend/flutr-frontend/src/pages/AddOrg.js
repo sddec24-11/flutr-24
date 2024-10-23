@@ -3,9 +3,15 @@ import Footer from "../components/footer";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 export default function AddOrg(){
+    useEffect(() => {
+        if(window.sessionStorage.getItem("authorizationLevel") !== "SUPERUSER"){
+            alert("Sorry You Can't View This Page");
+            document.location.href = "/login";
+        }
+    });
     const [orgName, setOrgName] = useState();
     const [orgAddress, setOrgAddress] = useState();
     const [orgEmail, setOrgEmail] = useState();

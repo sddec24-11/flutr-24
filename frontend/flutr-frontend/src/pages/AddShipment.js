@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect} from "react";
 import React, { useRef } from 'react';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
@@ -7,7 +7,12 @@ import "../styles/addShipmentStyles.css";
 
 export default function AddShipment() {
     
-    
+    useEffect(() => {
+        if(!window.sessionStorage.getItem("authenticated")){
+            alert("Sorry, you cant view this page.");
+            document.location.href = '/login';
+        }
+    });
 
 
     

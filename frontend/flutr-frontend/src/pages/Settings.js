@@ -21,6 +21,13 @@ export default function Settings(){
     }
 
     useEffect(() => {
+        if(window.sessionStorage.getItem("authorizationLevel") !== "ADMIN"){
+            alert("Sorry You Can't View This Page");
+            document.location.href = "/login";
+        }
+    });
+
+    useEffect(() => {
         const fetchData = async () => {
             const response = await fetch("http://206.81.3.155:8282/api/orgs/view/" + window.sessionStorage.getItem("houseID"), {
                 method: 'GET',

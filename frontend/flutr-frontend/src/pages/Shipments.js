@@ -1,11 +1,18 @@
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 import {Link} from "react-router-dom"
 import "../styles/shipmentsStyles.css";
 
 
 export default function Shipments(){
+
+    useEffect(() => {
+        if(!window.sessionStorage.getItem("authenticated")){
+            alert("Sorry, you cant view this page.");
+            document.location.href = '/login';
+        }
+    });
 
     const shipmentList = [
         { id: 1, shipmentDate: "2024-06-15", arrivalDate: "2024-06-19", supplier: "ship1",
