@@ -38,7 +38,7 @@ export default function Gallery({data}){
 
     return(
         <div>
-            <Navbar location={data} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+            <Navbar location={data} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>Gallery</strong></h2>
             </div>

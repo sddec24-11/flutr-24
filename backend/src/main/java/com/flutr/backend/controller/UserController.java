@@ -1,7 +1,6 @@
 package com.flutr.backend.controller;
 
 import com.flutr.backend.dto.Response;
-import com.flutr.backend.dto.users.PasswordChangeRequest;
 import com.flutr.backend.model.User;
 import com.flutr.backend.service.UserService;
 import com.flutr.backend.util.JwtUtil;
@@ -9,8 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -38,11 +35,7 @@ public class UserController {
         try {
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
             if (passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
-                User user = (User) userDetails;
-                String houseId = user.getHouseId();
-                String subdomain = user.getSubdomain();
-                String role = user.getRole().toString();
-                String token = jwtUtil.generateToken(userDetails.getUsername(), houseId, subdomain, role);
+                String token = jwtUtil.generateToken(userDetails.getUsername());
                 return ResponseEntity.ok(new Response<>(true, token, null));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
@@ -71,11 +64,11 @@ public class UserController {
         return ResponseEntity.ok(new Response<>(true, updatedUser));
     }
 
-    @PostMapping("/deactivate/{username}")
+    @DeleteMapping("/delete/{username}")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Response<String>> deactivateUser(@PathVariable String username) {
-        userService.deactivateUserByUsername(username);
-        return ResponseEntity.ok(new Response<>(true, "User deactivated successfully."));
+    public ResponseEntity<Response<String>> deleteUser(@PathVariable String username) {
+        userService.deleteUserByUsername(username);
+        return ResponseEntity.ok(new Response<>(true, "User deleted successfully."));
     }
 
     @GetMapping("/all")
@@ -84,27 +77,6 @@ public class UserController {
         Iterable<User> users = userService.findAllUsers();
         return ResponseEntity.ok(new Response<>(true, users));
     }
-
-    @PostMapping("/change-password")
-    public ResponseEntity<Response<String>> changePassword(@RequestBody PasswordChangeRequest passwordChangeRequest) {
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String currentUsername = authentication.getName();
-
-            userService.changeUserPassword(currentUsername, passwordChangeRequest.getOldPassword(), passwordChangeRequest.getNewPassword());
-            return ResponseEntity.ok(new Response<>(true, "Password changed successfully", null));
-        } catch (UsernameNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(new Response<>(false, null, new Response.ErrorDetails(HttpStatus.NOT_FOUND.value(), "User not found")));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>(false, null, new Response.ErrorDetails(HttpStatus.BAD_REQUEST.value(), e.getMessage())));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response<>(false, null, new Response.ErrorDetails(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Internal server error")));
-        }
-    }
-
 
     @ExceptionHandler(UsernameNotFoundException.class)
     public ResponseEntity<Response<String>> handleUsernameNotFound(UsernameNotFoundException ex) {

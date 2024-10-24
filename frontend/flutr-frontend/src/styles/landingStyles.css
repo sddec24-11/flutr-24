@@ -68,11 +68,6 @@
     width: 100%;
 }
 
-#extrasButton{
-    border: 1px solid;
-    padding: 5px 9px;
-}
-
 @media screen and (max-width: 534px){
     #all-tools{
         width:100%;

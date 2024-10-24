@@ -2,12 +2,10 @@ package com.flutr.backend.service;
 
 import com.flutr.backend.model.User;
 import com.flutr.backend.model.UserRole;
-import com.flutr.backend.repository.OrgRepository;
 import com.flutr.backend.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,49 +20,28 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    private OrgRepository orgRepository;
-
-    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public User registerUser(User newUser) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = findUserByUsername(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Current user not found"));
-    
+
         if (currentUser.getRole() == UserRole.EMPLOYEE) {
             throw new SecurityException("Employees are not authorized to add users");
         }
-    
+
         if (currentUser.getRole() == UserRole.ADMIN && newUser.getRole() == UserRole.SUPERUSER) {
             throw new SecurityException("Admins cannot create superusers");
         }
-    
+
         if (userRepository.findByUsername(newUser.getUsername()).isPresent()) {
             throw new IllegalStateException("Username already taken");
         }
-    
-        if (currentUser.getRole() == UserRole.SUPERUSER && newUser.getHouseId() != null && !orgRepository.existsByHouseId(newUser.getHouseId())) {
-            throw new IllegalStateException("Invalid houseId: No such organization exists");
-        }
-    
-        newUser.setPassword(passwordEncoder.encode("butterfly123"));
+
+        newUser.setPassword(passwordEncoder.encode(newUser.getPassword()));
         newUser.setHouseId(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getHouseId() : currentUser.getHouseId());
-        newUser.setSubdomain(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getSubdomain() : currentUser.getSubdomain());
         return userRepository.save(newUser);
-    }
-
-    public boolean changeUserPassword(String username, String oldPassword, String newPassword) {
-        User user = userRepository.findByUsername(username)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
-
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new IllegalArgumentException("Old password is incorrect");
-        }
-
-        user.setPassword(passwordEncoder.encode(newPassword));
-        userRepository.save(user);
-        return true;
     }
 
     @Transactional
@@ -93,28 +70,31 @@ public class UserService {
         return existingUser;
     }
 
-    public void deactivateUserByUsername(String username) {
+    public void deleteUserByUsername(String username) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = userRepository.findByUsername(authentication.getName())
+        User currentUser = findUserByUsername(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Current user not found"));
-    
+
         if (authentication.getName().equals(username)) {
-            throw new SecurityException("Users cannot deactivate themselves");
+            throw new SecurityException("Users cannot delete themselves");
         }
-    
-        User userToDeactivate = userRepository.findByUsername(username)
+
+        if (currentUser.getRole() == UserRole.EMPLOYEE) {
+            throw new SecurityException("Employees are not authorized to delete users");
+        }
+
+        User userToDelete = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
-    
-        if (currentUser.getRole() != UserRole.SUPERUSER && !userToDeactivate.getHouseId().equals(currentUser.getHouseId())) {
-            throw new SecurityException("Not authorized to deactivate user outside your house");
+
+        if (currentUser.getRole() != UserRole.SUPERUSER && !userToDelete.getHouseId().equals(currentUser.getHouseId())) {
+            throw new SecurityException("Not authorized to delete user outside your house");
         }
-    
-        if (currentUser.getRole() == UserRole.ADMIN && userToDeactivate.getRole() == UserRole.SUPERUSER) {
-            throw new SecurityException("Admins cannot deactivate superusers");
+
+        if (currentUser.getRole() == UserRole.ADMIN && userToDelete.getRole() == UserRole.SUPERUSER) {
+            throw new SecurityException("Admins cannot delete superusers");
         }
-    
-        userToDeactivate.setActive(false);
-        userRepository.save(userToDeactivate);
+
+        userRepository.delete(userToDelete);
     }
 
     public List<User> findAllUsers() {

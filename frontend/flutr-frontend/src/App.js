@@ -7,6 +7,7 @@ import LocationHome from "./pages/LocationHome.js";
 import Stats from "./pages/Stats.js";
 import Gallery from "./pages/Gallery.js";
 import Login from "./pages/Login.js";
+import OrganizationSettings from "./pages/OrganizationSettings.js";
 import Settings from "./pages/Settings.js";
 
 import Shipments from './pages/Shipments.js';
@@ -16,58 +17,114 @@ import AddRelease from './pages/AddRelease.js';
 import MasterButterfly from "./pages/MasterButterfly.js";
 import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
-import ChangePassword from "./pages/ChangePassword.js";
 
-import { RotatingLines } from "react-loader-spinner";
-
-import React, {useState, useEffect, useRef, useMemo} from "react";
-import Logout from "./pages/Logout.js";
+const locations = [
+  {
+    name: "Reiman Gardens",
+    path: "reiman-gardens",
+    logo: "reiman-logo.png",
+    image: "reiman-thumb.avif",
+    address: "1407 University Blvd. Ames, IA 50011",
+    color: "#087648",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "https://reimangardens.com/",
+      facebook: "https://reimangardens.com/",
+      x: "https://reimangardens.com/",
+      youtube: ""
+    }
+  },
+  {
+    name: "Butterfly Pavilion",
+    path: "butterfly-pavilion",
+    logo: "bp-logo.svg",
+    image: "reiman-thumb.avif",
+    address: "6525  W 104th Ave. Westminster, CO 80020",
+    color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
+  },
+  {
+    name: "Thanksgiving Point",
+    path: "thanksgiving-point",
+    logo: "tp-logo.webp",
+    image: "reiman-thumb.avif",
+    address: "3003 N Thanksgiving Way Lehi, UT 84043",
+    color: "#397fc2",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
+  },
+  {
+    name: "Ames, Iowa",
+    path: "city-of-ames",
+    logo: "isu_logo.png",
+    image: "reiman-thumb.avif",
+    address: "Ames, IA 50014",
+    color: "#9F2A2A",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
+  },
+  {
+    name: "Demo",
+    path: "demo1",
+    logo: "isu_logo.png",
+    image: "reiman-thumb.avif",
+    address: "somehwer",
+    color: "#9F2A00",
+    colorScheme: {
+      primary: "#087648",
+      secondary: "#7DAD87",
+      background: "#96C09F"
+    },
+    socialMedia: {
+      instagram: "",
+      facebook: "",
+      x: "",
+      youtube: ""
+    }
+  },
+];
 
 export default function App() {
-  const [locations, setLocations] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const apiFetched = useRef(false);
-  // "http://206.81.3.155:8282/api/orgs/list"
-  useEffect(() => {
-    const fetchData = async () => {
-      try{
-        const response = await fetch("https://3600aebd-7e20-4f96-ad57-ee19fbe31342.mock.pstmn.io/api/orgs/list", {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-        },
-        });
-        response.json().then(json => {
-          setLocations(json);
-          window.sessionStorage.setItem("locations", JSON.stringify(json));
-          console.log(json);
-        });
-      } catch (error) {
-        console.error("Failed to fetch locations:", error);
-      } finally {
-        setLoading(false);
-      }
-      
-    };
-    if (window.sessionStorage.getItem("locations") === null){
-      fetchData();
-      // apiFetched.current = true;  // Mark the API as called
-    } else{
-      setLocations(JSON.parse(window.sessionStorage.getItem("locations")));
-      setLoading(false);
-    }
-}, []);
-
-const AppRouter = ({locations}) => {
-  return(
-    <BrowserRouter basename=''>
+  return (
+    <div>
+        <BrowserRouter basename=''>
             <Routes>
                 <Route index element={<Landing data={locations} />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/logout" element={<Logout />} />
                 <Route path="/login" element={<Login />} />
-                <Route path="/changePassword" element={<ChangePassword/>} />
 
                 <Route path="/shipments" element={<Shipments />} />
                 <Route path="/addshipment" element={<AddShipment />} />
@@ -93,18 +150,6 @@ const AppRouter = ({locations}) => {
                 <Route path="/addOrg" element={<AddOrg/>}/>
             </Routes>
         </BrowserRouter>
-  );
-};
-
-  // if (locations === null) {
-  //   return <div>Loading...</div>;  // Or use a fancier loader
-  // }
-  if (loading) {
-    return <RotatingLines strokeColor="grey" strokeWidth="5" animationDuration="0.75" width="96" visible={true} />;
-  }
-  return (
-    <div>
-        <AppRouter locations={locations} />
     </div>
   );
 }

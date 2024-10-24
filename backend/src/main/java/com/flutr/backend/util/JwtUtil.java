@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.function.Function;
 
 @Component
@@ -27,10 +26,6 @@ public class JwtUtil {
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
-    }
-
-    public String extractHouseId(String token) {
-        return extractClaim(token, claims -> claims.get("houseId", String.class));
     }
 
     public Date extractExpiration(String token) {
@@ -54,17 +49,12 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username, String houseId, String subdomain, String role) {
-        java.util.Map<String, Object> claims = new HashMap<>();
-        claims.put("houseId", houseId);
-        claims.put("subdomain", subdomain);
-        claims.put("role", role);
+    public String generateToken(String username) {
         return Jwts.builder()
-            .claims(claims)
             .subject(username)
             .issuedAt(new Date())
             .expiration(new Date(System.currentTimeMillis() + expirationTime))
-            .signWith(getSecretKey())
+            .signWith(getSecretKey()) // Updated signing method to use Key instance
             .compact();
     }
 

@@ -6,6 +6,7 @@ import "../styles/addShipmentStyles.css";
 
 const NotificationModal = ({ isVisible, onClose }) => {
     if (!isVisible) return null;
+
     const handleAnotherShipment = () => {
         onClose();
         console.log('new shipment');
@@ -17,14 +18,6 @@ const NotificationModal = ({ isVisible, onClose }) => {
         console.log('return home');
         window.location.href = '/';
     };
-export default function AddShipment() {
-    
-    useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
-            alert("Sorry, you cant view this page.");
-            document.location.href = '/login';
-        }
-    });
 
     return (
         <div className='notification-modal'>

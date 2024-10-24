@@ -3,7 +3,6 @@ package com.flutr.backend.config;
 import com.flutr.backend.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -14,7 +13,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
 public class SecurityConfig {
 
     @Bean
@@ -23,13 +21,6 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/butterflies/all").permitAll()
-            .requestMatchers("/butterflies/fullDetails/**").permitAll()
-            .requestMatchers("/butterflies/details").permitAll()
-            .requestMatchers("/releases/inflight/**").permitAll()
-            .requestMatchers("/releases/botd/**").permitAll()
-            .requestMatchers("/orgs/all").permitAll()  // Allow public access to get all orgs
-            .requestMatchers("/orgs/**").permitAll()  // Allow public access to get specific org info by houseId
             .requestMatchers("/hello").permitAll()  // Allow hello tests without authentication
             .requestMatchers("/hellohello").permitAll()  // Allow hello tests without authentication
             .requestMatchers("/users/login").permitAll()  // Allow login without authentication

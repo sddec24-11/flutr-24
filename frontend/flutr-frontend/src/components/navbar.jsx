@@ -5,7 +5,7 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
-function Navbar({location, kioskMode}) {
+function Navbar({location, authenticated, kioskMode}) {
     // adding the states 
     const [isActive, setIsActive] = useState(false);
     //add the active class
@@ -39,7 +39,7 @@ function Navbar({location, kioskMode}) {
                   <a href={opener + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
                 </li>
 
-                {window.sessionStorage.getItem("authenticated") && 
+                {authenticated && 
               <NavDropdown
                   id="nav-dropdown"
                   title="Administration"
@@ -48,13 +48,9 @@ function Navbar({location, kioskMode}) {
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
                   <Dropdown.Item href="/addshipment">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
-                  {window.sessionStorage.getItem("authorizationLevel" ) === "ADMIN" &&
-                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>}
-                  {window.sessionStorage.getItem("authorizationLevel" ) === "ADMIN" &&
-                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>}
-                  <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
-                
-                  <Dropdown.Item href="/logout">Logout</Dropdown.Item>
+                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
+                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                  <Dropdown.Item href="/">Logout</Dropdown.Item>
                 </NavDropdown>}
               </ul>
               <div className={`${styles.hamburger} ${isActive ? styles.active : ''}`}  onClick={toggleActiveClass}>
@@ -83,22 +79,18 @@ function Navbar({location, kioskMode}) {
               <li onClick={removeActive}>
                 <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
-              <li onClick={removeActive}>
-                <a href='/masteredit' className={`${styles.navLink}`}>Master Edit</a>
-              </li>
-              {window.sessionStorage.getItem("authenticated") && 
+              {authenticated && 
               <NavDropdown
                   id="nav-dropdown"
                   title="Administration"
                 >
                   <Dropdown.Item href="">Add Release</Dropdown.Item>
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
-                  <Dropdown.Item href="/addshipment">Add Shipment</Dropdown.Item>
+                  <Dropdown.Item href="">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>
-                  <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
-                  <Dropdown.Item href="/logout">Logout</Dropdown.Item>
+                  <Dropdown.Item href="/">Logout</Dropdown.Item>
                 </NavDropdown>}
               
             </ul>

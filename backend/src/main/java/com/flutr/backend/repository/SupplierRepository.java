@@ -5,5 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import java.util.Optional;
 
 public interface SupplierRepository extends MongoRepository<Supplier, String> {
-    Optional<Supplier> findByAbbreviation(String abbreviation);
+    Optional<Supplier> findBySupplier(String supplier);
 }

@@ -4,7 +4,7 @@ import Footer from "../components/footer";
 export default function LocationSettings({ data }) {
   return (
     <div class="main-container">
-      <Navbar location={data} authenticated={window.sessionStorage.getItem("authorizationLevel")} />
+      <Navbar location={data} authenticated={true} />
       <h1>{data.name} Home</h1>
       <Footer location={data} />
     </div>

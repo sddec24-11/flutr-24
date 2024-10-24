@@ -44,13 +44,6 @@ export default function Shipments() {
             setLoading(false);
         }
     };
-  
-    useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
-            alert("Sorry, you cant view this page.");
-            document.location.href = '/login';
-        }
-    });
 
     // Effect to fetch shipments on mount
     useEffect(() => {
@@ -84,8 +77,8 @@ export default function Shipments() {
     };
 
     return (
-        <div class="main-container">
-            <Navbar authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+        <div className="main-container">
+            <Navbar/>
             <h1 className="shipments-header">Shipments</h1>
 
             {loading ? (
