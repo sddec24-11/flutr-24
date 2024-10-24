@@ -26,46 +26,6 @@ export default function Login(){
 
     const handleSubmit = async () => {
         try{
-            const response = await fetch("http://206.81.3.155:8282/api/users/login", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    password: password
-                }),
-            });
-            const message = await response.json();
-            if(message.error == null){
-                window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
-                window.sessionStorage.setItem("authenticated", true);
-                window.sessionStorage.setItem("authorizationLevel", "ADMIN");
-                window.sessionStorage.setItem("houseID", jose.decodeJwt(message.payload).houseId);
-                document.location.href = `/${window.sessionStorage.getItem("houseID")}`;
-            }
-            else{
-                setError(message.error);
-            }
-
-        } catch (error) {
-            console.log('Failed to fetch', error);
-        }
-    }
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-    const [errorMessage, setError] = useState("");
-
-    const handleUsername = (e) => {
-        setUsername(e.target.value);
-    }
-    const handlePassword = (e) => {
-        setPassword(e.target.value);
-    }
-    
-
-    const handleSubmit = async () => {
-        try{
             const response = await fetch("/api/users/login", {
                 method: 'POST',
                 headers: {
