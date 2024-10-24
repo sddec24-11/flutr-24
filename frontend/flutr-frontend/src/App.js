@@ -13,7 +13,7 @@ import Settings from "./pages/Settings.js";
 import Shipments from './pages/Shipments.js';
 import AddShipment from './pages/AddShipment.js';
 import EditShipment from './pages/EditShipment.js'
-import AddRelease from './pages/AddRelease.js';
+import MasterEdit from "./pages/MasterEdit.js";
 import MasterButterfly from "./pages/MasterButterfly.js";
 import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
@@ -129,7 +129,7 @@ export default function App() {
                 <Route path="/shipments" element={<Shipments />} />
                 <Route path="/addshipment" element={<AddShipment />} />
                 <Route path="/editshipment" element={<EditShipment />} />
-                <Route path="/addrelease" element={<AddRelease/>} />
+                <Route path="/masteredit" element={<MasterEdit />} />
 
                 {locations.map((r, index) => (
                     <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>

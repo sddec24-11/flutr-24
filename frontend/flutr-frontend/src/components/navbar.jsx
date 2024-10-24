@@ -44,7 +44,7 @@ function Navbar({location, authenticated, kioskMode}) {
                   id="nav-dropdown"
                   title="Administration"
                 >
-                  <Dropdown.Item href="/addrelease">Add Release</Dropdown.Item>
+                  <Dropdown.Item href="">Add Release</Dropdown.Item>
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
                   <Dropdown.Item href="">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
