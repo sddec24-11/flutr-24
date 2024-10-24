@@ -65,7 +65,7 @@ export default function LocationHome({data, kioskMode}){
             <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
             <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
             <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
-            <Navbar location={data} kioskMode={kioskMode} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+            <Navbar location={data} kioskMode={kioskMode} authenticated={true}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
             </div>

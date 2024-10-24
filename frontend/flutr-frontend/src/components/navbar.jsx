@@ -6,6 +6,7 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
 function Navbar({location, authenticated, kioskMode}) {
+function Navbar({location, authenticated, kioskMode}) {
     // adding the states 
     const [isActive, setIsActive] = useState(false);
     //add the active class
@@ -46,7 +47,7 @@ function Navbar({location, authenticated, kioskMode}) {
                 >
                   <Dropdown.Item href="/addrelease">Add Release</Dropdown.Item>
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
-                  <Dropdown.Item href="/addshipment">Add Shipment</Dropdown.Item>
+                  <Dropdown.Item href="">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>

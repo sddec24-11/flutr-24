@@ -35,6 +35,31 @@ export default function ChangePassword({forced}){
         //         console.log("Fail")
         //     }
         // })
+export default function ChangePassword({forced}){
+    const { register, handleSubmit, reset, formState: {errors} } = useForm();
+    const onSubmit = data => {
+        console.log(data);
+        console.log(data.email);
+        console.log(data.password);
+        let email = data.email;
+        let password = data.password;
+
+        fetch("https://f515af77-a75b-4d66-827f-e3c3c2a73793.mock.pstmn.io/auth", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password}),
+        })
+        .then((r) => r.json())
+        .then((r) => console.log(r))
+        // .then((r) => {
+        //     if('success' === r.message) {
+        //         Navigate('/')
+        //     } else {
+        //         console.log("Fail")
+        //     }
+        // })
         
     }
 
