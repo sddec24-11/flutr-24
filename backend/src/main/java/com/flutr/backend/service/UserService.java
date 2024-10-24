@@ -50,6 +50,7 @@ public class UserService {
     
         newUser.setPassword(passwordEncoder.encode("butterfly123"));
         newUser.setHouseId(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getHouseId() : currentUser.getHouseId());
+        newUser.setSubdomain(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getSubdomain() : currentUser.getSubdomain());
         return userRepository.save(newUser);
     }
 

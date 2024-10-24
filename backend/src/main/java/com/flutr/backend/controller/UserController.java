@@ -40,7 +40,9 @@ public class UserController {
             if (passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
                 User user = (User) userDetails;
                 String houseId = user.getHouseId();
-                String token = jwtUtil.generateToken(userDetails.getUsername(), houseId);
+                String subdomain = user.getSubdomain();
+                String role = user.getRole().toString();
+                String token = jwtUtil.generateToken(userDetails.getUsername(), houseId, subdomain, role);
                 return ResponseEntity.ok(new Response<>(true, token, null));
             } else {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

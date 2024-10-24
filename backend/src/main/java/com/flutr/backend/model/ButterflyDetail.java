@@ -9,11 +9,12 @@ public class ButterflyDetail {
     private int diseased;
     private int parasite;
     private int poorEmergence;
+    private int noEmergence;
     private int totalRemaining;
 
     public ButterflyDetail() {}
 
-    public ButterflyDetail(String buttId, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int parasite, int poorEmergence, int totalRemaining) {
+    public ButterflyDetail(String buttId, int numberReceived, int numberReleased, int emergedInTransit, int damaged, int diseased, int parasite, int poorEmergence, int noEmergence, int totalRemaining) {
         this.buttId = buttId;
         this.numberReceived = numberReceived;
         this.numberReleased = numberReleased;
@@ -22,6 +23,7 @@ public class ButterflyDetail {
         this.diseased = diseased;
         this.parasite = parasite;
         this.poorEmergence = poorEmergence;
+        this.noEmergence = noEmergence;
         this.totalRemaining = totalRemaining;
     }
 
@@ -97,5 +99,13 @@ public class ButterflyDetail {
 
     public void setTotalRemaining(int totalRemaining) {
         this.totalRemaining = totalRemaining;
+    }
+
+    public int getNoEmergence() {
+        return noEmergence;
+    }
+
+    public void setNoEmergence(int noEmergence) {
+        this.noEmergence = noEmergence;
     }
 }

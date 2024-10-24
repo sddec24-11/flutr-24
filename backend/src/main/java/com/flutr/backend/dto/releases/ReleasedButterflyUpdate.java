@@ -8,6 +8,7 @@ class ReleasedButterflyUpdate {
     private int damagedDuringRelease;
     private int diseasedDuringRelease;
     private int parasiteDuringRelease;
+    private int noEmergence;
 
     public ReleasedButterflyUpdate() {}
 
@@ -59,6 +60,14 @@ class ReleasedButterflyUpdate {
 
     public void setParasiteDuringRelease(int parasiteDuringRelease) {
         this.parasiteDuringRelease = parasiteDuringRelease;
+    }
+
+    public int getNoEmergence() {
+        return noEmergence;
+    }
+
+    public void setNoEmergence(int noEmergence) {
+        this.noEmergence = noEmergence;
     }
     
 }
