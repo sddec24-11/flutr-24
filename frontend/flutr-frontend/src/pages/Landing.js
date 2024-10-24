@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import Navbar from "../components/navbar";
 import Location_card from "../components/locationCard";
 import Row from 'react-bootstrap/Row';
