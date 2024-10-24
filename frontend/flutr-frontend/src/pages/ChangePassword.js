@@ -11,7 +11,6 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
 export default function ChangePassword({forced}){
-    const { register, handleSubmit, reset, formState: {errors} } = useForm();
     const onSubmit = data => {
         console.log(data);
         console.log(data.email);
