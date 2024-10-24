@@ -115,6 +115,7 @@ public class ShipmentService {
                             existingDetail.setDiseased(updatedDetail.getDiseased());
                             existingDetail.setParasite(updatedDetail.getParasite());
                             existingDetail.setPoorEmergence(updatedDetail.getPoorEmergence());
+                            existingDetail.setNoEmergence(updatedDetail.getNoEmergence());
     
                             // Recalculate total remaining
                             existingDetail.setTotalRemaining(updatedDetail.getNumberReceived() -
@@ -123,7 +124,8 @@ public class ShipmentService {
                                     updatedDetail.getDamaged() +
                                     updatedDetail.getDiseased() +
                                     updatedDetail.getParasite() +
-                                    updatedDetail.getPoorEmergence()));
+                                    updatedDetail.getPoorEmergence() +
+                                    updatedDetail.getNoEmergence()));
                         });
                 });
             }

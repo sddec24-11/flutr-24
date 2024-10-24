@@ -1,5 +1,6 @@
 package com.flutr.backend.service;
 
+import com.flutr.backend.model.Shipment;
 import com.flutr.backend.model.Supplier;
 import com.flutr.backend.util.JwtUtil;
 import com.mongodb.client.MongoClients;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -65,18 +67,23 @@ public class SupplierService {
         }
     }
 
-    public Supplier editSupplier(String abbreviation, String fullName, boolean isActive) {
+    public Supplier editSupplier(String oldAbbreviation, String newAbbreviation, String fullName, boolean isActive) {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("EDIT_SUPPLIER", "START", "Editing supplier: " + abbreviation);
+        loggingService.log("EDIT_SUPPLIER", "START", "Editing supplier: " + oldAbbreviation);
         try {
-            Supplier supplier = mongoTemplate.findOne(query(where("abbreviation").is(abbreviation)), Supplier.class, "suppliers");
+            Supplier supplier = mongoTemplate.findOne(query(where("abbreviation").is(oldAbbreviation)), Supplier.class, "suppliers");
             if (supplier == null) {
-                throw new RuntimeException("Supplier not found with abbreviation: " + abbreviation);
+                throw new RuntimeException("Supplier not found with abbreviation: " + oldAbbreviation);
             }
+            supplier.setAbbreviation(newAbbreviation);
             supplier.setFullName(fullName);
             supplier.setActive(isActive);
             mongoTemplate.save(supplier, "suppliers");
-            loggingService.log("EDIT_SUPPLIER", "SUCCESS", "Supplier edited successfully: " + fullName);
+
+            Update update = new Update().set("abbreviation", newAbbreviation);
+            mongoTemplate.updateMulti(query(where("abbreviation").is(oldAbbreviation)), update, Shipment.class, "shipments");
+
+            loggingService.log("EDIT_SUPPLIER", "SUCCESS", "Supplier: " + fullName + " and related shipments edited successfully.");
             return supplier;
         } catch (Exception e) {
             loggingService.log("EDIT_SUPPLIER", "FAILURE", e.getMessage());

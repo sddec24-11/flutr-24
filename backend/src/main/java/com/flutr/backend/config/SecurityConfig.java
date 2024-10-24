@@ -23,6 +23,13 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/butterflies/all").permitAll()
+            .requestMatchers("/butterflies/fullDetails/**").permitAll()
+            .requestMatchers("/butterflies/details").permitAll()
+            .requestMatchers("/releases/inflight/**").permitAll()
+            .requestMatchers("/releases/botd/**").permitAll()
+            .requestMatchers("/orgs/all").permitAll()  // Allow public access to get all orgs
+            .requestMatchers("/orgs/**").permitAll()  // Allow public access to get specific org info by houseId
             .requestMatchers("/hello").permitAll()  // Allow hello tests without authentication
             .requestMatchers("/hellohello").permitAll()  // Allow hello tests without authentication
             .requestMatchers("/users/login").permitAll()  // Allow login without authentication

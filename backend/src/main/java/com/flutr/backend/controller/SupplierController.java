@@ -1,6 +1,7 @@
 package com.flutr.backend.controller;
 
 import com.flutr.backend.dto.Response;
+import com.flutr.backend.dto.suppliers.EditSupplierRequest;
 import com.flutr.backend.model.Supplier;
 import com.flutr.backend.service.SupplierService;
 
@@ -30,9 +31,17 @@ public class SupplierController {
 
     @PutMapping("/edit")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Response<Supplier>> editSupplier(@RequestParam String abbreviation, @RequestParam String fullName, @RequestParam boolean isActive) {
-        Supplier updatedSupplier = supplierService.editSupplier(abbreviation, fullName, isActive);
-        return ResponseEntity.ok(new Response<>(true, updatedSupplier, null));
+    public ResponseEntity<Response<Supplier>> editSupplier(@RequestBody EditSupplierRequest editSupplierRequest) {
+        try {
+            Supplier updatedSupplier = supplierService.editSupplier(editSupplierRequest.getOldAbbreviation(), editSupplierRequest.getNewAbbreviation(), editSupplierRequest.getFullName(), editSupplierRequest.isActive());
+            return ResponseEntity.ok(new Response<>(true, updatedSupplier, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response<>(false, null, new Response.ErrorDetails(403, e.getMessage())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        }
     }
 
     @GetMapping("/view/all")

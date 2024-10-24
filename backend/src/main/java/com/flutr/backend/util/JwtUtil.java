@@ -54,9 +54,11 @@ public class JwtUtil {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String username, String houseId) {
+    public String generateToken(String username, String houseId, String subdomain, String role) {
         java.util.Map<String, Object> claims = new HashMap<>();
         claims.put("houseId", houseId);
+        claims.put("subdomain", subdomain);
+        claims.put("role", role);
         return Jwts.builder()
             .claims(claims)
             .subject(username)

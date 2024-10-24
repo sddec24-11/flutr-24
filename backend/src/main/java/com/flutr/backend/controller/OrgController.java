@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/orgs")
@@ -67,4 +68,27 @@ public class OrgController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
         }
     }
+
+    @GetMapping("/all")
+    public ResponseEntity<Response<List<Org>>> getAllOrgs() {
+        try {
+            List<Org> orgs = orgService.getAllHousesInfo();
+            return ResponseEntity.ok(new Response<>(true, orgs, null));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        }
+    }
+
+    @GetMapping("/{houseId}")
+    public ResponseEntity<Response<OrgInfo>> publicGetOrgInfo(@PathVariable String houseId) {
+        try {
+            OrgInfo orgInfo = orgService.publicGetOrgInfo(houseId);
+            return ResponseEntity.ok(new Response<>(true, orgInfo, null));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        }
+    }
+
 }
