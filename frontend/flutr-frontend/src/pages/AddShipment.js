@@ -4,41 +4,37 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 
-const NotificationModal = ({ isVisible, onClose }) => {
-    if (!isVisible) return null;
-    const handleAnotherShipment = () => {
-        onClose();
-        console.log('new shipment');
-        window.location.href = "/addshipment";
-    };
-
-    const handleReturnHome = () => {
-        onClose();
-        console.log('return home');
-        window.location.href = '/';
-    };
 export default function AddShipment() {
-    
     useEffect(() => {
         if(!window.sessionStorage.getItem("authenticated")){
             alert("Sorry, you cant view this page.");
             document.location.href = '/login';
         }
     });
-
-    return (
-        <div className='notification-modal'>
-            <div className='modal-content'>
-                <h2>Successfully submitted!</h2>
-                <p>Would you like to do another shipment or return home?</p>
-                <button onClick={handleAnotherShipment}>Another Shipment</button>
-                <button onClick={handleReturnHome}>Return Home</button>
+    const NotificationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+        const handleAnotherShipment = () => {
+            onClose();
+            console.log('new shipment');
+            window.location.href = "/addshipment";
+        };
+    
+        const handleReturnHome = () => {
+            onClose();
+            console.log('return home');
+            window.location.href = '/';
+        };
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Successfully submitted!</h2>
+                    <p>Would you like to do another shipment or return home?</p>
+                    <button onClick={handleAnotherShipment}>Another Shipment</button>
+                    <button onClick={handleReturnHome}>Return Home</button>
+                </div>
             </div>
-        </div>
-    );
-};
-
-export default function AddShipment() {
+        );
+    }
     
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
