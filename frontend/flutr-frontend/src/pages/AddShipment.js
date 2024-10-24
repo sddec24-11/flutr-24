@@ -17,6 +17,7 @@ const NotificationModal = ({ isVisible, onClose }) => {
         console.log('return home');
         window.location.href = '/';
     };
+    
 export default function AddShipment() {
     
     useEffect(() => {
