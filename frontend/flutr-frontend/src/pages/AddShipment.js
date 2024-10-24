@@ -33,6 +33,15 @@ const NotificationModal = ({ isVisible, onClose }) => {
 
 export default function AddShipment() {
     
+    useEffect(() => {
+        if(!window.sessionStorage.getItem("authenticated")){
+            alert("Sorry, you cant view this page.");
+            document.location.href = '/login';
+        }
+    });
+
+
+    
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [suppliers, setSuppliers] = useState([]);
