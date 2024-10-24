@@ -3,9 +3,15 @@ import Footer from "../components/footer";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 export default function AddOrg(){
+    useEffect(() => {
+        if(window.sessionStorage.getItem("authorizationLevel") !== "SUPERUSER"){
+            alert("Sorry You Can't View This Page");
+            document.location.href = "/login";
+        }
+    });
     const [orgName, setOrgName] = useState();
     const [orgAddress, setOrgAddress] = useState();
     const [orgEmail, setOrgEmail] = useState();
@@ -26,12 +32,39 @@ export default function AddOrg(){
 
     const handleCancel = (e) => {
         e.preventDefault();
-        document.location.href = `/`;
+        window.history.back();
     }
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    const handleSubmit = async () => {
+        if(orgName !== "" && orgAddress !== "" && orgEmail !== ""){
+            try{
+                const response = await fetch("http://206.81.3.155:8282/api/orgs/create", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey"),
+                    },
+                    body: JSON.stringify({
+                        name: orgName,
+                        address: orgAddress,
+                        adminEmail: orgEmail,
+                    }),
+                });
+                const message = await response.json();
+                if(message.error == null){
+                    if(message.success){
+                        console.log("Success! " + message.payload);
+                        document.location.href = "/";
+                    }
+                }
+                else{
+                    throw new Error(console.error);
+                }
+            } catch(error) {
+                console.log('Failed to fetch', error);
+            }
+        }
+        
     }
 
     return(
