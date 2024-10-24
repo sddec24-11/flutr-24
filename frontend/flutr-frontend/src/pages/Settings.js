@@ -56,6 +56,7 @@ export default function Settings(){
                 setBackgroundColor(json.payload.colors[2]);
 
                 setBOTD(json.payload.otd.active);
+                setStats(json.payload.statsActive);
                 setNews(json.payload.news.active);
                 setNewsContent(json.payload.news.newsContent);
 
@@ -146,7 +147,8 @@ export default function Settings(){
                         newsContent: newsContent
                     },
                     timezone: "CST",
-                    subheading: ""
+                    subheading: "",
+                    statsActive: statsState
                   }),
             });
             const message = await response.json();
