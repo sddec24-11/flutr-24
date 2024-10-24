@@ -1,46 +1,24 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import React, { useRef } from 'react';
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 import { useLocation } from "react-router-dom";
 
-const NotificationModal = ({ isVisible, onClose }) => {
-    if (!isVisible) return null;
-
-    return (
-        <div className='notification-modal'>
-            <div className='modal-content'>
-                <h2>Successfully submitted!</h2>
-                <p>Would you like to edit another shipment or return home?</p>
-                <button onClick={() => { onClose(); window.location.href = "/shipments"; }}>Edit Another Shipment</button>
-                <button onClick={() => { onClose(); window.location.href = '/'; }}>Return Home</button>
-            </div>
-        </div>
-    );
-};
-
 export default function EditShipment() {
+
     const location = useLocation();
     const shipment = location.state;
+    const {butterflyDetail} = shipment || {};
 
-    const [shipmentData, setShipmentData] = useState({
-        shipmentId: '',
-        shipmentDate: '',
-        arrivalDate: '',
-        abbreviation: '',
-        butterflyDetails: []
-    });
-
-    const [suppliers, setSuppliers] = useState([]);
-    const [error, setError] = useState(null);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const shipDateInputRef = useRef(null);
+    const [data, setData] = useState(butterflyDetail);
+    //use state for suppliers
+    
+    const shipDateInputRef = useRef(null); 
     const arriveDateInputRef = useRef(null);
-    const supplierInputRef = useRef(null);
+    const supplierDateInputRef = useRef(null);
 
-        const butterflyOptions = [
+    const butterflyOptions = [
         {value: "Butterfly 1" },
         {value: "Butterfly 2" },
         {value: "Butterfly 3" },
@@ -53,201 +31,105 @@ export default function EditShipment() {
         {value: "testing very long butterfly species name" },
     ];
 
-    //set shipments upon mount
-    useEffect(() => {
-        if (shipment) {
-            const formatDate = (dateString) => {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                return date.toISOString().split('T')[0];
-            };
-    
-            setShipmentData({
-                shipmentId: shipment.shipmentId,
-                shipmentDate: formatDate(shipment.shipmentDate),
-                arrivalDate: formatDate(shipment.arrivalDate),
-                abbreviation: shipment.abbreviation || '',
-                butterflyDetails: shipment.butterflyDetails || []
-            });
-        }
-    }, [shipment]);
+    //TEMP
+    function generateRandomId() {
+        return Math.random().toString(36).substr(2, 9);
+      }
 
-    //set suppliers upon mount
-    useEffect(() => {
-        fetchSuppliers();
-    }, []);
-
-    //fetch all active suppliers
-    const fetchSuppliers = async (retries = 3) => {
-        try {
-            const response = await fetch("/api/suppliers/view/active", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey")
-                }
-            });
-
-            if (!response.ok) throw new Error('Network response was not ok');
-
-            const message = await response.json();
-            if (message.error) throw new Error(message.error);
-
-            setSuppliers(message.payload);
-        } catch (error) {
-            if (retries > 0) {
-                console.log(`Retrying... Attempts left: ${retries}`);
-                fetchSuppliers(retries - 1); // Retry
-            } else {
-                setError('Failed to load suppliers: ' + error.message);
-            }
-        }
-    };
-
-    //add empty butterfly obj to butterfly details
-    const addButterfly = (species) => {
-        if (shipmentData.butterflyDetails.some(butterfly => butterfly.buttId === species)) {
-            console.log(`Butterfly with species '${species}' already exists.`);
+    const addButterfly = (speciesIn) => {
+        const exists = data.some(butterfly => butterfly.species === speciesIn);
+        if (exists) {
+            console.log(`Butterfly with species '${speciesIn}' already exists.`);
             return;
         }
-        const newButterfly = createButterflyObject(species);
-        setShipmentData(prev => ({
-            ...prev,
-            butterflyDetails: [...prev.butterflyDetails, newButterfly]
-        }));
-    };
 
-    //create empty butterfly obj with species name
-    const createButterflyObject = (species) => ({
-        buttId: species,
-        numberReceived: 0,
-        numberReleased: 0,
-        emergedInTransit: 0,
-        damaged: 0,
-        diseased: 0,
-        parasite: 0,
-        poorEmergence: 0,
-        totalRemaining: 0,
-    });
-    
-    //remove butterfly obj based on 
-    const removeButterfly = (species) => {
-        setShipmentData(prev => ({
-            ...prev,
-            butterflyDetails: prev.butterflyDetails.filter(item => item.buttId !== species)
-        }));
+        const newButterfly = {
+            butterflyId: generateRandomId(),
+            species: speciesIn,
+            numberReceived: 0,
+            numberReleased: 0,
+            emergedInTransit: 0,
+            damaged: 0,
+            diseased: 0,
+            parasites: 0,
+            poorEmergence: 0,
+            totalRemaining: 0,
+        };
+
+        setData(prev => [...prev, newButterfly]);
     };
     
-    const updateButterflyValue = (buttId, key, increment) => {
-        setShipmentData(prev => ({
-            ...prev,
-            butterflyDetails: prev.butterflyDetails.map(item => {
-                if (item.buttId === buttId) {
-                    if (increment)
-                    {
-                        if (key !== 'numberReceived') {
-                            if (item.totalRemaining <= 0) {return item;}
-                            else {
-                                return {
-                                    ...item,
-                                    [key]: item[key] + 1,
-                                    totalRemaining: item.totalRemaining - 1
-                                }
-                            }
-                        } else {
-                            return {
-                                ...item,
-                                [key]: item[key] + 1,
-                                totalRemaining: item.totalRemaining + 1
-                            }
+    const removeButterfly = (speciesOut) => {
+        setData(data.filter(item => item.species !== speciesOut));
+    }
+    
+    const incrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (key !== 'numberReceived') {
+                    if (item.totalRemaining <= 0) {return item;}
+                    else {
+                        return {
+                            ...item,
+                            [key]: item[key] + 1,
+                            totalRemaining: item.totalRemaining - 1
                         }
                     }
-                    else {
-                        if (item[key] <= 0) {return item;}
-                        if (key === 'numberReceived') {
-                            if (item.totalRemaining <= 0)
-                            {
-                                return item;
-                            }
+                }
+                else {
+                    return {
+                        ...item,
+                        [key]: item[key] + 1,
+                        totalRemaining: item.totalRemaining + 1
+                    };
+                }
+            }
+            return item;
+        }));
+    };
 
-                            return {
-                                ...item,
-                                [key]: item[key] - 1,
-                                totalRemaining: item.totalRemaining - 1
-                            }
-                        }
-                        else {
-                            return {
-                                ...item,
-                                [key]: item[key] - 1,
-                                totalRemaining: item.totalRemaining + 1
-                            }
-                        }
+    const decrementVal = (butterflyId, key) => {
+        setData(data.map(item => {
+            if (item.butterflyId === butterflyId) {
+                if (item[key] <= 0) {
+                    return item;
+                }
+
+                if (key === 'numberReceived') {
+                    if (item.totalRemaining <= 0) {
+                        return item;
                     }
                     
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining - 1
+                    };
                 }
-                return item;
-            })
-        }))
-    };
-
-    //create json obj of current shipment and submit to backend
-    const handleSubmit = async () => {
-        const shipDate = shipDateInputRef.current?.value;
-        const arrivalDate = arriveDateInputRef.current?.value;
-        const supplier = supplierInputRef.current?.value;
-    
-        if (!shipDate || !arrivalDate || supplier === 'true' || shipmentData.butterflyDetails.length === 0) {
-            alert("Please fill in all required fields: shipment date, arrival date, supplier, and at least one butterfly");
-            return;
-        }
-    
-        let retries = 3;
-    
-        while (retries > 0) {
-            try {
-                let id = shipmentData.shipmentId;
-                const response = await fetch(`api/shipments/edit/${id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': window.sessionStorage.getItem("accessKey")
-                    },
-                    body: JSON.stringify({
-                        shipmentDate: shipDate,
-                        arrivalDate: arrivalDate,
-                        abbreviation: supplier,
-                        butterflyDetails: shipmentData.butterflyDetails
-                    })
-                });
-    
-                const message = await response.json();
-    
-                if (message.error == null) {
-                    console.log(message);
-                    setIsModalVisible(true);
-                    return; // Exit after successful submission
-                } else {
-                    setError(message.error);
-                    return; // Exit on error message
-                }
-            } catch (error) {
-                console.log('Failed to fetch', error);
-                retries -= 1; // Decrease the retry count
-                if (retries === 0) {
-                    alert('Failed to submit after 3 attempts. Please try again later.');
+                else 
+                {
+                    return {
+                        ...item,
+                        [key]: item[key] - 1,
+                        totalRemaining: item.totalRemaining + 1
+                    }
                 }
             }
-        }
+            return item;
+        }));
     };
 
-    //TODO: return user to home page?
-    const handleCancel = () => {
-
-    }
-
-    const closeModal = () => setIsModalVisible(false);
-
+    //post to shipmentList
+    const submit = () => {
+        const newShipment = {
+            id: 40,
+            shipmentDate: shipDateInputRef.current.value,
+            arrivalDate: arriveDateInputRef.current.value,
+            supplier: supplierDateInputRef.current.value,
+            butterflyDetail: data
+        };
+        console.log(newShipment);
+    };
 
 return (
         <div class="main-container">
@@ -258,21 +140,28 @@ return (
                 <div className="ship-info-input">
                     <div class="input-group">
                         <label for="shipdate">Shipment Date: </label>
-                        <input type="date" id="shipdate" ref={shipDateInputRef} value={shipmentData.shipmentDate} onChange={(e) => setShipmentData({ ...shipmentData, shipmentDate: e.target.value })} />
+                        <input type="date" id="shipdate" name="shipment-date" ref={shipDateInputRef} defaultValue={shipment.shipmentDate} />
                     </div>
                     <div class="input-group">
                         <label for="arrivedate">Arrival Date: </label>
-                        <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef} value={shipmentData.arrivalDate} onChange={(e) => setShipmentData({ ...shipmentData, arrivalDate: e.target.value })} />
+                        <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef} defaultValue={shipment.arrivalDate} />
                     </div>
                     <div class="input-group">
                         <label for="suppliers">Supplier: </label>
-                        <select id="suppliers" name="suppliers" ref={supplierInputRef} value={shipmentData.abbreviation} onChange={(e) => setShipmentData({ ...shipmentData, abbreviation: e.target.value })}>
-                                <option disabled selected value></option>
-                                {suppliers.map((supplier) => (
-                                    <option key={supplier.abbreviation} value={supplier.abbreviation}>
-                                        {supplier.abbreviation}
-                                    </option>
-                                ))}
+                        <select id="suppliers" name="suppliers" ref={supplierDateInputRef} defaultValue={shipment.supplier} >
+                            <option disabled selected value></option>
+                            <option value="ship1">ship1</option>
+                            <option value="ship2">ship2</option>
+                            <option value="ship3">ship3</option>
+                            <option value="ship4">ship4</option>
+                            <option value="ship5">ship5</option>
+                            <option value="ship6">ship6</option>
+                            <option value="ship7">ship7</option>
+                            <option value="ship8">ship8</option>
+                            <option value="ship9">ship9</option>
+                            <option value="ship10">ship10</option>
+                            <option value="ship11">ship11</option>
+                            <option value="ship12">ship12</option>
                         </select>
                     </div>
                 </div>
@@ -294,7 +183,7 @@ return (
                 <table className="add-table">
                     <thead>
                         <tr>
-                            <th style={{width:'15%'}}>Species</th>
+                            <th style={{width:"250px"}}>Species</th>
                             <th>Received</th>
                             <th>Released</th>
                             <th>Poor Emergence</th>
@@ -302,37 +191,72 @@ return (
                             <th>Damaged in Transit</th>
                             <th>Diseased</th>
                             <th>Parasites</th>
-                            <th style={{width:'6%'}}>Total</th>
-                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
+                            <th style={{width:"94px"}}>Total</th>
+                            <th style={{width:'94px', background:'#E4976C', border:'none'}}></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {shipmentData.butterflyDetails.map(item => (
-                            <tr key={item.buttId}>
-                                <td>{item.buttId}</td>
-                                {['numberReceived', 'numberReleased', 'poorEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
-                                    <td key={key}>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
-                                        <div className="value-box">{item[key]}</div>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
-                                    </td>
-                                ))}
-                                <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>
-                                <td style={{ background: '#E4976C' }}>
-                                    <p style={{ color: '#E1EFFE', margin: "0" }} onClick={() => removeButterfly(item.buttId)}>remove</p>
-                                </td>
-                            </tr>
+                        {data.map(item => (
+                        <tr key={item.butterflyId}>
+                            <td>{item.species}</td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'numberReceived')}>+</button>
+                                <div className="value-box">{item.numberReceived}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'numberReceived')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'numberReleased')}>+</button>
+                                <div className="value-box">{item.numberReleased}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'numberReleased')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'poorEmergence')}>+</button>
+                                <div className="value-box">{item.poorEmergence}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'poorEmergence')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'emergedInTransit')}>+</button>
+                                <div className="value-box">{item.emergedInTransit}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'emergedInTransit')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'damaged')}>+</button>
+                                <div className="value-box">{item.damaged}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'damaged')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'diseased')}>+</button>
+                                <div className="value-box">{item.diseased}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'diseased')}>-</button>
+                            </td>
+                            <td>
+                                <button onClick={() => incrementVal(item.butterflyId, 'parasites')}>+</button>
+                                <div className="value-box">{item.parasites}</div>
+                                <button onClick={() => decrementVal(item.butterflyId, 'parasites')}>-</button>
+                            </td>
+                            <td style={{background:'#469FCE',color:'#E1EFFE'}}>
+                                {item.totalRemaining}
+                            </td>
+                            <td style={{background:'#E4976C'}}>
+                                <p style={{color:'#E1EFFE', margin:"0", onMouseOver:""}}
+                                    onClick={() => removeButterfly(item.species)}>
+                                    remove
+                                </p>
+                            </td>
+                        </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
-            <div className="submit-cancel-buttons">
-                <button type="button" className="btn cancel-btn" onClick={closeModal}>Cancel</button>
-                <button type="button" className="btn submit-btn" onClick={handleSubmit}>Submit</button>
+            <div class="submit-cancel-buttons">
+                <button type="button" class="btn cancel-btn">Cancel</button>
+                <button type="submit" class="btn submit-btn" 
+                        onClick={() => submit()}>
+                            Submit
+                </button>
             </div>
 
-            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />                
             <Footer />
         </div>
     );
