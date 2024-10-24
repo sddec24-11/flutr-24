@@ -20,18 +20,23 @@ public class User implements UserDetails{
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
     private String houseId; 
+    private String subdomain;
     private UserRole role;
+    private boolean isActive; 
 
 
     
     public User() {
     }
-    public User(String id, String username, String houseId, String password, UserRole role) {
+
+    public User(String id, String username, String houseId, String password, String subdomain, UserRole role, boolean isActive) {
         this.id = id;
         this.username = username;
         this.houseId = houseId;
         this.password = password;
         this.role = role;
+        this.isActive = isActive;
+        this.subdomain = subdomain;
     }
     public String getId() {
         return id;
@@ -51,6 +56,7 @@ public class User implements UserDetails{
     public void setHouseId(String houseId) {
         this.houseId = houseId;
     }
+    
     public UserRole getRole() {
         return role;
     }
@@ -58,6 +64,13 @@ public class User implements UserDetails{
         this.role = role;
     }
 
+    public String getSubdomain() {
+        return subdomain;
+    }
+
+    public void setSubdomain(String subdomain) {
+        this.subdomain = subdomain;
+    }
     
     public String getPassword() {
         return password;
@@ -94,6 +107,14 @@ public class User implements UserDetails{
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
    
 }
