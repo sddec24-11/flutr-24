@@ -10,17 +10,19 @@ public class Org {
     private String name;
     private String address;
     private String logo;
+    private String facilityImage;
     private String subdomain;
     private String adminEmail;
     
     public Org() {
     }
 
-    public Org(String houseId, String name, String address, String logo, String subdomain, String adminEmail) {
+    public Org(String houseId, String name, String address, String logo, String facilityImage, String subdomain, String adminEmail) {
         this.houseId = houseId;
         this.name = name;
         this.address = address;
         this.logo = logo;
+        this.facilityImage = facilityImage;
         this.subdomain = subdomain;
         this.adminEmail = adminEmail;
     }
@@ -60,6 +62,14 @@ public class Org {
     }
     public void setAdminEmail(String adminEmail) {
         this.adminEmail = adminEmail;
+    }
+
+    public String getFacilityImage() {
+        return facilityImage;
+    }
+
+    public void setFacilityImage(String facilityImage) {
+        this.facilityImage = facilityImage;
     }
 
     

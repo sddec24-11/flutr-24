@@ -52,6 +52,45 @@ export default function Login(){
             console.log('Failed to fetch', error);
         }
     }
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setError] = useState("");
+
+    const handleUsername = (e) => {
+        setUsername(e.target.value);
+    }
+    const handlePassword = (e) => {
+        setPassword(e.target.value);
+    }
+    
+
+    const handleSubmit = async () => {
+        try{
+            const response = await fetch("/api/users/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                }),
+            });
+            const message = await response.json();
+            if(message.error == null){
+                window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
+                window.sessionStorage.setItem("authorizationLevel", true);
+                window.sessionStorage.setItem("test","test")
+                document.location.href = "/";
+            }
+            else{
+                setError(message.error);
+            }
+
+        } catch (error) {
+            console.log('Failed to fetch', error);
+        }
+    }
 
     const handleCancel = (e) => {
         e.preventDefault();

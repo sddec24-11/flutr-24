@@ -12,6 +12,7 @@ public class OrgInfo {
     private String name;
     private String address;
     private String logoUrl; // URL to the image stored in DigitalOcean Spaces
+    private String facilityImgUrl;
     private String adminEmail;
     private List<String> colors; // Array of 3 hex codes
     private String website;
@@ -19,17 +20,19 @@ public class OrgInfo {
     private String subheading;
     private Otd otd; // Butterfly of the day
     private News news;
+    private Boolean statsActive;
     private String timezone;
 
     public OrgInfo() {}
 
-    public OrgInfo(String houseId, String name, String address, String logoUrl,
+    public OrgInfo(String houseId, String name, String address, String logoUrl, String facilityImgUrl,
                String adminEmail, List<String> colors, String website, SocialMediaLinks socials,
-               String subheading, Otd otd, News news, String timezone) {
+               String subheading, Otd otd, News news, Boolean statsActive, String timezone) {
         this.houseId = houseId;
         this.name = name;
         this.address = address;
         this.logoUrl = logoUrl;
+        this.facilityImgUrl = facilityImgUrl;
         this.adminEmail = adminEmail;
         this.colors = colors;
         this.website = website;
@@ -37,6 +40,7 @@ public class OrgInfo {
         this.subheading = subheading;
         this.otd = otd;
         this.news = news;
+        this.statsActive = statsActive;
         this.timezone = timezone;
     }
 
@@ -71,6 +75,14 @@ public class OrgInfo {
 
     public void setLogoUrl(String logoUrl) {
         this.logoUrl = logoUrl;
+    }
+
+    public String getFacilityImgUrl() {
+        return facilityImgUrl;
+    }
+
+    public void setFacilityImgUrl(String facilityImgUrl) {
+        this.facilityImgUrl = facilityImgUrl;
     }
 
     public String getAdminEmail() {
@@ -127,6 +139,14 @@ public class OrgInfo {
 
     public void setNews(News news) {
         this.news = news;
+    }
+
+    public Boolean getStatsActive() {
+        return statsActive;
+    }
+
+    public void setStatsActive(Boolean statsActive) {
+        this.statsActive = statsActive;
     }
 
     public String getTimezone() {

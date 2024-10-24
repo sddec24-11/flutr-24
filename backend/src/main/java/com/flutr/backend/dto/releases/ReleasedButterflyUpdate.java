@@ -2,22 +2,24 @@ package com.flutr.backend.dto.releases;
 
 public 
 class ReleasedButterflyUpdate {
-    private String butterflyId;
+    private String buttId;
     private int numberReleased;
     private int poorEmergence;
     private int damagedDuringRelease;
     private int diseasedDuringRelease;
+    private int parasiteDuringRelease;
+    private int noEmergence;
 
     public ReleasedButterflyUpdate() {}
 
     // Getters and Setters
 
-    public String getButterflyId() {
-        return butterflyId;
+    public String getButtId() {
+        return buttId;
     }
 
-    public void setButterflyId(String butterflyId) {
-        this.butterflyId = butterflyId;
+    public void setButtId(String buttId) {
+        this.buttId = buttId;
     }
 
     public int getNumberReleased() {
@@ -51,4 +53,21 @@ class ReleasedButterflyUpdate {
     public void setDiseasedDuringRelease(int diseasedDuringRelease) {
         this.diseasedDuringRelease = diseasedDuringRelease;
     }
+
+    public int getParasiteDuringRelease() {
+        return parasiteDuringRelease;
+    }
+
+    public void setParasiteDuringRelease(int parasiteDuringRelease) {
+        this.parasiteDuringRelease = parasiteDuringRelease;
+    }
+
+    public int getNoEmergence() {
+        return noEmergence;
+    }
+
+    public void setNoEmergence(int noEmergence) {
+        this.noEmergence = noEmergence;
+    }
+    
 }
