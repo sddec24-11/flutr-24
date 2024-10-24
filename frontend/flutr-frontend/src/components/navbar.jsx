@@ -6,7 +6,6 @@ import NavDropdown from 'react-bootstrap/NavDropdown';
 
 
 function Navbar({location, authenticated, kioskMode}) {
-function Navbar({location, authenticated, kioskMode}) {
     // adding the states 
     const [isActive, setIsActive] = useState(false);
     //add the active class
