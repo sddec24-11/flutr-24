@@ -16,18 +16,18 @@ public class Shipment {
     private String shipmentId;
     private Date shipmentDate;
     private Date arrivalDate;
-    private String supplier;
+    private String abbreviation;
     private List<ButterflyDetail> butterflyDetails;  // Details for each butterfly in the shipment
     @LastModifiedDate
     private Date lastUpdated;
 
     public Shipment() {}
 
-    public Shipment(String shipmentId, Date shipmentDate, Date arrivalDate, String supplier, List<ButterflyDetail> butterflyDetails) {
+    public Shipment(String shipmentId, Date shipmentDate, Date arrivalDate, String abbreviation, List<ButterflyDetail> butterflyDetails) {
         this.shipmentId = shipmentId;
         this.shipmentDate = shipmentDate;
         this.arrivalDate = arrivalDate;
-        this.supplier = supplier;
+        this.abbreviation = abbreviation;
         this.butterflyDetails = butterflyDetails;
     }
 
@@ -57,12 +57,12 @@ public class Shipment {
         this.arrivalDate = arrivalDate;
     }
 
-    public String getSupplier() {
-        return supplier;
+    public String getAbbreviation() {
+        return abbreviation;
     }
 
-    public void setSupplier(String supplier) {
-        this.supplier = supplier;
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
     }
 
     public List<ButterflyDetail> getButterflyDetails() {

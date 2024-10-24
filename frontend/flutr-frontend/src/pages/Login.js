@@ -9,35 +9,48 @@ import Contact from "./Contact";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import * as jose from 'jose'
 
 export default function Login(){
-    const onSubmit = data => {
-        console.log(data);
-        console.log(data.email);
-        console.log(data.password);
-        let username = data.username;
-        let password = data.password;
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [errorMessage, setError] = useState("");
 
-        fetch("http://206.81.3.155:8282/api/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                username: username,
-                password: password
-            }),
-        });
-        // .then((r) => r.json())
-        // .then((r) => console.log(r))
-        // .then((r) => {
-        //     if('success' === r.message) {
-        //         Navigate('/')
-        //     } else {
-        //         console.log("Fail")
-        //     }
-        // })
-        
+    const handleUsername = (e) => {
+        setUsername(e.target.value);
+    }
+    const handlePassword = (e) => {
+        setPassword(e.target.value);
+    }
+    
+
+    const handleSubmit = async () => {
+        try{
+            const response = await fetch("http://206.81.3.155:8282/api/users/login", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                }),
+            });
+            const message = await response.json();
+            if(message.error == null){
+                window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
+                window.sessionStorage.setItem("authenticated", true);
+                window.sessionStorage.setItem("authorizationLevel", "ADMIN");
+                window.sessionStorage.setItem("houseID", jose.decodeJwt(message.payload).houseId);
+                document.location.href = `/${window.sessionStorage.getItem("houseID")}`;
+            }
+            else{
+                setError(message.error);
+            }
+
+        } catch (error) {
+            console.log('Failed to fetch', error);
+        }
     }
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");

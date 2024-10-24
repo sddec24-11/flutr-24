@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ShipmentRepository extends MongoRepository<Shipment, String> {
     
-    List<Shipment> findByShipmentDateAndSupplier(Date shipmentDate, String supplier);
+    List<Shipment> findByShipmentDateAndAbbreviation(Date shipmentDate, String abbreviation);
     List<Shipment> findByArrivalDateBetween(Date startDate, Date endDate);
-    List<Shipment> findByArrivalDateBetweenAndSupplier(Date startDate, Date endDate, String supplier);
+    List<Shipment> findByArrivalDateBetweenAndAbbreviation(Date startDate, Date endDate, String abbreviation);
 }
