@@ -19,7 +19,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
         insta();
       }
       else{
-        window.location.href = location.socialMedia.instagram;
+        window.location.href = location.socials.instagramLink;
       }
     }
 
@@ -29,7 +29,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
         facebook();
       }
       else{
-        window.location.href = location.socialMedia.facebook;
+        window.location.href = location.socials.facebookLink;
       }
     }
 
@@ -39,7 +39,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
         x();
       }
       else{
-        window.location.href = location.socialMedia.x;
+        window.location.href = location.socials.twitterLink;
       }
     }
 
@@ -49,7 +49,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
         youtube();
       }
       else{
-        window.location.href = location.socialMedia.youtube;
+        window.location.href = location.socials.youtubeLink;
       }
     }
 

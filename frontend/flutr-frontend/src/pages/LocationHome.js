@@ -114,7 +114,7 @@ export default function LocationHome({data, kioskMode}){
                     </Row>
                 </Container>
             </div>
-            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
+            <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
 }
