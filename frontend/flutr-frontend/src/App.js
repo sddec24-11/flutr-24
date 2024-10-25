@@ -27,20 +27,20 @@ export default function App() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const apiFetched = useRef(false);
-  // "http://206.81.3.155:8282/api/orgs/list"
+
   useEffect(() => {
     const fetchData = async () => {
       try{
-        const response = await fetch("https://3600aebd-7e20-4f96-ad57-ee19fbe31342.mock.pstmn.io/api/orgs/list", {
+        const response = await fetch("http://206.81.3.155:8282/api/orgs/all", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
         },
         });
         response.json().then(json => {
-          setLocations(json);
-          window.sessionStorage.setItem("locations", JSON.stringify(json));
-          console.log(json);
+          setLocations(json.payload);
+          window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          console.log(json.payload);
         });
       } catch (error) {
         console.error("Failed to fetch locations:", error);
@@ -75,17 +75,17 @@ const AppRouter = ({locations}) => {
                 <Route path="/addrelease" element={<AddRelease/>} />
 
                 {locations.map((r, index) => (
-                    <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
+                    <Route path={"/" + r.subdomain} element={<LocationHome data={r.houseID}/>} key={index}/>
                 ))}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.path + "/stats"} element={<Stats data={r} />} key={`${index} stat`}/>
+                    return<Route path={"/" + r.subdomain + "/stats"} element={<Stats data={r.houseID} />} key={`${index} stat`}/>
                 })}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
+                    return<Route path={"/" + r.subdomain + "/gallery"} element={<Gallery data={r.houseID} />} key={`${index} gallery`}/>
                 })}
-                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0]} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0]} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0].houseID} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0].houseID} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseID} kioskMode={true}/>} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="masterbutterfly" element={<MasterButterfly/>}/>

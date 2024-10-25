@@ -87,11 +87,14 @@ export default function Landing({data}){
                             <Row xs={1} sm={2} md={2} lg={3} >
                                 {data.map((r, index) => {
                                     console.log(`${r.name}`)
+                                    if(r.name !== null){
                                         if(r.name.toLowerCase().includes(searchInput.toLowerCase())){
-                                            return(
-                                                <Location_card location={r} index={index}/>
-                                            )
+                                        return(
+                                            <Location_card location={r} index={index}/>
+                                        )
                                     }
+                                    }
+                                    
                                 })}
                             </Row>
                         {/* </div> */}

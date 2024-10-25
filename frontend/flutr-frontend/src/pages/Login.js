@@ -42,9 +42,9 @@ export default function Login(){
                 window.sessionStorage.setItem("authorized", true);
                 window.sessionStorage.setItem("houseID", jose.decodeJwt(message.payload).houseId);
                 window.sessionStorage.setItem("authorizationLevel", jose.decodeJwt(message.payload).role);
-                window.sessionStorage.setItem("subdomain", jose.decodeJwt(message.payload).sub);
+                window.sessionStorage.setItem("subdomain", jose.decodeJwt(message.payload).subdomain);
                 window.sessionStorage.setItem("test","test")
-                document.location.href = `/${jose.decodeJwt(message.payload).sub}`;
+                document.location.href = `/${jose.decodeJwt(message.payload).subdomain}`;
             }
             else{
                 setError(message.error);
