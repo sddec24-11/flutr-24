@@ -63,6 +63,20 @@ public class OrgService {
         }
     }
 
+    private String getCurrentSubdomain() {
+        final String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            try {
+                return jwtUtil.extractSubdomain(jwt);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to extract subdomain from JWT", e);
+            }
+        } else {
+            throw new SecurityException("No JWT token found in request headers");
+        }
+    }
+
     public String createOrg(Org org) {
 
         if (org.getSubdomain() == null || org.getSubdomain().isEmpty()) {
@@ -178,6 +192,7 @@ public class OrgService {
     public OrgInfo getOrgInfo(String houseId) {
         MongoTemplate mongoTemplate = getMongoTemplate();
         OrgInfo orgInfo = mongoTemplate.findById(houseId, OrgInfo.class, "org_info");
+        System.out.println(getCurrentSubdomain());
         if (orgInfo == null) {
             throw new IllegalArgumentException("Organization with ID: " + houseId + " not found.");
         }
