@@ -33,6 +33,10 @@ public class JwtUtil {
         return extractClaim(token, claims -> claims.get("houseId", String.class));
     }
 
+    public String extractSubdomain(String token) {
+        return extractClaim(token, claims -> claims.get("subdomain", String.class));
+    }
+
     public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
