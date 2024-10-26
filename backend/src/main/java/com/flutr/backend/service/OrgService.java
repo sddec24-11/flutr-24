@@ -24,8 +24,6 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -188,7 +186,7 @@ public class OrgService {
         try{
             if (logoFile != null && !logoFile.isEmpty()) {
                 String logoKey = houseId + "/" + houseId + "_logo." + getFileExtension(logoFile.getOriginalFilename());
-                String logoUrl = storageService.uploadFile(bucketName, logoKey, convertMultiPartToFile(logoFile));
+                String logoUrl = storageService.uploadFile(bucketName, logoKey, logoFile);
                 existingOrgInfo.setLogoUrl(logoUrl);
                 if (existingOrg != null) {
                     existingOrg.setLogo(logoUrl);
@@ -202,7 +200,7 @@ public class OrgService {
         
             if (facilityImageFile != null && !facilityImageFile.isEmpty()) {
                 String facilityKey = houseId + "/" + houseId + "_facilityImg." + getFileExtension(facilityImageFile.getOriginalFilename());
-                String facilityUrl = storageService.uploadFile(bucketName, facilityKey, convertMultiPartToFile(facilityImageFile));
+                String facilityUrl = storageService.uploadFile(bucketName, facilityKey, facilityImageFile);
                 existingOrgInfo.setFacilityImgUrl(facilityUrl);
                 if (existingOrg != null) {
                     existingOrg.setFacilityImage(facilityUrl);
@@ -277,11 +275,4 @@ public class OrgService {
         }
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
 }
