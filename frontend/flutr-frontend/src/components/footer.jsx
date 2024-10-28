@@ -61,10 +61,10 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
     if(location != null){
       // setPickColor(location.color);
       return (
-        <div style={{height: "50px", backgroundColor: location.colorScheme.primary, margin: 'auto'}}>
+        <div style={{height: "50px", backgroundColor: location.colors[0], margin: 'auto'}}>
           <Container className="socialHolder" style={{height: "95%", margin: 'auto'}}>
             <Row style={{height: "95%", paddingTop: '5px'}}>
-              {location.socialMedia.instagram != "" && 
+              {location.socials.instagramActive && 
               <Col onClick={handleInsta} >
                 <div style={{textAlign: 'center'}}>
                   <svg style={{margin: 'auto'}} xmlns="http://www.w3.org/2000/svg" height="40" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
@@ -72,7 +72,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
                   </svg>
                 </div>
               </Col>}
-              {location.socialMedia.facebook != "" && 
+              {location.socials.facebookActive && 
               <Col onClick={handleFacebook}>
                 <div style={{textAlign: 'center'}}>
                   <svg xmlns="http://www.w3.org/2000/svg" height="40" fill="currentColor" class="bi bi-facebook" viewBox="0 0 16 16">
@@ -80,7 +80,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
                   </svg>
                 </div>
               </Col>}
-              {location.socialMedia.x != "" && 
+              {location.socials.twitterActive && 
               <Col onClick={handleX}>
                 <div style={{textAlign: 'center'}}>
                   <svg xmlns="http://www.w3.org/2000/svg" height="40" fill="currentColor" class="bi bi-twitter-x" viewBox="0 0 16 16">
@@ -88,7 +88,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
                   </svg>
                 </div>
               </Col>}
-              {location.socialMedia.youtube != "" && 
+              {location.socials.youtubeActive&& 
               <Col onClick={handleYouTube}>
                 <div style={{textAlign: 'center'}}>
                   <svg xmlns="http://www.w3.org/2000/svg" height="40" fill="currentColor" class="bi bi-youtube" viewBox="0 0 16 16">

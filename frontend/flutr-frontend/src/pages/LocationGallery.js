@@ -32,6 +32,7 @@ export default function Gallery({data}){
     const [searchInput, setSearchInput] = useState("");
     const [locationData, setLocationData] = useState({});
     const [butterflies, setButterflies] = useState([]);
+    const [loaded, setLoaded] = useState(false);
     useEffect(() => {
       const fetchData = async () => {
         try{
@@ -74,10 +75,10 @@ export default function Gallery({data}){
         e.preventDefault();
         setSearchInput(e.target.value);
       };
-
+    if(loaded){
     return(
         <div>
-            <Navbar location={data} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+            <Navbar location={locationData} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>Gallery</strong></h2>
             </div>
@@ -95,6 +96,9 @@ export default function Gallery({data}){
                     </Row>
                 </Container>
             </div>
+            <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
+
         </div>
     )
+                      }
 }

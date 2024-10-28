@@ -28,6 +28,11 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const apiFetched = useRef(false);
 
+  const filterData = (responseData) => {
+    responseData.payload.filter(item => {
+      return item.name !== null && item.subdomain !== null;
+    })
+  }
   useEffect(() => {
     const fetchData = async () => {
       try{
@@ -38,9 +43,11 @@ export default function App() {
         },
         });
         response.json().then(json => {
-          setLocations(json.payload);
-          window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          console.log("Its here: " + json);
+          setLocations(filterData(json));
+          window.sessionStorage.setItem("locations", JSON.stringify(filterData(json)));
           console.log(json.payload);
+          console.log(filterData(json));
         });
       } catch (error) {
         console.error("Failed to fetch locations:", error);
@@ -56,6 +63,7 @@ export default function App() {
       setLocations(JSON.parse(window.sessionStorage.getItem("locations")));
       setLoading(false);
     }
+
 }, []);
 
 const AppRouter = ({locations}) => {
@@ -74,18 +82,19 @@ const AppRouter = ({locations}) => {
                 <Route path="/editshipment" element={<EditShipment />} />
                 <Route path="/addrelease" element={<AddRelease/>} />
 
+              
                 {locations.map((r, index) => (
-                    <Route path={"/" + r.subdomain} element={<LocationHome data={r.houseID}/>} key={index}/>
+                    <Route path={"/" + r.subdomain} element={<LocationHome data={r.houseId}/>} key={index}/>
                 ))}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.subdomain + "/stats"} element={<Stats data={r.houseID} />} key={`${index} stat`}/>
+                    return<Route path={"/" + r.subdomain + "/stats"} element={<Stats data={r.houseId} />} key={`${index} stat`}/>
                 })}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.subdomain + "/gallery"} element={<Gallery data={r.houseID} />} key={`${index} gallery`}/>
+                    return<Route path={"/" + r.subdomain + "/gallery"} element={<Gallery data={r.houseId} />} key={`${index} gallery`}/>
                 })}
-                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0].houseID} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0].houseID} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseID} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0].houseId} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0].houseId} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseId} kioskMode={true}/>} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="masterbutterfly" element={<MasterButterfly/>}/>

@@ -33,7 +33,8 @@ export default function LocationHome({data, kioskMode}){
     const [yt, setYT] = useState(false);
 
     const [locationData, setLocationData] = useState({});
-    const [loading, setLoading] = useState(true);
+    const [loaded, setLoaded] = useState(false);
+    
     useEffect(() => {
         const fetchData = async () => {
           try{
@@ -45,11 +46,12 @@ export default function LocationHome({data, kioskMode}){
             });
             response.json().then(json => {
               setLocationData(json.payload);
+              setLoaded(true);
             });
           } catch (error) {
             console.error("Failed to fetch location:", error);
           } finally {
-            setLoading(false);
+            
           }
           
         };
@@ -77,14 +79,16 @@ export default function LocationHome({data, kioskMode}){
   const handleFB = () => setFB(true);
   const handleX = () => setX(true);
   const handleYT = () => setYT(true);
+  if(loaded){
     return(
+        
         <div style={{backgroundColor: locationData.colors[2]}}>
             <PageTitle title={locationData.name + "'s Home"}/>
             <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
             <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={locationData.socials.facebookLink}/>
             <SocialModal show={x} handleClose={handleClose} type={"X"} link={locationData.socials.twitterLink}/>
             <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={locationData.socials.youtubeLink}/>
-            <Navbar location={data} kioskMode={kioskMode} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+            <Navbar location={locationData} kioskMode={kioskMode} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>{locationData.name}</strong></h2>
             </div>
@@ -117,4 +121,8 @@ export default function LocationHome({data, kioskMode}){
             <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
+                                }
+                                else{
+                                    return(<div>Loading location data...</div>)
+                                }
 }

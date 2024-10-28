@@ -17,9 +17,7 @@ function Navbar({location, kioskMode}) {
     const removeActive = () => {
       setIsActive(false)
     }
-    // const [pickColor, setPickColor] = useState("#dbeafe");
     if(location != null){
-      // setPickColor(location.color);
       var opener = '/';
       if(kioskMode){
         opener = '/kiosk/';
@@ -27,16 +25,16 @@ function Navbar({location, kioskMode}) {
       return (
         <div className="App">
           <header className="App-header">
-            <nav className={`${styles.navbar}`}style={{backgroundColor: location.color}}>
+            <nav className={`${styles.navbar}`}style={{backgroundColor: location.colors[0]}}>
               {}
               
-              <a href={opener + location.path} className={`${styles.logo}`}><img src={require(`../images/${location.logo}`)} alt={location.logo}/></a>
+              <a href={opener + location.website} className={`${styles.logo}`}><img src={location.logoUrl} alt={location.logoUrl}/></a>
               <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
                 <li onClick={removeActive}>
-                  <a href={opener + location.path + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
+                  <a href={opener + location.website + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
                 </li>
                 <li onClick={removeActive}>
-                  <a href={opener + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
+                  <a href={opener + location.website + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
                 </li>
 
                 {window.sessionStorage.getItem("authenticated") && 

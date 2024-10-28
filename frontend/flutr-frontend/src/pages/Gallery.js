@@ -3,7 +3,7 @@ import ButterflyCard from "../components/ButterflyCard";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Button from 'react-bootstrap/Button';
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/footer";
@@ -37,6 +37,47 @@ export default function Gallery({data, kioskMode}){
     const [searchInput, setSearchInput] = useState("");
     const [showExtras, setExtras] = useState(false);
 
+    const [locationData, setLocationData] = useState({});
+    // const [butterflies, setButterflies] = useState([]);
+    const [loaded, setLoaded] = useState(false);
+    useEffect(() => {
+      const fetchData = async () => {
+        try{
+          const response = await fetch(`http://206.81.3.155:8282/api/orgs/${data}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+          },
+          });
+          response.json().then(json => {
+            setLocationData(json.payload);
+            setLoaded(true);
+          });
+        } catch (error) {
+          console.error("Failed to fetch location:", error);
+        } finally {
+          
+        }
+        
+      };
+      const fetchButterflies = async () => {
+        try{
+          const response = await fetch("http://206.81.3.155:8282/api/butterflies/all", {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'applocation/json',
+            },
+          });
+          response.json().then(json => {
+            // setButterflies(json.payload);
+          })
+        } catch (error) {
+
+        }
+      };
+      fetchData();
+      fetchButterflies();
+  }, []);
 
     const handleChangeSearch = (e) => {
         e.preventDefault();
@@ -63,17 +104,19 @@ export default function Gallery({data, kioskMode}){
   const handleFB = () => setFB(true);
   const handleX = () => setX(true);
   const handleYT = () => setYT(true);
-
+  if(loaded){
     return(
-        <div style={{backgroundColor: data.colorScheme.background}}>
-            <PageTitle title={data.name + "'s Gallery"}/>
-            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
-            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
-            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
-            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
-            <Navbar location={data} authenticated={window.sessionStorage.getItem("authorizationLevel")} kioskMode={kioskMode}/>
+      <div style={{backgroundColor: "#00000000"}}>
+
+        {/* <div style={{backgroundColor: locationData.colors[2]}}> */}
+            <PageTitle title={locationData.name + "'s Gallery"}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={locationData.socials.facebookLink}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={locationData.socials.twitterLink}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={locationData.socials.youtubeLink}/>
+            <Navbar location={locationData} authenticated={window.sessionStorage.getItem("authorizationLevel")} kioskMode={kioskMode}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
-                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: data.colorScheme.primary}}><strong>Gallery</strong></h2>
+                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>Gallery</strong></h2>
             </div>
             <div style={{borderRadius: '15px', backgroundColor: '#FFFFFF', width: '86%', margin: 'auto', paddingTop: '16px', marginBottom: '16px', marginTop: '16px'}}>
                 <Container>
@@ -95,7 +138,8 @@ export default function Gallery({data, kioskMode}){
                     </Row>
                 </Container>
             </div>
-            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
+            <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
+                      }
 }
