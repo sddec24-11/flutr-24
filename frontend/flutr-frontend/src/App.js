@@ -35,6 +35,7 @@ export default function App() {
   }
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Trying fetch");
       try{
         const response = await fetch("http://206.81.3.155:8282/api/orgs/all", {
           method: 'GET',
@@ -43,16 +44,16 @@ export default function App() {
         },
         });
         response.json().then(json => {
-          console.log("Its here: " + json);
-          setLocations(filterData(json));
-          window.sessionStorage.setItem("locations", JSON.stringify(filterData(json)));
-          console.log(json.payload);
-          console.log(filterData(json));
+          console.log("Its here: " + JSON.stringify(json.payload));
+          window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          window.location.reload();
+          // window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          // setLocations(filterData(json));
+          // window.sessionStorage.setItem("locations", JSON.stringify(filterData(json)));
         });
       } catch (error) {
         console.error("Failed to fetch locations:", error);
       } finally {
-        setLoading(false);
       }
       
     };
