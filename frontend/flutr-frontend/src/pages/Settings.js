@@ -114,6 +114,7 @@ export default function Settings(){
 
 
     const handleSubmit = async () => {
+        console.log("Attempting PUT");
         try{
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
@@ -125,7 +126,7 @@ export default function Settings(){
                     houseId: window.sessionStorage.getItem('houseID'),
                     name: orgName,
                     address: orgAddress,
-                    website: orgWebsite,
+                    subdomain: orgWebsite,
                     logoUrl: "https://example.com/newlogo.png",
                     socials: {
                       "instagramActive":instaState,
@@ -139,8 +140,7 @@ export default function Settings(){
                     },
                     colors: [primaryColor, secondaryColor, backgroundColor],
                     otd: {
-                        active: botdState,
-                        buttID: ""
+                        active: botdState
                     },
                     news: {
                         active: newsState,
@@ -156,7 +156,7 @@ export default function Settings(){
                 alert("Butterfly House Successfully Updated!")
             }
             else{
-                
+                alert("Butterfly Not Successfully Updated");
             }
 
         } catch (error) {
