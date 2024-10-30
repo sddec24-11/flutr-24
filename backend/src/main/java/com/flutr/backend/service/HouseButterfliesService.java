@@ -21,9 +21,6 @@ import java.util.stream.Collectors;
 public class HouseButterfliesService {
 
     @Autowired
-    private MongoTemplate mongoTemplate;
-
-    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
