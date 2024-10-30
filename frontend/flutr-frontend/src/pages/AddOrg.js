@@ -52,13 +52,14 @@ export default function AddOrg(){
                         name: orgName,
                         address: orgAddress,
                         adminEmail: orgEmail,
-                        website: "default",
+                        subdomain: "default",
                     }),
                 });
                 const message = await response.json();
                 if(message.error == null){
                     if(message.success){
                         console.log("Success! " + message.payload);
+                        window.sessionStorage.removeItem("locations");
                         document.location.href = "/";
                     }
                 }

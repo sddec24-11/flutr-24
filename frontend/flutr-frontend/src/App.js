@@ -25,6 +25,8 @@ import Logout from "./pages/Logout.js";
 import MasterButterflyEdit from "./pages/MasterButterflyEdit.js";
 import MasterButterflyList from "./pages/MasterButterflyList.js";
 import ButterflyGuestView from "./pages/ButterflyGuestView.js";
+import EditSupplier from "./pages/EditSuppliers.js";
+import AddSupplier from "./pages/AddSuppliers.js";
 
 export default function App() {
   const [locations, setLocations] = useState([]);
@@ -107,6 +109,9 @@ const AppRouter = ({locations}) => {
                 <Route path="/masterbutterfly/list" element={<MasterButterflyList/>}/>
                 <Route path="/edit/butterfly" element={<EditButterflies/>}/>
                 <Route path="/addOrg" element={<AddOrg/>}/>
+                <Route path="/edit/suppliers" element={<EditSupplier/>}/>
+                <Route path="/add/suppliers" element={<AddSupplier/>}/>
+
             </Routes>
         </BrowserRouter>
   );

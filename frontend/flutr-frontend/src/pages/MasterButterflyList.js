@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/footer";
 import SocialModal from "../components/SocialModal";
-import {Link} from "react-router-dom"
+import {Link} from "react-router-dom";
 
 const butterflies = [
     {

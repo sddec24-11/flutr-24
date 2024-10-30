@@ -8,6 +8,7 @@ import Container from 'react-bootstrap/Container';
 import "../styles/settingsStyles.css";
 import Checkbox from "../components/Checkbox";
 import Modal from 'react-bootstrap/Modal';
+import {Link} from "react-router-dom"
 
 export default function Settings(){
     const [logo, setLogo] = useState();
@@ -21,75 +22,9 @@ export default function Settings(){
         setFacilityImage(URL.createObjectURL(e.target.files[0]));
     }
     const [suppliers, setSuppliers] = useState([]);
+    const [accounts, setAccounts] = useState([]);
 
-    function SupplierPopup({toEdit, show, handleClose}){
-        const [editing, setEditing] = useState(false);
-        const [verb, setVerb] = useState("Add");
-        const [pathEnd, setPath] = useState("add");
-        const [apiVerb, setAPIVerb] = useState('POST');
-        if(toEdit !== null){
-            setEditing(true);
-            setVerb("Edit");
-            setPath("edit");
-            setAPIVerb("PUT");
-        }
-        const [id, setId] = useState((toEdit !== null) ? "" : toEdit.id);
-        const [abbreviation, setAbbreviation] = useState((toEdit !== null) ? "true" : "false");
-        const [fullName, setFullName] = useState((toEdit !== null) ? "" : toEdit.fullName);
-        const [active, setActive] = useState((toEdit !== null) ? true : toEdit.active);
 
-        const handleName = (e) => {
-            setFullName(e.target.value);
-        }
-        const handleAbrev =(e) => {
-            setAbbreviation(e.target.value);
-        }
-        const handleActive = (e) => {
-            setActive(e.taget.value);
-        }
-
-        const handleSubmit = async () => {
-            try{
-                const response = await fetch(`http://206.81.3.155:8282/api/suppliers/${pathEnd}`, {
-                    method: apiVerb,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': window.sessionStorage.getItem("accessKey"),
-                    },
-                    body: JSON.stringify({
-                        fullName: fullName,
-                        active: active,
-                        abbreviation: abbreviation,
-                        id: (editing ? id : undefined)
-                    })
-                })
-            } catch(error){
-                console.log('Failed to fetch', error);
-            }
-        }
-        return(
-            <div>
-                <Modal show={show} onHide={handleClose}>
-                    <Modal.Header closeButton>
-                        <Modal.Title>{verb} a supplier.</Modal.Title>
-                    </Modal.Header>
-                    <Modal.Body>
-                        <h4>Full Name:</h4>
-                        <input value={fullName} onChange={handleName}></input>
-                        <h4>Abbreviation:</h4>
-                        <input value={abbreviation} onChange={handleAbrev}></input>
-                        <h4>Active:</h4>
-                        <input value={active} onChange={handleActive} type="checkbox"></input>
-
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <Button variant="secondary" onClick={handleClose}>Cancel</Button>
-                        <Button onClick={handleSubmit}>Submit</Button>
-                    </Modal.Footer>
-                </Modal>
-            </div>
-        )
-    }
 
     useEffect(() => {
         if(window.sessionStorage.getItem("authorizationLevel") !== "ADMIN"){
@@ -110,6 +45,23 @@ export default function Settings(){
             response.json().then(json => {
                 console.log(json.payload);
                 setSuppliers(json.payload);
+            })
+        }
+        fetchData();
+    }, [])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("http://206.81.3.155:8282/api/users/all", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey")
+                }
+            });
+            response.json().then(json => {
+                console.log(json.payload);
+                setAccounts(json.payload);
             })
         }
         fetchData();
@@ -296,7 +248,42 @@ export default function Settings(){
         setNewsContent(e.target.value);
     }
 
-    
+    const handleNewSupplier = (e) => {
+        e.preventDefault();
+        window.location.href = "/add/suppliers";
+    }
+    const handleNewEmployee = (e) => {
+        e.preventDefault();
+        window.location.href = "/add/employee";
+    }
+
+    const [username, setUsername] = useState("");
+    const handleUsername = (e) => {
+        setUsername(e.target.value);
+    }
+
+    const handleEmployeeAdd = async () => {
+        try{
+            const response = await fetch('http://206.81.3.155:8282/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                },
+                body: JSON.stringify({
+                    username: username,
+                    role: "EMPLOYEE"
+                })
+            })
+            response.json().then(json => {
+                if(json.success){
+                    window.location.reload();
+                }
+            });
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
 
     return (
         <div>
@@ -399,7 +386,30 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 4 &&
-                    <div></div>}
+                    <div id="employeeList">
+                    <Container style={{width: '100%'}}>
+                        <Row xs={6}>
+                            <Col xs={4}><strong>Username</strong></Col>
+                            <Col xs={3}><strong>Role</strong></Col>
+                            <Col xs={2}><strong>Active?</strong></Col>
+                            <Col xs={2}><strong>Organization</strong></Col>
+                            <Col xs={1}></Col>
+                        </Row>
+                        {accounts.map((r) => {
+                            return(
+                                <Row style={{border: '1px solid #000000'}}>
+                                    <Col xs={4}><h4>{r.username}</h4></Col>
+                                    <Col xs={3}><h4>{r.role}</h4></Col>
+                                    <Col xs={2}><h4>{r.active}</h4></Col>
+                                    <Col xs={2}><h4>{r.houseId}</h4></Col>
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
+                                </Row>
+                            )
+                        })}
+                    </Container>
+                    <input value={username} onChange={handleUsername}></input>
+                    <button onClick={handleEmployeeAdd}>Add New Employee</button>
+            </div>}
                 {activeTab === 5 &&
                 <div id="supplierList">
                     <Container style={{width: '100%'}}>
@@ -415,11 +425,12 @@ export default function Settings(){
                                     <Col xs={6}><h4>{r.fullName}</h4></Col>
                                     <Col xs={3}><h4>{r.abbreviation}</h4></Col>
                                     <Col xs={2}><h4>{r.active}</h4></Col>
-                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}>edit</Col>
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
                                 </Row>
                             )
                         })}
                     </Container>
+                    <button onClick={handleNewSupplier}>Add New Supplier</button>
             </div>}
                 {outerTab === 1 &&
                 <div className="bottomButtons">
@@ -430,6 +441,7 @@ export default function Settings(){
                 
                 
             </div>
+            
         </div>
     )
 }
