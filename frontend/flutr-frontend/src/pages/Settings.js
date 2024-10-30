@@ -116,40 +116,42 @@ export default function Settings(){
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
+            const formData = new FormData();
+            formData.append("orgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
+            name: orgName,
+            address: orgAddress,
+            website: orgWebsite,
+            logoUrl: "https://example.com/newlogo.png",
+            socials: {
+              "instagramActive":instaState,
+              "instagramLink": orgInsta,
+              "facebookActive": faceState,
+              "facebookLink": orgFaceBook,
+              "twitterActive": xState,
+              "twitterLink": orgX,
+              "youtubeActive": ytState,
+              "youtubeLink": orgYouTube,
+            },
+            colors: [primaryColor, secondaryColor, backgroundColor],
+            otd: {
+                active: botdState
+            },
+            news: {
+                active: newsState,
+                newsContent: newsContent
+            },
+            timezone: "CST",
+            subheading: "",
+            statsActive: statsState}));
+            const data = new URLSearchParams(formData);
+            // formData.append("logoFile", logo);
+            // formData.append("facilityImageFile", facilityImage);
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': window.sessionStorage.getItem('accessKey')
                 },
-                body: JSON.stringify({
-                    houseId: window.sessionStorage.getItem('houseID'),
-                    name: orgName,
-                    address: orgAddress,
-                    subdomain: orgWebsite,
-                    logoUrl: "https://example.com/newlogo.png",
-                    socials: {
-                      "instagramActive":instaState,
-                      "instagramLink": orgInsta,
-                      "facebookActive": faceState,
-                      "facebookLink": orgFaceBook,
-                      "twitterActive": xState,
-                      "twitterLink": orgX,
-                      "youtubeActive": ytState,
-                      "youtubeLink": orgYouTube,
-                    },
-                    colors: [primaryColor, secondaryColor, backgroundColor],
-                    otd: {
-                        active: botdState
-                    },
-                    news: {
-                        active: newsState,
-                        newsContent: newsContent
-                    },
-                    timezone: "CST",
-                    subheading: "",
-                    statsActive: statsState
-                  }),
+                body: formData,
             });
             const message = await response.json();
             if(message.success){

@@ -30,7 +30,7 @@ const butterflies = [
   },
 ];
 
-export default function EditButterflies({ isMasterUser }) {
+export default function EditButterflies() {
   const [changeList, setChangeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [editPoints, setEditPoints] = useState(butterflies.map(() => -1));

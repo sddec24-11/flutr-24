@@ -13,7 +13,7 @@ import Shipments from './pages/Shipments.js';
 import AddShipment from './pages/AddShipment.js';
 import EditShipment from './pages/EditShipment.js'
 import AddRelease from './pages/AddRelease.js';
-import MasterButterfly from "./pages/MasterButterfly.js";
+import MasterButterflyCreate from "./pages/MasterButterflyCreate.js";
 import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
 import ChangePassword from "./pages/ChangePassword.js";
@@ -22,6 +22,8 @@ import { RotatingLines } from "react-loader-spinner";
 
 import React, {useState, useEffect, useRef, useMemo} from "react";
 import Logout from "./pages/Logout.js";
+import MasterButterflyEdit from "./pages/MasterButterflyEdit.js";
+import MasterButterflyList from "./pages/MasterButterflyList.js";
 
 export default function App() {
   const [locations, setLocations] = useState([]);
@@ -98,7 +100,9 @@ const AppRouter = ({locations}) => {
                 <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseId} kioskMode={true}/>} />
                 <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
-                <Route path="masterbutterfly" element={<MasterButterfly/>}/>
+                <Route path="/masterbutterfly/create" element={<MasterButterflyCreate/>}/>
+                <Route path="/masterbutterfly/edit" element={<MasterButterflyEdit/>}/>
+                <Route path="/masterbutterfly/list" element={<MasterButterflyList/>}/>
                 <Route path="/edit/butterfly" element={<EditButterflies/>}/>
                 <Route path="/addOrg" element={<AddOrg/>}/>
             </Routes>
