@@ -91,7 +91,7 @@ useEffect(() => {
                             butterfly={r}
                             index={index}
                             handleUpdate={handleUpdate}
-                            // commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
+                            commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
                             lifespan={editPoints[index] !== -1 ? changeList[editPoints[index]].lifespan : r.lifespan}
                           />
                         ))}

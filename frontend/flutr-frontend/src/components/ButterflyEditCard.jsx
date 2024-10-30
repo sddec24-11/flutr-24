@@ -7,7 +7,7 @@ export default function ButterflyEditCard({
   index,
   handleUpdate,
   commonName,
-  lifespan,
+  lifespan
 }) {
   const [common, setCommon] = useState(commonName);
   const [life, setLifespan] = useState(lifespan);
@@ -43,8 +43,8 @@ export default function ButterflyEditCard({
         />
         <Card.Body>
           <Card.Title style={{ alignContent: "center" }}>{butterfly.buttId}</Card.Title>
-          {/* <Card.Text>Common name:</Card.Text>
-          <input value={common} onChange={handleCommonChange} /> */}
+          <Card.Text>Common name:</Card.Text>
+          <input value={common} onChange={handleCommonChange} />
           <Card.Text>Lifespan (days)</Card.Text>
           <input value={life} onChange={handleLifespanChange} />
         </Card.Body>
