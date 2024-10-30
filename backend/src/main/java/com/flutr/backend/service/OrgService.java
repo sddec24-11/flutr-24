@@ -42,6 +42,9 @@ public class OrgService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
+    private LoggingService loggingService;
+
+    @Autowired
     private JwtUtil jwtUtil;
 
     @Autowired
@@ -171,50 +174,50 @@ public class OrgService {
     }
 
     public OrgInfo editOrg(OrgInfo updatedOrgInfo, MultipartFile logoFile, MultipartFile facilityImageFile) {
+        loggingService.log("EDIT_ORG", "START", "Attempting to update Org with ID: " + updatedOrgInfo.getHouseId());
         MongoTemplate mongoTemplate = getMongoTemplate();
         MongoTemplate masterMongoTemplate = new MongoTemplate(MongoClients.create(), "Master_DB"); 
         String bucketName = "flutr-org-images"; 
-
+    
         OrgInfo existingOrgInfo = mongoTemplate.findById(updatedOrgInfo.getHouseId(), OrgInfo.class, "org_info");
         if (existingOrgInfo == null) {
+            loggingService.log("EDIT_ORG", "ERROR", "Organization with ID: " + updatedOrgInfo.getHouseId() + " not found in org_info.");
             throw new IllegalArgumentException("Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
         }
-
-        String houseId = updatedOrgInfo.getHouseId();
+    
         Org existingOrg = masterMongoTemplate.findById(updatedOrgInfo.getHouseId(), Org.class, "orgs");
-        
-        try{
+        if (existingOrg == null) {
+            loggingService.log("EDIT_ORG", "ERROR", "Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
+            throw new IllegalArgumentException("Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
+        }
+    
+        try {
             if (logoFile != null && !logoFile.isEmpty()) {
-                String logoKey = houseId + "/" + houseId + "_logo." + getFileExtension(logoFile.getOriginalFilename());
+                String logoKey = updatedOrgInfo.getHouseId() + "/" + updatedOrgInfo.getHouseId() + "_logo." + getFileExtension(logoFile.getOriginalFilename());
+                loggingService.log("EDIT_ORG", "UPLOAD", "Uploading logo file for Org: " + updatedOrgInfo.getHouseId());
                 String logoUrl = storageService.uploadFile(bucketName, logoKey, logoFile);
                 existingOrgInfo.setLogoUrl(logoUrl);
-                if (existingOrg != null) {
-                    existingOrg.setLogo(logoUrl);
-                }
+                existingOrg.setLogo(logoUrl);
             } else {
                 existingOrgInfo.setLogoUrl(updatedOrgInfo.getLogoUrl());
-                if (existingOrg != null) {
-                    existingOrg.setLogo(updatedOrgInfo.getLogoUrl());
-                }
+                existingOrg.setLogo(updatedOrgInfo.getLogoUrl());
             }
-        
+    
             if (facilityImageFile != null && !facilityImageFile.isEmpty()) {
-                String facilityKey = houseId + "/" + houseId + "_facilityImg." + getFileExtension(facilityImageFile.getOriginalFilename());
+                String facilityKey = updatedOrgInfo.getHouseId() + "/" + updatedOrgInfo.getHouseId() + "_facilityImg." + getFileExtension(facilityImageFile.getOriginalFilename());
+                loggingService.log("EDIT_ORG", "UPLOAD", "Uploading facility image file for Org: " + updatedOrgInfo.getHouseId());
                 String facilityUrl = storageService.uploadFile(bucketName, facilityKey, facilityImageFile);
                 existingOrgInfo.setFacilityImgUrl(facilityUrl);
-                if (existingOrg != null) {
-                    existingOrg.setFacilityImage(facilityUrl);
-                }
+                existingOrg.setFacilityImage(facilityUrl);
             } else {
                 existingOrgInfo.setFacilityImgUrl(updatedOrgInfo.getFacilityImgUrl());
-                if (existingOrg != null) {
-                    existingOrg.setFacilityImage(updatedOrgInfo.getFacilityImgUrl());
-                }
+                existingOrg.setFacilityImage(updatedOrgInfo.getFacilityImgUrl());
             }
         } catch (IOException e) {
+            loggingService.log("EDIT_ORG", "FAILURE", "Failed to upload images: " + e.getMessage());
             throw new RuntimeException("Failed to convert multipart file to file: " + e.getMessage());
         }
-
+    
         existingOrgInfo.setName(updatedOrgInfo.getName());
         existingOrgInfo.setAddress(updatedOrgInfo.getAddress());
         existingOrgInfo.setColors(updatedOrgInfo.getColors());
@@ -225,17 +228,18 @@ public class OrgService {
         existingOrgInfo.setNews(updatedOrgInfo.getNews());
         existingOrgInfo.setStatsActive(updatedOrgInfo.getStatsActive());
         existingOrgInfo.setTimezone(updatedOrgInfo.getTimezone());
-
+    
+        loggingService.log("EDIT_ORG", "SAVE", "Saving updated OrgInfo to org_info collection.");
         mongoTemplate.save(existingOrgInfo, "org_info");
 
         if (existingOrg != null) {
             existingOrg.setName(updatedOrgInfo.getName());
             existingOrg.setAddress(updatedOrgInfo.getAddress());
             existingOrg.setSubdomain(updatedOrgInfo.getWebsite());
+            loggingService.log("EDIT_ORG", "SAVE", "Saving updated Org to orgs in Master_DB.");
             masterMongoTemplate.save(existingOrg, "orgs");
-        } else {
-            throw new IllegalArgumentException("Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
         }
+        
 
         return existingOrgInfo;
     }
