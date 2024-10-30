@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import com.flutr.backend.dto.houseButterflies.ButterflyDetailsDTO;
@@ -94,9 +95,10 @@ public class HouseButterfliesService {
         if (butterfly == null) {
             throw new IllegalArgumentException("Butterfly with buttId: " + buttId + " not found in house ID: " + getCurrentHouseId());
         }
-        butterfly.setCommonName(newCommonName);
-        butterfly.setLifespan(newLifespan);
-        mongoTemplate.save(butterfly, getCurrentHouseId() + "_DB.house_butterflies");
+        Update update = new Update();
+        update.set("commonName", newCommonName);
+        update.set("lifespan", newLifespan);
+        houseTemplate.updateFirst(query, update, HouseButterflies.class, "house_butterflies");
         loggingService.log("EDIT_BUTTERFLY", "SUCCESS", "Butterfly edited successfully with ID: " + buttId);
     }
 }
