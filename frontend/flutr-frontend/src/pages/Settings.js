@@ -189,9 +189,9 @@ export default function Settings(){
             timezone: "CST",
             subheading: "",
             statsActive: statsState}));
+            formData.append("logoFile", logo);
+            formData.append("facilityImageFile", facilityImage);
             const data = new URLSearchParams(formData);
-            // formData.append("logoFile", logo);
-            // formData.append("facilityImageFile", facilityImage);
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
                 headers: {
