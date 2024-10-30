@@ -4,6 +4,7 @@ import com.flutr.backend.model.Butterfly;
 import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Org;
 import com.flutr.backend.model.OrgInfo;
+import com.flutr.backend.model.Supplier;
 import com.flutr.backend.model.User;
 import com.flutr.backend.model.UserRole;
 import com.flutr.backend.repository.OrgRepository;
@@ -13,6 +14,8 @@ import com.flutr.backend.util.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -123,6 +126,7 @@ public class OrgService {
         newOrgDatabase.createCollection("logging");
 
         MongoTemplate orgMongoTemplate = new MongoTemplate(mongoClient, org.getHouseId() + "_DB");
+        MongoTemplate reimanTemplate = new MongoTemplate(mongoClient, "reiman-gardens_DB");
         OrgInfo orgInfo = new OrgInfo(
             org.getHouseId(),
             org.getName(),
@@ -160,6 +164,13 @@ public class OrgService {
             orgMongoTemplate.insert(houseButterfly, "house_butterflies");
         });
 
+        List<Supplier> suppliers = reimanTemplate.findAll(Supplier.class, "suppliers");
+        suppliers.forEach(supplier -> {
+            Supplier newSupplier = new Supplier();
+            BeanUtils.copyProperties(supplier, newSupplier);
+            orgMongoTemplate.insert(newSupplier, "suppliers");
+        });
+
     }
 
     private void createInitialAdminUser(Org org) {
@@ -179,13 +190,15 @@ public class OrgService {
         MongoTemplate masterMongoTemplate = new MongoTemplate(MongoClients.create(), "Master_DB"); 
         String bucketName = "flutr-org-images"; 
     
-        OrgInfo existingOrgInfo = mongoTemplate.findById(updatedOrgInfo.getHouseId(), OrgInfo.class, "org_info");
+        Query orgInfoQuery = new Query(Criteria.where("houseId").is(updatedOrgInfo.getHouseId()));
+        OrgInfo existingOrgInfo = mongoTemplate.findOne(orgInfoQuery, OrgInfo.class, "org_info");
         if (existingOrgInfo == null) {
             loggingService.log("EDIT_ORG", "ERROR", "Organization with ID: " + updatedOrgInfo.getHouseId() + " not found in org_info.");
             throw new IllegalArgumentException("Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
         }
-    
-        Org existingOrg = masterMongoTemplate.findById(updatedOrgInfo.getHouseId(), Org.class, "orgs");
+
+        Query orgQuery = new Query(Criteria.where("houseId").is(updatedOrgInfo.getHouseId()));
+        Org existingOrg = masterMongoTemplate.findOne(orgQuery, Org.class, "orgs");
         if (existingOrg == null) {
             loggingService.log("EDIT_ORG", "ERROR", "Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
             throw new IllegalArgumentException("Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
@@ -232,15 +245,14 @@ public class OrgService {
         loggingService.log("EDIT_ORG", "SAVE", "Saving updated OrgInfo to org_info collection.");
         mongoTemplate.save(existingOrgInfo, "org_info");
 
-        if (existingOrg != null) {
-            existingOrg.setName(updatedOrgInfo.getName());
-            existingOrg.setAddress(updatedOrgInfo.getAddress());
-            existingOrg.setSubdomain(updatedOrgInfo.getWebsite());
-            loggingService.log("EDIT_ORG", "SAVE", "Saving updated Org to orgs in Master_DB.");
-            masterMongoTemplate.save(existingOrg, "orgs");
-        }
         
-
+        existingOrg.setName(updatedOrgInfo.getName());
+        existingOrg.setAddress(updatedOrgInfo.getAddress());
+        existingOrg.setSubdomain(updatedOrgInfo.getWebsite());
+        loggingService.log("EDIT_ORG", "SAVE", "Saving updated Org to orgs in Master_DB.");
+        masterMongoTemplate.save(existingOrg, "orgs");
+        
+        
         return existingOrgInfo;
     }
 

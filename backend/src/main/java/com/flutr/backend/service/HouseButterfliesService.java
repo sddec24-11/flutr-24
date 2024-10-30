@@ -2,15 +2,19 @@ package com.flutr.backend.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
+import com.flutr.backend.dto.houseButterflies.ButterflyDetailsDTO;
 import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.util.JwtUtil;
+import com.mongodb.client.MongoClients;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class HouseButterfliesService {
@@ -41,18 +45,46 @@ public class HouseButterfliesService {
         }
     }
 
-    public List<HouseButterflies> getAllHouseButterflies() {
-        return mongoTemplate.findAll(HouseButterflies.class, getCurrentHouseId() + "_DB.house_butterflies");
+    private MongoTemplate getHouseMongoTemplate(String houseId) {
+        try {
+            return new MongoTemplate(MongoClients.create(), houseId + "_DB");
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid house ID or database connection issue: " + houseId);
+        }
     }
 
-    public List<HouseButterflies> getButterflyDetails() {
+    public List<HouseButterflies> getAllHouseButterflies(String houseId) {
+        MongoTemplate houseTemplate = getHouseMongoTemplate(houseId);
+        List<HouseButterflies> result = houseTemplate.findAll(HouseButterflies.class, "house_butterflies");
+        if (result.isEmpty()) {
+            throw new IllegalStateException("No butterflies found for house ID: " + houseId);
+        }
+        return result;
+    }
+
+    public List<ButterflyDetailsDTO> getButterflyDetails(String houseId) {
+        MongoTemplate houseTemplate = getHouseMongoTemplate(houseId);
         Query query = new Query();
         query.fields().include("buttId").include("commonName").include("imgWingsOpen").include("lifespan");
-        return mongoTemplate.find(query, HouseButterflies.class, getCurrentHouseId() + "_DB.house_butterflies");
+        List<HouseButterflies> butterflies = houseTemplate.find(query, HouseButterflies.class, "house_butterflies");
+
+        if (butterflies.isEmpty()) {
+            throw new IllegalStateException("No butterfly details found for house ID: " + houseId);
+        }
+
+        return butterflies.stream()
+            .map(b -> new ButterflyDetailsDTO(b.getButtId(), b.getCommonName(), b.getImgWingsOpen(), b.getLifespan()))
+            .collect(Collectors.toList());
     }
 
-    public HouseButterflies getFullButterflyDetails(String buttId) {
-        return mongoTemplate.findById(buttId, HouseButterflies.class, getCurrentHouseId() + "_DB.house_butterflies");
+    public HouseButterflies getFullButterflyDetails(String houseId, String buttId) {
+        MongoTemplate houseTemplate = getHouseMongoTemplate(houseId);
+        Query query = new Query(Criteria.where("buttId").is(buttId));
+        HouseButterflies butterfly = houseTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
+        if (butterfly == null) {
+            throw new IllegalArgumentException("Butterfly with buttId: " + buttId + " not found in house ID: " + houseId);
+        }
+        return butterfly;
     }
 
     public void editHouseButterfly(String buttId, String newCommonName, int newLifespan) {

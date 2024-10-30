@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flutr.backend.dto.Response;
+import com.flutr.backend.dto.houseButterflies.ButterflyDetailsDTO;
 import com.flutr.backend.dto.houseButterflies.EditHouseButterflyRequest;
 import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.service.HouseButterfliesService;
@@ -25,34 +26,34 @@ public class HouseButterfliesController {
     @Autowired
     private HouseButterfliesService houseButterfliesService;
 
-    @GetMapping("/all")
-    public ResponseEntity<Response<List<HouseButterflies>>> getAllButterflies() {
+    @GetMapping("/all/{houseId}")
+    public ResponseEntity<Response<List<HouseButterflies>>> getAllButterflies(@PathVariable String houseId) {
         try {
-            List<HouseButterflies> butterflies = houseButterfliesService.getAllHouseButterflies();
+            List<HouseButterflies> butterflies = houseButterfliesService.getAllHouseButterflies(houseId);
             return ResponseEntity.ok(new Response<>(true, butterflies, null));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, e.getMessage())));
         }
     }
 
     // Only names, lifespan, image
-    @GetMapping("/details")
-    public ResponseEntity<Response<List<HouseButterflies>>> getButterflyDetails() {
+    @GetMapping("/details/{houseId}")
+    public ResponseEntity<Response<List<ButterflyDetailsDTO>>> getButterflyDetails(@PathVariable String houseId) {
         try {
-            List<HouseButterflies> butterflyDetails = houseButterfliesService.getButterflyDetails();
-            return ResponseEntity.ok(new Response<>(true, butterflyDetails, null));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        List<ButterflyDetailsDTO> butterflyDetails = houseButterfliesService.getButterflyDetails(houseId);
+        return ResponseEntity.ok(new Response<>(true, butterflyDetails, null));
+    } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, e.getMessage())));
         }
     }
 
-    @GetMapping("/fullDetails/{buttId}")
-    public ResponseEntity<Response<HouseButterflies>> getFullButterflyDetails(@PathVariable String buttId) {
+    @GetMapping("/fullDetails/{houseId}/{buttId}")
+    public ResponseEntity<Response<HouseButterflies>> getFullButterflyDetails(@PathVariable String houseId, @PathVariable String buttId) {
         try {
-            HouseButterflies butterfly = houseButterfliesService.getFullButterflyDetails(buttId);
+            HouseButterflies butterfly = houseButterfliesService.getFullButterflyDetails(houseId, buttId);
             return ResponseEntity.ok(new Response<>(true, butterfly, null));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+            return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, e.getMessage())));
         }
     }
 
@@ -67,7 +68,7 @@ public class HouseButterfliesController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, e.getMessage())));
         }
     }
     
