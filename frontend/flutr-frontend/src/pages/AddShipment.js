@@ -10,37 +10,85 @@ export default function AddShipment() {
             alert("Sorry, you cant view this page.");
             document.location.href = '/login';
         }
-    });
+    }, []);
+
+    const isUserAuthorized = () => {
+        const accessKey = window.sessionStorage.getItem("accessKey");
+        return accessKey && accessKey.trim() !== "";
+    };
+
     const NotificationModal = ({ isVisible, onClose }) => {
         if (!isVisible) return null;
-        const handleAnotherShipment = () => {
-            onClose();
-            console.log('new shipment');
-            window.location.href = "/addshipment";
+    
+        const handleAddShipment = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = "/addshipment";
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
         };
     
         const handleReturnHome = () => {
-            onClose();
-            console.log('return home');
-            window.location.href = '/';
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
         };
+    
         return (
             <div className='notification-modal'>
                 <div className='modal-content'>
                     <h2>Successfully submitted!</h2>
-                    <p>Would you like to do another shipment or return home?</p>
-                    <button onClick={handleAnotherShipment}>Another Shipment</button>
+                    <p>Would you like to add another shipment or return home?</p>
+                    <button onClick={handleAddShipment}>Add Another Shipment</button>
                     <button onClick={handleReturnHome}>Return Home</button>
                 </div>
             </div>
         );
-    }
+    };
+
+    const CancelConfirmationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleConfirmCancel = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Are you sure you want to cancel?</h2>
+                    <p>All unsaved changes will be lost.</p>
+                    <button onClick={onClose}>Go Back</button>
+                    <button onClick={handleConfirmCancel}>Confirm Cancel</button>
+                </div>
+            </div>
+        );
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setIsCancelModalVisible(false);
+    };
+    
     
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [suppliers, setSuppliers] = useState([]);
     const [butterflyOptions, setButterflyOptions] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
     
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
@@ -48,10 +96,9 @@ export default function AddShipment() {
 
     //set supplier dropdown
     useEffect(() => {
-        let attempts = 0;
         const maxRetries = 3;
     
-        const fetchOptions = async () => {
+        const fetchOptions = async (retries = maxRetries) => {
             try {
                 const response = await fetch("/api/suppliers/view/active", {
                     method: 'GET',
@@ -66,29 +113,30 @@ export default function AddShipment() {
                 if (message.error == null) {
                     setSuppliers(message.payload);
                 } else {
-                    console.log(message.error);
+                    console.error("Error from API response:", message.error);
+                    setError("Failed to load suppliers.");
                 }
             } catch (error) {
-                attempts++;
-                if (attempts < maxRetries) {
-                    console.log(`Retry attempt ${attempts}`);
-                    fetchOptions();
+                console.error("Fetch attempt failed with error:", error.message);
+    
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchOptions(retries - 1), 1000); // Retry with delay
                 } else {
-                    setError('Failed to load suppliers after multiple attempts.');
-                    console.error('Failed to load suppliers:', error);
+                    setError("Failed to load suppliers after multiple attempts.");
+                    console.error("Failed to load suppliers after retries:", error);
                 }
             }
         };
     
         fetchOptions();
     }, []);
-
+    
     //set butterfly dropdown
     useEffect(() => {
-        let attempts = 0;
         const maxRetries = 3;
-
-        const fetchOptions = async () => {
+    
+        const fetchOptions = async (retries = maxRetries) => {
             try {
                 const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
                     method: 'GET',
@@ -102,24 +150,25 @@ export default function AddShipment() {
                 if (message.error == null) {
                     setButterflyOptions(message.payload);
                 } else {
-                    console.log(message.error);
+                    console.error("API Error:", message.error);
+                    setError("Failed to load butterfly options.");
                 }
             } catch (error) {
-                attempts++;
-                if (attempts < maxRetries) {
-                    console.log(`Retry attempt ${attempts}`);
-                    fetchOptions();
+                console.error("Fetch attempt failed with error:", error.message);
+    
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchOptions(retries - 1), 1000); // Retry with delay
                 } else {
-                    setError('Failed to load butterflies after multiple attempts.');
-                    console.error('Failed to load butterflies:', error);
+                    setError("Failed to load butterflies after multiple attempts.");
+                    console.error("Failed to load butterflies after retries:", error);
                 }
             }
         };
     
         fetchOptions();
-    }, []);   
-    
-
+    }, []);
+       
     //create new empty butterfly obj and add to list of butterflies in shipment
     const addButterfly = (speciesIn) => {
         const exists = data.some(butterfly => butterfly.buttId === speciesIn);
@@ -215,16 +264,15 @@ export default function AddShipment() {
         const arrivalDate = arriveDateInputRef.current?.value;
         const supplier = supplierInputRef.current?.value;
     
-        console.log(data);
-    
         if (!shipDate || !arrivalDate || supplier === 'true' || data.length === 0) {
             alert("Please fill in all required fields: shipment date, arrival date, supplier, and at least one butterfly");
             return;
         }
     
-        let retries = 3;
+        const maxRetries = 3;
+        let attempts = 0;
     
-        while (retries > 0) {
+        const submitData = async () => {
             try {
                 const response = await fetch("/api/shipments/add", {
                     method: 'POST',
@@ -242,32 +290,34 @@ export default function AddShipment() {
     
                 const message = await response.json();
     
-                if (message.error == null) {
-                    console.log(message);
+                if (!message.error) {
+                    console.log("Submission successful:", message);
                     setIsModalVisible(true);
-                    return; // Exit after successful submission
                 } else {
+                    console.error("API Error:", message.error);
                     setError(message.error);
-                    return; // Exit on error message
                 }
             } catch (error) {
-                console.log('Failed to fetch', error);
-                retries -= 1; // Decrease the retry count
-                if (retries === 0) {
-                    alert('Failed to submit after 3 attempts. Please try again later.');
+                attempts++;
+                console.error(`Attempt ${attempts} failed:`, error.message);
+    
+                if (attempts < maxRetries) {
+                    console.log(`Retrying submission... Attempts left: ${maxRetries - attempts}`);
+                    setTimeout(submitData, 1000); // Retry with a delay
+                } else {
+                    alert("Failed to submit after multiple attempts. Please try again later.");
+                    setError("Submission failed after multiple attempts.");
                 }
             }
-        }
+        };
+    
+        submitData();
     };
-
-    //TODO: return user to home page?
+    
+    //return user to home page?
     const handleCancel = () => {
-
+        setIsCancelModalVisible(true);
     }
-
-    const closeModal = () => {
-        setIsModalVisible(false);
-    };
 
     return (
         <div class="main-container">
@@ -380,6 +430,8 @@ export default function AddShipment() {
             </div>
 
             <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
+            <CancelConfirmationModal 
+                isVisible={isCancelModalVisible} onClose={closeModal} />
             <Footer />
         </div>
     );

@@ -5,22 +5,84 @@ import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 import { useLocation } from "react-router-dom";
 
-const NotificationModal = ({ isVisible, onClose }) => {
-    if (!isVisible) return null;
-
-    return (
-        <div className='notification-modal'>
-            <div className='modal-content'>
-                <h2>Successfully submitted!</h2>
-                <p>Would you like to add another release or return home?</p>
-                <button onClick={() => { onClose(); window.location.href = "/shipments"; }}>Add Another Release</button>
-                <button onClick={() => { onClose(); window.location.href = '/'; }}>Return Home</button>
-            </div>
-        </div>
-    );
-};
 
 export default function AddRelease(){
+    useEffect(() => {
+        if(!window.sessionStorage.getItem("authorized")){
+            alert("Sorry, you cant view this page.");
+            document.location.href = '/login';
+        }
+    }, []);
+    
+    const isUserAuthorized = () => {
+        const accessKey = window.sessionStorage.getItem("accessKey");
+        return accessKey && accessKey.trim() !== "";
+    };
+    
+    const NotificationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleAddShipment = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = "/shipments";
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        const handleReturnHome = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Successfully submitted!</h2>
+                    <p>Would you like to add another release or return home?</p>
+                    <button onClick={handleAddShipment}>Add Another Release</button>
+                    <button onClick={handleReturnHome}>Return Home</button>
+                </div>
+            </div>
+        );
+    };
+    
+    const CancelConfirmationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleConfirmCancel = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Are you sure you want to cancel?</h2>
+                    <p>All unsaved changes will be lost.</p>
+                    <button onClick={onClose}>Go Back</button>
+                    <button onClick={handleConfirmCancel}>Confirm Cancel</button>
+                </div>
+            </div>
+        );
+    };
+    
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setIsCancelModalVisible(false);
+    };
 
     const today = new Date().toLocaleDateString();
     const location = useLocation();
@@ -35,6 +97,7 @@ export default function AddRelease(){
 
     const [error, setError] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
     const [activeTab, setActiveTab] = useState('table1');
 
     const releaseDateInputRef = useRef(null);   
@@ -165,17 +228,9 @@ export default function AddRelease(){
         }
     };
 
-    const closeModal = () => setIsModalVisible(false);
-
-    // const submit = () => {
-    //     const newShipment = {
-    //         id: 40,
-    //         numberReleased: releaseDateInputRef.current.value,
-    //         butterflyDetail: data,
-    //     };
-    //     console.log(newShipment);
-    // };
-
+    const handleCancel = () => {
+        setIsCancelModalVisible(true);
+    }
 
     const renderTable1 = () => (
         <table className="add-table" style={{borderTopLeftRadius: '0px'}}>
@@ -291,11 +346,12 @@ export default function AddRelease(){
             </div>
 
             <div class="submit-cancel-buttons">
-                <button type="button" class="btn cancel-btn">Cancel</button>
+                <button type="button" class="btn cancel-btn" onClick={handleCancel}>Cancel</button>
                 <button type="submit" class="btn submit-btn" onClick={handleSubmit}>Submit</button>
             </div>
             
             <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
+            <CancelConfirmationModal isVisible={isCancelModalVisible} onClose={closeModal} />
             <Footer />
         </div>
     );

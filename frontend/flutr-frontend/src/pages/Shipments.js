@@ -12,50 +12,52 @@ export default function Shipments() {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 8;
 
-    // Function to fetch shipments
-    const fetchShipments = async (retries = 3) => {
-        try {
-            const response = await fetch("/api/shipments/view/all", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey")
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const message = await response.json();
-            if (message.error) {
-                throw new Error(message.error);
-            } else {
-                setShipmentList(message.payload);
-            }
-        } catch (error) {
-            if (retries > 0) {
-                console.log(`Retrying... Attempts left: ${retries}`);
-                await fetchShipments(retries - 1); // Retry
-            } else {
-                setError('Failed to load shipments: ' + error.message);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-  
     useEffect(() => {
         if(!window.sessionStorage.getItem("authorized")){
             alert("Sorry, you cant view this page.");
             document.location.href = '/login';
         }
-    });
+    }, []);
 
-    // Effect to fetch shipments on mount
+    // Function to fetch shipments
     useEffect(() => {
+        const maxRetries = 3;
+
+        const fetchShipments = async (retries = maxRetries) => {
+            try {
+                const response = await fetch("/api/shipments/view/all", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    }
+                });
+
+                const message = await response.json();
+
+                if (message.error == null) {
+                    setShipmentList(message.payload.reverse());
+                    setLoading(false);
+                } else {
+                    console.error("Fetch attempt failed with error: ", error.message);
+                    setError("Failed to load shipments.");
+                }
+            } catch (error) {
+                console.error("Fetch attempt failed with error:", error.message);
+
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchShipments(retries - 1), 1000);
+                } else {
+                    setError('Failed to load shipments after multiple attempts.');
+                    console.error("Failed to load shipments after retries:", error);
+                    setLoading(false);
+                }
+            }
+        };
+
         fetchShipments();
-    }, [])
+    }, []);
 
     const totalPages = Math.ceil(shipmentList.length / rowsPerPage);
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -105,7 +107,7 @@ export default function Shipments() {
                             </tr>
                         </thead>
                         <tbody>
-                            {currentShipments.slice().reverse().map((shipment) => (
+                            {currentShipments.map((shipment) => (
                                 <tr key={shipment.shipmentId}>
                                     <td>{formatDate(shipment.shipmentDate)}</td>
                                     <td>{formatDate(shipment.arrivalDate)}</td>
