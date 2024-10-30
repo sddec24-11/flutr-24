@@ -88,9 +88,11 @@ public class HouseButterfliesService {
     }
 
     public void editHouseButterfly(String buttId, String newCommonName, int newLifespan) {
-        HouseButterflies butterfly = mongoTemplate.findById(buttId, HouseButterflies.class, getCurrentHouseId() + "_DB.house_butterflies");
+        MongoTemplate houseTemplate = getHouseMongoTemplate(getCurrentHouseId());
+        Query query = new Query(Criteria.where("buttId").is(buttId));
+        HouseButterflies butterfly = houseTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
         if (butterfly == null) {
-            throw new IllegalArgumentException("Butterfly not found with ID: " + buttId);
+            throw new IllegalArgumentException("Butterfly with buttId: " + buttId + " not found in house ID: " + getCurrentHouseId());
         }
         butterfly.setCommonName(newCommonName);
         butterfly.setLifespan(newLifespan);
