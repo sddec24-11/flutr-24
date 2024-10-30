@@ -13,7 +13,7 @@ const NotificationModal = ({ isVisible, onClose }) => {
             <div className='modal-content'>
                 <h2>Successfully submitted!</h2>
                 <p>Would you like to add another release or return home?</p>
-                <button onClick={() => { onClose(); window.location.href = "/addrelease"; }}>Edit Another Shipment</button>
+                <button onClick={() => { onClose(); window.location.href = "/shipments"; }}>Add Another Release</button>
                 <button onClick={() => { onClose(); window.location.href = '/'; }}>Return Home</button>
             </div>
         </div>
@@ -118,6 +118,51 @@ export default function AddRelease(){
             }
             return item;
         }));
+    };
+
+    //create json obj of current shipment and submit to backend
+    const handleSubmit = async () => {
+
+        const toSend = butterflyUpdates.map(update => {
+            const {totalRemaining, runningRemaining, ...filteredUpdate } = update;
+            return filteredUpdate;
+        });
+
+        let retries = 3;
+    
+        while (retries > 0) {
+            try {
+                let id = shipmentData.shipmentId;
+                const response = await fetch("api/releases/release", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    },
+                    body: JSON.stringify({
+                        shipmentId: shipmentData.shipmentId,
+                        butterflyUpdates: toSend
+                    })
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    console.log(message);
+                    setIsModalVisible(true);
+                    return; // Exit after successful submission
+                } else {
+                    setError(message.error);
+                    return; // Exit on error message
+                }
+            } catch (error) {
+                console.log('Failed to fetch', error);
+                retries -= 1; // Decrease the retry count
+                if (retries === 0) {
+                    alert('Failed to submit after 3 attempts. Please try again later.');
+                }
+            }
+        }
     };
 
     const closeModal = () => setIsModalVisible(false);
@@ -247,11 +292,10 @@ export default function AddRelease(){
 
             <div class="submit-cancel-buttons">
                 <button type="button" class="btn cancel-btn">Cancel</button>
-                <button type="submit" class="btn submit-btn">
-                            Submit
-                </button>
+                <button type="submit" class="btn submit-btn" onClick={handleSubmit}>Submit</button>
             </div>
             
+            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
             <Footer />
         </div>
     );
