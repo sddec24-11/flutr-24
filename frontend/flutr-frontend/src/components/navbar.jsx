@@ -39,7 +39,7 @@ function Navbar({location, kioskMode}) {
                   <a href={opener + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
                 </li>
 
-                {window.sessionStorage.getItem("authenticated") && 
+                {window.sessionStorage.getItem("authorized") && 
               <NavDropdown
                   id="nav-dropdown"
                   title="Administration"
@@ -86,7 +86,7 @@ function Navbar({location, kioskMode}) {
               <li onClick={removeActive}>
                 <a href='/masteredit' className={`${styles.navLink}`}>Master Edit</a>
               </li>
-              {window.sessionStorage.getItem("authenticated") && 
+              {window.sessionStorage.getItem("authorized") && 
               <NavDropdown
                   id="nav-dropdown"
                   title="Administration"

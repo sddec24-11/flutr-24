@@ -39,24 +39,12 @@ export default function AddShipment() {
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [suppliers, setSuppliers] = useState([]);
+    const [butterflyOptions, setButterflyOptions] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
     const supplierInputRef = useRef(null);
-
-    //TEMP
-    const butterflyOptions = [
-        {value: "Butterfly 1" },
-        {value: "Butterfly 2" },
-        {value: "Butterfly 3" },
-        {value: "Butterfly 4" },
-        {value: "Butterfly 5" },
-        {value: "Butterfly 6" },
-        {value: "Butterfly 7" },
-        {value: "Butterfly 8" },
-        {value: "Butterfly 9" },
-    ];
 
     //set supplier dropdown
     useEffect(() => {
@@ -95,9 +83,46 @@ export default function AddShipment() {
         fetchOptions();
     }, []);
 
+    //set butterfly dropdown
+    useEffect(() => {
+        let attempts = 0;
+        const maxRetries = 3;
+
+        const fetchOptions = async () => {
+            try {
+                const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    setButterflyOptions(message.payload);
+                } else {
+                    console.log(message.error);
+                }
+            } catch (error) {
+                attempts++;
+                if (attempts < maxRetries) {
+                    console.log(`Retry attempt ${attempts}`);
+                    fetchOptions();
+                } else {
+                    setError('Failed to load butterflies after multiple attempts.');
+                    console.error('Failed to load butterflies:', error);
+                }
+            }
+        };
+    
+        fetchOptions();
+    }, []);   
+    
+
     //create new empty butterfly obj and add to list of butterflies in shipment
     const addButterfly = (speciesIn) => {
-        const exists = data.some(butterfly => butterfly.species === speciesIn);
+        const exists = data.some(butterfly => butterfly.buttId === speciesIn);
         if (exists) {
             console.log(`Butterfly with species '${speciesIn}' already exists.`);
             return;
@@ -107,12 +132,13 @@ export default function AddShipment() {
             buttId: speciesIn,
             numberReceived: 0,
             numberReleased: 0,
+            poorEmergence: 0,
+            noEmergence: 0,
             emergedInTransit: 0,
             damaged: 0,
             diseased: 0,
             parasite: 0,
-            poorEmergence: 0,
-            totalRemaining: 0,
+            totalRemaining: 0
         };
 
         setData(prev => [...prev, newButterfly]);
@@ -275,11 +301,11 @@ export default function AddShipment() {
                     <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
-                            {butterflyOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.value}
-                                 </option>
-                        ))}
+                                {butterflyOptions.map((butterfly) => (
+                                    <option key={butterfly.buttId} value={butterfly.buttId}>
+                                        {butterfly.buttId}
+                                    </option>
+                                ))}
                     </select>
                 </div>
             </div>

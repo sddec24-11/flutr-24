@@ -39,9 +39,12 @@ export default function Login(){
             const message = await response.json();
             if(message.error == null){
                 window.sessionStorage.setItem("accessKey", "Bearer " + message.payload);
-                window.sessionStorage.setItem("authorizationLevel", true);
+                window.sessionStorage.setItem("authorized", true);
+                window.sessionStorage.setItem("houseID", jose.decodeJwt(message.payload).houseId);
+                window.sessionStorage.setItem("authorizationLevel", jose.decodeJwt(message.payload).role);
+                window.sessionStorage.setItem("subdomain", jose.decodeJwt(message.payload).subdomain);
                 window.sessionStorage.setItem("test","test")
-                document.location.href = "/";
+                document.location.href = `/${jose.decodeJwt(message.payload).subdomain}`;
             }
             else{
                 setError(message.error);

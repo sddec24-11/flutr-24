@@ -49,6 +49,10 @@
     border: none; 
 }
 
+.add-table td {
+    height: 80px;
+}
+
 .add-table tbody tr:nth-child(odd) {
     background-color: #FFFFFF;
 }

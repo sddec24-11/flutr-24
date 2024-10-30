@@ -33,25 +33,13 @@ export default function EditShipment() {
     });
 
     const [suppliers, setSuppliers] = useState([]);
+    const [butterflyOptions, setButterflyOptions] = useState([]);
     const [error, setError] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
     const supplierInputRef = useRef(null);
-
-        const butterflyOptions = [
-        {value: "Butterfly 1" },
-        {value: "Butterfly 2" },
-        {value: "Butterfly 3" },
-        {value: "Butterfly 4" },
-        {value: "Butterfly 5" },
-        {value: "Butterfly 6" },
-        {value: "Butterfly 7" },
-        {value: "Butterfly 8" },
-        {value: "Butterfly 9" },
-        {value: "testing very long butterfly species name" },
-    ];
 
     //set shipments upon mount
     useEffect(() => {
@@ -76,6 +64,42 @@ export default function EditShipment() {
     useEffect(() => {
         fetchSuppliers();
     }, []);
+
+    //set butterfly dropdown
+    useEffect(() => {
+        let attempts = 0;
+        const maxRetries = 3;
+
+        const fetchOptions = async () => {
+            try {
+                const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    setButterflyOptions(message.payload);
+                } else {
+                    console.log(message.error);
+                }
+            } catch (error) {
+                attempts++;
+                if (attempts < maxRetries) {
+                    console.log(`Retry attempt ${attempts}`);
+                    fetchOptions();
+                } else {
+                    setError('Failed to load butterflies after multiple attempts.');
+                    console.error('Failed to load butterflies:', error);
+                }
+            }
+        };
+    
+        fetchOptions();
+    }, []);  
 
     //fetch all active suppliers
     const fetchSuppliers = async (retries = 3) => {
@@ -122,12 +146,13 @@ export default function EditShipment() {
         buttId: species,
         numberReceived: 0,
         numberReleased: 0,
+        poorEmergence: 0,
+        noEmergence: 0,
         emergedInTransit: 0,
         damaged: 0,
         diseased: 0,
         parasite: 0,
-        poorEmergence: 0,
-        totalRemaining: 0,
+        totalRemaining: 0
     });
     
     //remove butterfly obj based on 
@@ -248,51 +273,6 @@ export default function EditShipment() {
 
     const closeModal = () => setIsModalVisible(false);
 
-    const handleKeyDown = (e, buttId, key) => {
-        if (e.key === "Enter") {
-            const newValue = e.target.value;
-    
-            // Validate that the value is a positive integer or empty
-            if (/^\d*$/.test(newValue)) {
-                const numericValue = newValue === '' ? '' : Number(newValue); // Convert to number if not empty
-    
-                // Update the specific item's value in the shipment data
-                setShipmentData(prev => ({
-                    ...prev,
-                    butterflyDetails: prev.butterflyDetails.map(item => {
-                        if (item.buttId === buttId) {
-                            if (key !== 'numberRecieved') {
-                                if (item.totalRemaining - numericValue < 0)
-                                {
-                                    return {
-                                        ...item,
-                                        [key]: item[key] = item.totalRemaining,
-                                        totalRemaining: 0
-                                    }
-                                }
-    
-                                if (item.totalRemaining - numericValue >= 0)
-                                {
-                                    return {
-                                        ...item,
-                                        [key]: numericValue,
-                                        totalRemaining: item.totalRemaining - numericValue
-                                    }
-                                }
-                            }
-                        }
-    
-                        return item; 
-                    })
-                }));
-    
-                // Optionally, clear input after Enter key press
-                e.target.value = numericValue;
-            }
-        }
-    };
-    
-
 
 return (
         <div class="main-container">
@@ -326,11 +306,11 @@ return (
                     <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
-                        {butterflyOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.value}
-                        </option>
-                        ))}
+                                {butterflyOptions.map((butterfly) => (
+                                    <option key={butterfly.buttId} value={butterfly.buttId}>
+                                        {butterfly.buttId}
+                                    </option>
+                                ))}
                     </select>
                 </div>
             </div>
@@ -359,13 +339,7 @@ return (
                                 {['numberReceived', 'numberReleased', 'poorEmergence', 'noEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
                                     <td key={key}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
-                                        <input 
-                                            type="text" 
-                                            className="value-box" 
-                                            value={item[key] === null ? '' : item[key]} 
-                                            onKeyDown={(e) => handleKeyDown(e, item.buttId, key)}
-                                            min="0" // Optional: set minimum value
-                                        />
+                                        <div className="value-box">{item[key]}</div>
                                             <div style={{ display: "flex", flexDirection: "column", padding: "10px 0px"}}>
                                                 <button style = {{marginBottom: "5px"}} onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
                                                 <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
