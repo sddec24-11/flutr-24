@@ -1,0 +1,33 @@
+.content{
+    width: 90%;
+    margin: auto;
+    border: 4px solid #8ABCD7;
+    border-radius: 0px 15px 15px 15px;
+}
+.tab-holder{
+    width: 90%;
+    margin: auto;
+}
+.tabs{
+    width: 50%;
+    display: table;
+
+}
+.tabButtons{
+    width: 20%;
+    height: 62px;
+    background-color: #8ABCD7;
+    border: 4px solid #8ABCD7;
+    border-radius: 10px 10px 0px 0px;
+    text-align: center;
+    color: white;
+    display: table-cell;
+}
+#info{
+    width: 65%;
+    margin: auto;
+}
+.bottomButtons{
+    width: 100%;
+    margin: auto;
+}

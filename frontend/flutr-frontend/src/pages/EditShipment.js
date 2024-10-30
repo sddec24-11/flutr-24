@@ -1,0 +1,339 @@
+import { useState, useEffect } from "react";
+import React, { useRef } from 'react';
+import Navbar from "../components/navbar";
+import Footer from "../components/footer";
+import "../styles/addShipmentStyles.css";
+import { useLocation } from "react-router-dom";
+
+const NotificationModal = ({ isVisible, onClose }) => {
+    if (!isVisible) return null;
+
+    return (
+        <div className='notification-modal'>
+            <div className='modal-content'>
+                <h2>Successfully submitted!</h2>
+                <p>Would you like to edit another shipment or return home?</p>
+                <button onClick={() => { onClose(); window.location.href = "/shipments"; }}>Edit Another Shipment</button>
+                <button onClick={() => { onClose(); window.location.href = '/'; }}>Return Home</button>
+            </div>
+        </div>
+    );
+};
+
+export default function EditShipment() {
+    const location = useLocation();
+    const shipment = location.state;
+
+    const [shipmentData, setShipmentData] = useState({
+        shipmentId: '',
+        shipmentDate: '',
+        arrivalDate: '',
+        abbreviation: '',
+        butterflyDetails: []
+    });
+
+    const [suppliers, setSuppliers] = useState([]);
+    const [error, setError] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const shipDateInputRef = useRef(null);
+    const arriveDateInputRef = useRef(null);
+    const supplierInputRef = useRef(null);
+
+        const butterflyOptions = [
+        {value: "Butterfly 1" },
+        {value: "Butterfly 2" },
+        {value: "Butterfly 3" },
+        {value: "Butterfly 4" },
+        {value: "Butterfly 5" },
+        {value: "Butterfly 6" },
+        {value: "Butterfly 7" },
+        {value: "Butterfly 8" },
+        {value: "Butterfly 9" },
+        {value: "testing very long butterfly species name" },
+    ];
+
+    //set shipments upon mount
+    useEffect(() => {
+        if (shipment) {
+            const formatDate = (dateString) => {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                return date.toISOString().split('T')[0];
+            };
+    
+            setShipmentData({
+                shipmentId: shipment.shipmentId,
+                shipmentDate: formatDate(shipment.shipmentDate),
+                arrivalDate: formatDate(shipment.arrivalDate),
+                abbreviation: shipment.abbreviation || '',
+                butterflyDetails: shipment.butterflyDetails || []
+            });
+        }
+    }, [shipment]);
+
+    //set suppliers upon mount
+    useEffect(() => {
+        fetchSuppliers();
+    }, []);
+
+    //fetch all active suppliers
+    const fetchSuppliers = async (retries = 3) => {
+        try {
+            const response = await fetch("/api/suppliers/view/active", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey")
+                }
+            });
+
+            if (!response.ok) throw new Error('Network response was not ok');
+
+            const message = await response.json();
+            if (message.error) throw new Error(message.error);
+
+            setSuppliers(message.payload);
+        } catch (error) {
+            if (retries > 0) {
+                console.log(`Retrying... Attempts left: ${retries}`);
+                fetchSuppliers(retries - 1); // Retry
+            } else {
+                setError('Failed to load suppliers: ' + error.message);
+            }
+        }
+    };
+
+    //add empty butterfly obj to butterfly details
+    const addButterfly = (species) => {
+        if (shipmentData.butterflyDetails.some(butterfly => butterfly.buttId === species)) {
+            console.log(`Butterfly with species '${species}' already exists.`);
+            return;
+        }
+        const newButterfly = createButterflyObject(species);
+        setShipmentData(prev => ({
+            ...prev,
+            butterflyDetails: [...prev.butterflyDetails, newButterfly]
+        }));
+    };
+
+    //create empty butterfly obj with species name
+    const createButterflyObject = (species) => ({
+        buttId: species,
+        numberReceived: 0,
+        numberReleased: 0,
+        emergedInTransit: 0,
+        damaged: 0,
+        diseased: 0,
+        parasite: 0,
+        poorEmergence: 0,
+        totalRemaining: 0,
+    });
+    
+    //remove butterfly obj based on 
+    const removeButterfly = (species) => {
+        setShipmentData(prev => ({
+            ...prev,
+            butterflyDetails: prev.butterflyDetails.filter(item => item.buttId !== species)
+        }));
+    };
+    
+    const updateButterflyValue = (buttId, key, increment) => {
+        setShipmentData(prev => ({
+            ...prev,
+            butterflyDetails: prev.butterflyDetails.map(item => {
+                if (item.buttId === buttId) {
+                    if (increment)
+                    {
+                        if (key !== 'numberReceived') {
+                            if (item.totalRemaining <= 0) {return item;}
+                            else {
+                                return {
+                                    ...item,
+                                    [key]: item[key] + 1,
+                                    totalRemaining: item.totalRemaining - 1
+                                }
+                            }
+                        } else {
+                            return {
+                                ...item,
+                                [key]: item[key] + 1,
+                                totalRemaining: item.totalRemaining + 1
+                            }
+                        }
+                    }
+                    else {
+                        if (item[key] <= 0) {return item;}
+                        if (key === 'numberReceived') {
+                            if (item.totalRemaining <= 0)
+                            {
+                                return item;
+                            }
+
+                            return {
+                                ...item,
+                                [key]: item[key] - 1,
+                                totalRemaining: item.totalRemaining - 1
+                            }
+                        }
+                        else {
+                            return {
+                                ...item,
+                                [key]: item[key] - 1,
+                                totalRemaining: item.totalRemaining + 1
+                            }
+                        }
+                    }
+                    
+                }
+                return item;
+            })
+        }))
+    };
+
+    //create json obj of current shipment and submit to backend
+    const handleSubmit = async () => {
+        const shipDate = shipDateInputRef.current?.value;
+        const arrivalDate = arriveDateInputRef.current?.value;
+        const supplier = supplierInputRef.current?.value;
+    
+        if (!shipDate || !arrivalDate || supplier === 'true' || shipmentData.butterflyDetails.length === 0) {
+            alert("Please fill in all required fields: shipment date, arrival date, supplier, and at least one butterfly");
+            return;
+        }
+    
+        let retries = 3;
+    
+        while (retries > 0) {
+            try {
+                let id = shipmentData.shipmentId;
+                const response = await fetch(`api/shipments/edit/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    },
+                    body: JSON.stringify({
+                        shipmentDate: shipDate,
+                        arrivalDate: arrivalDate,
+                        abbreviation: supplier,
+                        butterflyDetails: shipmentData.butterflyDetails
+                    })
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    console.log(message);
+                    setIsModalVisible(true);
+                    return; // Exit after successful submission
+                } else {
+                    setError(message.error);
+                    return; // Exit on error message
+                }
+            } catch (error) {
+                console.log('Failed to fetch', error);
+                retries -= 1; // Decrease the retry count
+                if (retries === 0) {
+                    alert('Failed to submit after 3 attempts. Please try again later.');
+                }
+            }
+        }
+    };
+
+    //TODO: return user to home page?
+    const handleCancel = () => {
+
+    }
+
+    const closeModal = () => setIsModalVisible(false);
+
+
+return (
+        <div class="main-container">
+            <Navbar />
+            <h1 className="add-shipments-header">Edit Database</h1>
+
+            <div class="border-all">
+                <div className="ship-info-input">
+                    <div class="input-group">
+                        <label for="shipdate">Shipment Date: </label>
+                        <input type="date" id="shipdate" ref={shipDateInputRef} value={shipmentData.shipmentDate} onChange={(e) => setShipmentData({ ...shipmentData, shipmentDate: e.target.value })} />
+                    </div>
+                    <div class="input-group">
+                        <label for="arrivedate">Arrival Date: </label>
+                        <input type="date" id="arrivedate" name="arrival-date" ref={arriveDateInputRef} value={shipmentData.arrivalDate} onChange={(e) => setShipmentData({ ...shipmentData, arrivalDate: e.target.value })} />
+                    </div>
+                    <div class="input-group">
+                        <label for="suppliers">Supplier: </label>
+                        <select id="suppliers" name="suppliers" ref={supplierInputRef} value={shipmentData.abbreviation} onChange={(e) => setShipmentData({ ...shipmentData, abbreviation: e.target.value })}>
+                                <option disabled selected value></option>
+                                {suppliers.map((supplier) => (
+                                    <option key={supplier.abbreviation} value={supplier.abbreviation}>
+                                        {supplier.abbreviation}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                </div>
+
+                <div class="butterfly">
+                    <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                            onChange={(e) => addButterfly(e.target.value)}>
+                        <option disabled selected value>Add Butterfly</option>
+                        {butterflyOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                                {option.value}
+                        </option>
+                        ))}
+                    </select>
+                </div>
+            </div>
+
+            <div className="add-shipments-table-container">
+                <table className="add-table">
+                    <thead>
+                        <tr>
+                            <th style={{width:'15%'}}>Species</th>
+                            <th>Received</th>
+                            <th>Released</th>
+                            <th>Poor Emergence</th>
+                            <th>Emerged in Transit</th>
+                            <th>Damaged in Transit</th>
+                            <th>Diseased</th>
+                            <th>Parasites</th>
+                            <th style={{width:'6%'}}>Total</th>
+                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {shipmentData.butterflyDetails.map(item => (
+                            <tr key={item.buttId}>
+                                <td>{item.buttId}</td>
+                                {['numberReceived', 'numberReleased', 'poorEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
+                                    <td key={key}>
+                                        <button onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
+                                        <div className="value-box">{item[key]}</div>
+                                        <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
+                                    </td>
+                                ))}
+                                <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>
+                                <td style={{ background: '#E4976C' }}>
+                                    <p style={{ color: '#E1EFFE', margin: "0" }} onClick={() => removeButterfly(item.buttId)}>remove</p>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            <div className="submit-cancel-buttons">
+                <button type="button" className="btn cancel-btn" onClick={closeModal}>Cancel</button>
+                <button type="button" className="btn submit-btn" onClick={handleSubmit}>Submit</button>
+            </div>
+
+            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />                
+            <Footer />
+        </div>
+    );
+}

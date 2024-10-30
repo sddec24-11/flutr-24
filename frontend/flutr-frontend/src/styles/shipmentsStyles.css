@@ -1,0 +1,103 @@
+.shipments-header{
+    color: #469FCE;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    font-size: 28px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+}
+
+.shipments-table-container{
+    width: 100%;
+    text-align: center;
+    min-height: 555px;
+    max-height: 555px;
+}
+
+.paging-table {
+    margin: auto;
+    width: 80%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 2px solid #469FCE;
+    border-radius: 10px;
+    line-height: 60px;
+    table-layout: fixed;
+}
+
+.paging-table thead{
+    color: #E1EFFE;
+    background-color: #469FCE;
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 65px;
+}
+
+.paging-table tbody {
+    color: #469FCE;
+    background-color: transparent;
+    font-size: 20px;
+    font-weight: 400;
+    border: none; 
+}
+
+.paging-table tbody tr:nth-child(odd) {
+    background-color: #FFFFFF;
+}
+
+.paging-table tbody tr:nth-child(even) {
+    background-color: #D1ECFB;
+}
+
+.paging-row {
+    text-align: center;
+    font-size: 20px;
+    padding-top: 2%;
+    padding-bottom: 2%;
+    width: 100%;
+}
+
+.paging-column {
+    float: left;
+    width: 43%;
+    height: 54.5px;
+}
+
+.paging-column span {
+    color: #469FCE;
+    line-height:54.5px;
+}
+
+.paging-column button {
+    background-color: #469FCE;
+    color: white;
+    border: 2px solid #469FCE;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-size: 23px;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    width: 30%;
+}
+
+.paging-column button:hover {
+    background-color: #D1ECFB;
+    border-color: #D1ECFB;
+}
+
+.paging-column button:disabled {
+    background-color: #D1ECFB;
+    border-color: #D1ECFB;
+    color: #FFFFFF;
+    cursor: not-allowed;
+}
+
+.paging-row:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
