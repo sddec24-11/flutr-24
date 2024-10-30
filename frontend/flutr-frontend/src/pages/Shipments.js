@@ -85,6 +85,7 @@ export default function Shipments() {
 
     return (
         <div class="main-container">
+            <Navbar />
             <h1 className="shipments-header">Shipments</h1>
 
             {loading ? (
@@ -100,14 +101,20 @@ export default function Shipments() {
                                 <th>Arrival Date</th>
                                 <th>Supplier</th>
                                 <th style={{ width: "100px" }}></th>
+                                <th style={{ width: "100px" }}></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {currentShipments.map((shipment) => (
+                            {currentShipments.slice().reverse().map((shipment) => (
                                 <tr key={shipment.shipmentId}>
                                     <td>{formatDate(shipment.shipmentDate)}</td>
                                     <td>{formatDate(shipment.arrivalDate)}</td>
                                     <td>{shipment.abbreviation}</td>
+                                    <td>
+                                        <Link to="/addrelease" state={shipment}>
+                                            <p style={{ backgroundColor: '#E4976C', color: "#E1EFFE", margin: "0" }}>release</p>
+                                        </Link>
+                                    </td>
                                     <td>
                                         <Link to="/editshipment" state={shipment}>
                                             <p style={{ backgroundColor: "#469FCE", color: "#E1EFFE", margin: "0" }}>edit</p>

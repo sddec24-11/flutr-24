@@ -117,7 +117,7 @@
     width:380px;
 }
 
-.ship-info-input label {
+.ship-info-input label, p {
     color: #469FCE;
     font-size: 20px;
     margin-bottom: 8px;
