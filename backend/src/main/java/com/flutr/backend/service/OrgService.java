@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.result.UpdateResult;
 
 import java.io.IOException;
 import java.util.List;
@@ -203,6 +205,8 @@ public class OrgService {
             loggingService.log("EDIT_ORG", "ERROR", "Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
             throw new IllegalArgumentException("Master DB Organization with ID: " + updatedOrgInfo.getHouseId() + " not found.");
         }
+
+        boolean subdomainUpdated = !existingOrg.getSubdomain().equals(updatedOrgInfo.getWebsite());
     
         try {
             if (logoFile != null && !logoFile.isEmpty()) {
@@ -252,6 +256,14 @@ public class OrgService {
         loggingService.log("EDIT_ORG", "SAVE", "Saving updated Org to orgs in Master_DB.");
         masterMongoTemplate.save(existingOrg, "orgs");
         
+        if (subdomainUpdated) {
+            Update update = new Update();
+            update.set("subdomain", updatedOrgInfo.getWebsite());
+            Query userUpdateQuery = new Query(Criteria.where("houseId").is(updatedOrgInfo.getHouseId()));
+            UpdateResult result = masterMongoTemplate.updateMulti(userUpdateQuery, update, User.class, "users");
+            loggingService.log("EDIT_ORG", "UPDATE_USERS", "Updated subdomain for users: " + result.getModifiedCount() + " users updated.");
+        }
+
         
         return existingOrgInfo;
     }
