@@ -52,7 +52,7 @@ export default function AddOrg(){
                         name: orgName,
                         address: orgAddress,
                         adminEmail: orgEmail,
-                        subdomain: "default",
+                        subdomain: orgSubdomain,
                     }),
                 });
                 const message = await response.json();
