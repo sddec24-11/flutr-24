@@ -60,7 +60,7 @@ public class OrgController {
         }
     }
 
-    @GetMapping("/view/{houseId}")
+    @GetMapping("/adminView/{houseId}")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Response<OrgInfo>> getOrgInfo(@PathVariable String houseId) {
         try {
@@ -85,7 +85,7 @@ public class OrgController {
         }
     }
 
-    @GetMapping("/{houseId}")
+    @GetMapping("/view/{houseId}")
     public ResponseEntity<Response<OrgInfo>> publicGetOrgInfo(@PathVariable String houseId) {
         try {
             OrgInfo orgInfo = orgService.publicGetOrgInfo(houseId);
