@@ -8,6 +8,8 @@ import Button from 'react-bootstrap/Button';
 import PageTitle from "../components/PageTitle";
 import Footer from "../components/footer";
 import SocialModal from "../components/SocialModal";
+import {Link} from "react-router-dom"
+
 
 
 const butterflies = [
@@ -43,7 +45,7 @@ export default function Gallery({data, kioskMode}){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`http://206.81.3.155:8282/api/orgs/${data}`, {
+          const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -62,14 +64,15 @@ export default function Gallery({data, kioskMode}){
       };
       const fetchButterflies = async () => {
         try{
-          const response = await fetch("http://206.81.3.155:8282/api/butterflies/all", {
+          const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
             },
           });
           response.json().then(json => {
-            // setButterflies(json.payload);
+            console.log(json.payload);
+            setButterflies(json.payload);
           })
         } catch (error) {
 
@@ -127,10 +130,10 @@ export default function Gallery({data, kioskMode}){
                     </Row>
                     <Row xs={1} sm={2} md={3} lg={4}>
                         {butterflies
-                        .filter((r) => r.sci_name.toLowerCase().includes(searchInput.toLowerCase()))
+                        .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
                         .map((r, index) => {
                             return(
-                                <ButterflyCard index={index} butterfly={r} />
+                                <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId}}><ButterflyCard index={index} butterfly={r} /></Link>
                             )
                         })}
                     </Row>

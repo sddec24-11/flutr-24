@@ -3,42 +3,39 @@ import ButterflyEditCard from "../components/ButterflyEditCard";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/esm/Button";
 
-const butterflies = [
-  {
-    id: 1,
-    sci_name: "Firsticus Oneth",
-    common_name: "The first one",
-    lifespan: 1,
-    image: "reiman-logo.png",
-  },
-  {
-    id: 3,
-    sci_name: "Triterfly",
-    common_name: "The third one",
-    lifespan: 3,
-    image: "reiman-logo.png",
-  },
-  {
-    id: 2,
-    sci_name: "Biterfly",
-    common_name: "The second one",
-    lifespan: 2,
-    image: "reiman-logo.png",
-  },
-];
 
 export default function EditButterflies() {
   const [changeList, setChangeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [butterflies, setButterflies] = useState([]);
   const [editPoints, setEditPoints] = useState(butterflies.map(() => -1));
   const [showExtras, setExtras] = useState(false);
 
   const toggleTools = () => {
     setExtras(!showExtras);
 }
+useEffect(() => {
+  const fetchButterflies = async () => {
+    try{
+      const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      response.json().then(json => {
+        console.log(json.payload);
+        setButterflies(json.payload);
+      })
+    } catch (error) {
+
+    }
+  };
+  fetchButterflies();
+}, []);
 
   // Updates the change list with new values when a butterfly is edited
   const handleUpdate = (index, updatedValues) => {
@@ -50,13 +47,13 @@ export default function EditButterflies() {
       // If not, add a new entry
       updatedEditPoints[index] = updatedChangeList.length;
       updatedChangeList.push({
-        id: butterflies[index].id,
+        id: butterflies[index].buttId,
         ...updatedValues,
       });
     } else {
       // If yes, update the existing entry
       updatedChangeList[editPoints[index]] = {
-        id: butterflies[index].id,
+        id: butterflies[index].buttId,
         ...updatedValues,
       };
     }
@@ -68,12 +65,6 @@ export default function EditButterflies() {
   const handleChangeSearch = (e) => {
     e.preventDefault();
     setSearchInput(e.target.value);
-  };
-
-  const handleAdd = (e) => {
-    e.preventDefault();
-    console.log("Redirect or open add butterfly form");
-    // Redirect To Add Butterfly Form
   };
 
   return (
@@ -93,14 +84,14 @@ export default function EditButterflies() {
                     </Row>
                     <Row xs={1} sm={2} md={2} lg={3}>
                       {butterflies
-                        .filter((r) => r.sci_name.toLowerCase().includes(searchInput.toLowerCase()))
+                        .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
                         .map((r, index) => (
                           <ButterflyEditCard
                             key={r.id}
                             butterfly={r}
                             index={index}
                             handleUpdate={handleUpdate}
-                            common_name={editPoints[index] !== -1 ? changeList[editPoints[index]].common_name : r.common_name}
+                            // commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
                             lifespan={editPoints[index] !== -1 ? changeList[editPoints[index]].lifespan : r.lifespan}
                           />
                         ))}

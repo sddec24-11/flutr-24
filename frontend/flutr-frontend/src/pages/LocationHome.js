@@ -33,12 +33,14 @@ export default function LocationHome({data, kioskMode}){
     const [yt, setYT] = useState(false);
 
     const [locationData, setLocationData] = useState({});
+    const [botdData, setBotdData] = useState({});
+    const [statData, setStats] = useState({});
     const [loaded, setLoaded] = useState(false);
     
     useEffect(() => {
         const fetchData = async () => {
           try{
-            const response = await fetch(`http://206.81.3.155:8282/api/orgs/${data}`, {
+            const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -51,11 +53,52 @@ export default function LocationHome({data, kioskMode}){
           } catch (error) {
             console.error("Failed to fetch location:", error);
           } finally {
-            
           }
           
         };
+        const fetchBOTD = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/botd/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setBotdData(json.payload);
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch botd:", error);
+            } finally {
+              
+            }
+            
+          };
+          const fetchStats = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setStats(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch stats:", error);
+            } finally {
+            }
+            
+          };
         fetchData();
+        fetchBOTD();
+        fetchStats();
     }, []);
 
     const handleStats = (e) => {
@@ -81,7 +124,6 @@ export default function LocationHome({data, kioskMode}){
   const handleYT = () => setYT(true);
   if(loaded){
     return(
-        
         <div style={{backgroundColor: locationData.colors[2]}}>
             <PageTitle title={locationData.name + "'s Home"}/>
             <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
@@ -104,9 +146,9 @@ export default function LocationHome({data, kioskMode}){
                                 <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
                                     <h3 style={{color: locationData.colors[0], paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
                                     <div style={{backgroundColor: locationData.colors[1], width: '75%', margin: 'auto'}}>
-                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{stats.butterflyCount}</h1>
+                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{statData.totalInFlight}</h1>
                                         <h4 style={{color: locationData.colors[0], fontSize: '28px'}}>butterflies in flight</h4>
-                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{stats.speciesCount}</h1>
+                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{statData.speciesInFlight}</h1>
                                         <h4 style={{color: locationData.colors[0], fontSize: '28px', paddingBottom: '10px'}}>species in flight</h4>
                                     </div>
                                     <div>

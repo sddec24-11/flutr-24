@@ -10,29 +10,51 @@ import Col from "react-bootstrap/esm/Col";
 
 export default function Stats({data, kioskMode}){
     const [locationData, setLocationData] = useState({});
+    const [statData, setStats] = useState({});
     const [loaded, setLoaded] = useState(false);
     
     useEffect(() => {
         const fetchData = async () => {
-          try{
-            const response = await fetch(`http://206.81.3.155:8282/api/orgs/${data}`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-            },
-            });
-            response.json().then(json => {
-              setLocationData(json.payload);
-              setLoaded(true);
-            });
-          } catch (error) {
-            console.error("Failed to fetch location:", error);
-          } finally {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                setLocationData(json.payload);
+                setLoaded(true);
+              });
+            } catch (error) {
+              console.error("Failed to fetch location:", error);
+            } finally {
+              
+            }
             
-          }
-          
-        };
+          };
+          const fetchStats = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setStats(json.payload);
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch stats:", error);
+            } finally {
+              
+            }
+            
+          };
         fetchData();
+        fetchStats();
     }, []);
     const [insta, setInsta] = useState(false);
     const [fb, setFB] = useState(false);
@@ -69,13 +91,13 @@ export default function Stats({data, kioskMode}){
                         <Row>
                             <Col>
                                 <div style={{width: '100%', margin: 'auto', textAlign: "center"}}>
-                                    <h1 style={{color: locationData.colors[0]}}>{stats.butterflyCount}</h1>
+                                    <h1 style={{color: locationData.colors[0]}}>{statData.totalInFlight}</h1>
                                     <h4 style={{color: locationData.colors[0]}}>butterflies in flight</h4>
                                 </div>
                             </Col>
                             <Col>
                                 <div style={{width: '100%', margin:'auto', textAlign: "center"}}>
-                                    <h1 style={{color: locationData.colors[0]}}>{stats.speciesCount}</h1>
+                                    <h1 style={{color: locationData.colors[0]}}>{statData.speciesInFlight}</h1>
                                     <h4 style={{color: locationData.colors[0]}}>species in flight</h4>
                                 </div>
                             </Col>

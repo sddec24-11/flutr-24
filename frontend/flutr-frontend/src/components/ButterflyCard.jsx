@@ -14,11 +14,11 @@ export default function ButterflyCard({butterfly, index}){
                 margin: "10px",
                 }}
             >
-                {/* <Card.Img
+                <Card.Img
                 variant="top"
                 style={{ width: "100%", padding: "0", borderRadius: "11px" }}
-                src={require(`../images/${butterfly.image}`)}
-                /> */}
+                src={butterfly.imgWingsOpen}
+                />
                 <Card.Body>
                 <Card.Title style={{ alignContent: "center" }}><i>{butterfly.buttId}</i></Card.Title>
                 <Card.Text><strong>{butterfly.commonName}</strong></Card.Text>
