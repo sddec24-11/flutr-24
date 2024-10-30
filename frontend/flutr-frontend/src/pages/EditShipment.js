@@ -248,6 +248,51 @@ export default function EditShipment() {
 
     const closeModal = () => setIsModalVisible(false);
 
+    const handleKeyDown = (e, buttId, key) => {
+        if (e.key === "Enter") {
+            const newValue = e.target.value;
+    
+            // Validate that the value is a positive integer or empty
+            if (/^\d*$/.test(newValue)) {
+                const numericValue = newValue === '' ? '' : Number(newValue); // Convert to number if not empty
+    
+                // Update the specific item's value in the shipment data
+                setShipmentData(prev => ({
+                    ...prev,
+                    butterflyDetails: prev.butterflyDetails.map(item => {
+                        if (item.buttId === buttId) {
+                            if (key !== 'numberRecieved') {
+                                if (item.totalRemaining - numericValue < 0)
+                                {
+                                    return {
+                                        ...item,
+                                        [key]: item[key] = item.totalRemaining,
+                                        totalRemaining: 0
+                                    }
+                                }
+    
+                                if (item.totalRemaining - numericValue >= 0)
+                                {
+                                    return {
+                                        ...item,
+                                        [key]: numericValue,
+                                        totalRemaining: item.totalRemaining - numericValue
+                                    }
+                                }
+                            }
+                        }
+    
+                        return item; 
+                    })
+                }));
+    
+                // Optionally, clear input after Enter key press
+                e.target.value = numericValue;
+            }
+        }
+    };
+    
+
 
 return (
         <div class="main-container">
@@ -298,23 +343,34 @@ return (
                             <th>Received</th>
                             <th>Released</th>
                             <th>Poor Emergence</th>
+                            <th>No Emergence</th>
                             <th>Emerged in Transit</th>
-                            <th>Damaged in Transit</th>
+                            <th>Damaged</th>
                             <th>Diseased</th>
-                            <th>Parasites</th>
-                            <th style={{width:'6%'}}>Total</th>
-                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
+                            <th>Parasite</th>
+                            <th style={{width:'6%'}}>Remaining</th>
+                            <th style={{width:'5%', background:'#E4976C', border:'none'}}></th>
                         </tr>
                     </thead>
                     <tbody>
                         {shipmentData.butterflyDetails.map(item => (
                             <tr key={item.buttId}>
                                 <td>{item.buttId}</td>
-                                {['numberReceived', 'numberReleased', 'poorEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
+                                {['numberReceived', 'numberReleased', 'poorEmergence', 'noEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
                                     <td key={key}>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
-                                        <div className="value-box">{item[key]}</div>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
+                                        <input 
+                                            type="text" 
+                                            className="value-box" 
+                                            value={item[key] === null ? '' : item[key]} 
+                                            onKeyDown={(e) => handleKeyDown(e, item.buttId, key)}
+                                            min="0" // Optional: set minimum value
+                                        />
+                                            <div style={{ display: "flex", flexDirection: "column", padding: "10px 0px"}}>
+                                                <button style = {{marginBottom: "5px"}} onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
+                                                <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
+                                            </div>
+                                        </div>
                                     </td>
                                 ))}
                                 <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>

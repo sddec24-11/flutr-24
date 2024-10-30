@@ -24,7 +24,6 @@
     border-spacing: 0;
     border: 2px solid #469FCE;
     border-radius: 10px;
-    line-height: 70px;
     table-layout: fixed;
 }
 
@@ -36,6 +35,10 @@
     top:0;
     z-index: 1;
     letter-spacing: 0.5px;
+}
+
+.add-table th {
+    height: 80px;
 }
 
 .add-table tbody {
@@ -87,15 +90,14 @@
     width: 51px;
     height: 55px;
     line-height: 45px;
-    align-items: center;
     border: 4px solid #8ABCD7;
     border-radius: 15px;
     margin: 0 10px;
     background-color: #F5F5F5;
     vertical-align: middle;
-  }
+}
 
-  .ship-info-input {
+.ship-info-input {
     display: flex;
     justify-content: space-between;
     gap: 20px;
@@ -237,5 +239,7 @@ button.tab-btn {
       transform: scale(1);
     }
   }
+
+  
   
 

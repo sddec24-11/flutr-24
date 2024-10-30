@@ -6,7 +6,7 @@ import "../styles/addShipmentStyles.css";
 
 export default function AddShipment() {
     useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
+        if(!window.sessionStorage.getItem("authorized")){
             alert("Sorry, you cant view this page.");
             document.location.href = '/login';
         }
@@ -60,29 +60,40 @@ export default function AddShipment() {
 
     //set supplier dropdown
     useEffect(() => {
+        let attempts = 0;
+        const maxRetries = 3;
+    
         const fetchOptions = async () => {
             try {
                 const response = await fetch("/api/suppliers/view/active", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : window.sessionStorage.getItem("accessKey")
+                        'Authorization': window.sessionStorage.getItem("accessKey")
                     }
                 });
+    
                 const message = await response.json();
-                if (message.error == null)
-                {
+    
+                if (message.error == null) {
                     setSuppliers(message.payload);
-                }
-                else {
+                } else {
                     console.log(message.error);
                 }
             } catch (error) {
-                setError('Failed to load suppliers: ', error);
+                attempts++;
+                if (attempts < maxRetries) {
+                    console.log(`Retry attempt ${attempts}`);
+                    fetchOptions();
+                } else {
+                    setError('Failed to load suppliers after multiple attempts.');
+                    console.error('Failed to load suppliers:', error);
+                }
             }
         };
-    fetchOptions();
-}, []);
+    
+        fetchOptions();
+    }, []);
 
     //create new empty butterfly obj and add to list of butterflies in shipment
     const addButterfly = (speciesIn) => {
