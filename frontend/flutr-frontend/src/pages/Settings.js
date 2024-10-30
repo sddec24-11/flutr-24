@@ -163,7 +163,7 @@ export default function Settings(){
         console.log("Attempting PUT");
         try{
             const formData = new FormData();
-            formData.append("orgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
+            formData.append("updatedOrgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
             name: orgName,
             address: orgAddress,
             website: orgWebsite,
@@ -195,9 +195,10 @@ export default function Settings(){
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
                 headers: {
+                    // 'Content-Type': 'application/x-www-form-urlformencoded',
                     'Authorization': window.sessionStorage.getItem('accessKey')
                 },
-                body: formData,
+                body: data,
             });
             const message = await response.json();
             if(message.success){
@@ -260,6 +261,34 @@ export default function Settings(){
     const [username, setUsername] = useState("");
     const handleUsername = (e) => {
         setUsername(e.target.value);
+    }
+    const handlePassword = async (username) => {
+        try{
+            console.log(username);
+
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
+    const handleDeactivate = async (username) => {
+        try{
+            const response = await fetch(`http://206.81.3.155:8282/api/users/deactivate/${username}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                }
+            })
+            response.json().then(json => {
+                if(json.success){
+                    // console.log(json.payload);
+                    window.location.reload();
+                }
+            })
+
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
     }
 
     const handleEmployeeAdd = async () => {
@@ -400,9 +429,10 @@ export default function Settings(){
                                 <Row style={{border: '1px solid #000000'}}>
                                     <Col xs={4}><h4>{r.username}</h4></Col>
                                     <Col xs={3}><h4>{r.role}</h4></Col>
-                                    <Col xs={2}><h4>{r.active}</h4></Col>
+                                    <Col xs={2}><h4 style={{color: (r.active) ? "#49eb34" : "#FF0000"}}>{(r.active) ? "Yes" : "No"}</h4></Col>
                                     <Col xs={2}><h4>{r.houseId}</h4></Col>
-                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
+                                    {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>
                                 </Row>
                             )
                         })}

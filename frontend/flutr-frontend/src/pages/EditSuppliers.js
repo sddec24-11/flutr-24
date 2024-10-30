@@ -2,7 +2,6 @@ import { Button } from "bootstrap"
 import Navbar from "../components/navbar"
 import Footer from "../components/footer";
 import React, { useState, useEffect } from 'react';
-import ColorPicker from "../components/ColorPick";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
@@ -40,6 +39,7 @@ export default function EditSupplier(){
 
     const handleSubmit = async () => {
         try{
+            console.log("Reporting it is : " + active);
             const response = await fetch('http://206.81.3.155:8282/api/suppliers/edit', {
                 method: 'PUT',
                 headers: {
@@ -48,7 +48,7 @@ export default function EditSupplier(){
                 },
                 body: JSON.stringify({
                     fullName: fullName,
-                    isActive: active,
+                    active: active,
                     newAbbreviation: abbreviation,
                     oldAbbreviation: toEdit.abbreviation
                 })
