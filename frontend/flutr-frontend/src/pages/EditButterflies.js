@@ -20,7 +20,7 @@ export default function EditButterflies() {
 useEffect(() => {
   const fetchButterflies = async () => {
     try{
-      const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
+      const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

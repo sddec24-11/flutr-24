@@ -26,7 +26,7 @@ export default function MasterButterflyEdit(){
           console.log(butterflyToEdit);
           console.log(encodeURIComponent(butterflyToEdit));
           try{
-            const response = await fetch(`/api/master/butterflyDetails/${encodeURIComponent(butterflyToEdit)}`,{
+            const response = await fetch(`http://206.81.3.155:8282/api/master/butterflyDetails/${encodeURIComponent(butterflyToEdit)}`,{
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -79,7 +79,7 @@ export default function MasterButterflyEdit(){
 
       const handleSubmit = async () => {
         try{
-            const response = await fetch("/api/master/editButterfly",{
+            const response = await fetch("http://206.81.3.155:8282/api/master/editButterfly",{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

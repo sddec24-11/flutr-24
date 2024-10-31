@@ -16,7 +16,7 @@ export default function Stats({data, kioskMode}){
     useEffect(() => {
         const fetchData = async () => {
             try{
-              const response = await fetch(`/api/orgs/view/${data}`, {
+              const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -35,7 +35,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchStats = async () => {
             try{
-              const response = await fetch(`/api/releases/inflight/${data}`, {
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
