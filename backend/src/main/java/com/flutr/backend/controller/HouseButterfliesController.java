@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 
 import com.flutr.backend.dto.Response;
 import com.flutr.backend.dto.houseButterflies.ButterflyDetailsDTO;
@@ -20,7 +19,6 @@ import com.flutr.backend.service.HouseButterfliesService;
 
 import java.util.List;
 
-@CrossOrigin(origins = {"http://206.81.3.155", "http://flutr.org"}, maxAge = 3600)
 @RestController
 @RequestMapping("/butterflies")
 public class HouseButterfliesController {
