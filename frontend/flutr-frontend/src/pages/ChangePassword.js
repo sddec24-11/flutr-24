@@ -30,7 +30,7 @@ export default function ChangePassword(){
     const handleSubmit = async () => {
         if(password === repeatPassword){
             try{
-                const response = await fetch("http://206.81.3.155/api/users/change-password", {
+                const response = await fetch("http://206.81.3.155:8282/api/users/change-password", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

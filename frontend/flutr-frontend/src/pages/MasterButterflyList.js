@@ -49,7 +49,7 @@ export default function MasterButterflyList(){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`http://206.81.3.155/api/master/allButterflies`, {
+          const response = await fetch(`http://206.81.3.155:8282/api/master/allButterflies`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
