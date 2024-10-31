@@ -36,7 +36,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/all", {
+            const response = await fetch("/api/suppliers/view/all", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("http://206.81.3.155:8282/api/users/all", {
+            const response = await fetch("/api/users/all", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("http://206.81.3.155:8282/api/orgs/view/" + window.sessionStorage.getItem("houseID"), {
+            const response = await fetch("/api/orgs/view/" + window.sessionStorage.getItem("houseID"), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -192,28 +192,21 @@ export default function Settings(){
             statsActive: statsState}));
             formdata.append("logoFile", logo);
             formdata.append("facilityImageFile", facilityImage);
-            const myHeaders = new Headers();
-            myHeaders.append("Authorization", window.sessionStorage.getItem('accessKey'));
+            
 
-            const requestOptions = {
-            method: "PUT",
-            headers: myHeaders,
-            body: formdata,
-            redirect: "follow"
-            };
-
-            fetch("http:// 206.81.3.155:8282/api/orgs/edit", requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.error(error));
-            // const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
-            //     method: 'PUT',
-            //     headers: {
-            //         // 'Content-Type': 'application/x-www-form-urlformencoded',
-            //         'Authorization': window.sessionStorage.getItem('accessKey')
-            //     },
-            //     body: data,
-            // });
+            
+            const response = await fetch("/api/orgs/edit", {
+                method: 'PUT',
+                headers: {
+                    // 'Content-Type': 'application/x-www-form-urlformencoded',
+                    'Authorization': window.sessionStorage.getItem('accessKey')
+                },
+                body: formdata,
+            });
+            response.json().then(json => {
+                console.log(json.payload);
+                setAccounts(json.payload);
+            });
 
         } catch (error) {
             console.log('Failed to fetch', error);
@@ -279,7 +272,7 @@ export default function Settings(){
     }
     const handleDeactivate = async (username) => {
         try{
-            const response = await fetch(`http://206.81.3.155:8282/api/users/deactivate/${username}`,{
+            const response = await fetch(`/api/users/deactivate/${username}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -300,7 +293,7 @@ export default function Settings(){
 
     const handleEmployeeAdd = async () => {
         try{
-            const response = await fetch('http://206.81.3.155:8282/api/users/register', {
+            const response = await fetch('/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

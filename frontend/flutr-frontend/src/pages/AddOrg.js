@@ -42,7 +42,7 @@ export default function AddOrg(){
     const handleSubmit = async () => {
         if(orgName !== "" && orgAddress !== "" && orgEmail !== ""){
             try{
-                const response = await fetch("http://206.81.3.155:8282/api/orgs/create", {
+                const response = await fetch("/api/orgs/create", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
