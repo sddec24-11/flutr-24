@@ -9,6 +9,7 @@ import "../styles/settingsStyles.css";
 import Checkbox from "../components/Checkbox";
 import Modal from 'react-bootstrap/Modal';
 import {Link} from "react-router-dom"
+import axios from 'axios';
 
 export default function Settings(){
     const [logo, setLogo] = useState();
@@ -162,8 +163,8 @@ export default function Settings(){
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
-            const formData = new FormData();
-            formData.append("updatedOrgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
+            const formdata = new FormData();
+            formdata.append("updatedOrgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
             name: orgName,
             address: orgAddress,
             website: orgWebsite,
@@ -189,24 +190,30 @@ export default function Settings(){
             timezone: "CST",
             subheading: "",
             statsActive: statsState}));
-            formData.append("logoFile", logo);
-            formData.append("facilityImageFile", facilityImage);
-            const data = new URLSearchParams(formData);
-            const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
-                method: 'PUT',
-                headers: {
-                    // 'Content-Type': 'application/x-www-form-urlformencoded',
-                    'Authorization': window.sessionStorage.getItem('accessKey')
-                },
-                body: data,
-            });
-            const message = await response.json();
-            if(message.success){
-                alert("Butterfly House Successfully Updated!")
-            }
-            else{
-                alert("Butterfly Not Successfully Updated");
-            }
+            formdata.append("logoFile", logo);
+            formdata.append("facilityImageFile", facilityImage);
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", window.sessionStorage.getItem('accessKey'));
+
+            const requestOptions = {
+            method: "PUT",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow"
+            };
+
+            fetch("http:// 206.81.3.155:8282/api/orgs/edit", requestOptions)
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+            // const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
+            //     method: 'PUT',
+            //     headers: {
+            //         // 'Content-Type': 'application/x-www-form-urlformencoded',
+            //         'Authorization': window.sessionStorage.getItem('accessKey')
+            //     },
+            //     body: data,
+            // });
 
         } catch (error) {
             console.log('Failed to fetch', error);
