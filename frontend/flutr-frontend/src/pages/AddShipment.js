@@ -319,6 +319,40 @@ export default function AddShipment() {
         setIsCancelModalVisible(true);
     }
 
+    const handleBlur = (event, buttIdIn, keyIn) => {
+        const input = Math.max(0, parseInt(event.target.value, 10) || 0);
+    
+        setData(data.map(butterfly => {
+            if (butterfly.buttId !== buttIdIn) return butterfly;
+    
+            let newVal = input;
+            let newTotal = butterfly.totalRemaining;
+    
+            if (keyIn === 'numberReceived') {
+                const difference = newVal - butterfly[keyIn];
+                newTotal += difference;
+    
+                if (newTotal < 0) {
+                    newVal = butterfly[keyIn] + butterfly.totalRemaining;
+                    newTotal = 0;
+                }
+            } else {
+                const maxAvailable = butterfly[keyIn] + butterfly.totalRemaining;
+                newVal = Math.min(input, maxAvailable);
+                newTotal -= (newVal - butterfly[keyIn]);
+            }
+    
+            event.target.value = newVal;
+    
+            return {
+                ...butterfly,
+                [keyIn]: newVal,
+                totalRemaining: newTotal
+            };
+        }));
+    };
+    
+
     return (
         <div class="main-container">
             <Navbar />
@@ -376,54 +410,31 @@ export default function AddShipment() {
                     </thead>
                     <tbody>
                         {data.map(item => (
-                        <tr key={item.buttId}>
-                            <td>{item.buttId}</td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'numberReceived')}>+</button>
-                                <div className="value-box">{item.numberReceived}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'numberReceived')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'emergedInTransit')}>+</button>
-                                <div className="value-box">{item.emergedInTransit}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'emergedInTransit')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'damaged')}>+</button>
-                                <div className="value-box">{item.damaged}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'damaged')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'diseased')}>+</button>
-                                <div className="value-box">{item.diseased}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'diseased')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'parasite')}>+</button>
-                                <div className="value-box">{item.parasite}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'parasite')}>-</button>
-                            </td>
-                            <td id="total-remaining" style={{background:'#469FCE',color:'#E1EFFE'}}>
-                                {item.totalRemaining}
-                            </td>
-                            <td style={{background:'#E4976C'}}>
-                                <p style={{color:'#E1EFFE', margin:"0"}}
-                                    onClick={() => removeButterfly(item.buttId)}>
-                                    remove
-                                </p>
-                            </td>
-                        </tr>
+                            <tr key={item.buttId}>
+                                <td>{item.buttId}</td>
+                                {['numberReceived', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
+                                    <td key={key}>
+                                        <button tabIndex={-1} onClick={() => incrementVal(item.buttId, key)}>+</button>
+                                        <input type="numeric" className="value-box" defaultValue = {item[key]} onBlur = {(e) => handleBlur(e, item.buttId, key)}></input>
+                                        <button tabIndex={-1} onClick={() => decrementVal(item.buttId, key)}>-</button>     
+                                    </td>
+                                ))}
+                                <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>
+                                <td style={{ background: '#E4976C' }}>
+                                    <p style={{ color: '#E1EFFE', margin: "0" }} onClick={() => removeButterfly(item.buttId)}>remove</p>
+                                </td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
             <div class="submit-cancel-buttons">
-                <button type="button" class="btn cancel-btn"
+                <button tabIndex={-1} type="button" class="btn cancel-btn"
                         onClick={() => handleCancel()}>
                             Cancel
                 </button>
-                <button type="submit" class="btn submit-btn" 
+                <button tabIndex={-1} type="submit" class="btn submit-btn" 
                         onClick={() => handleSubmit()}>
                             Submit
                 </button>
@@ -432,7 +443,7 @@ export default function AddShipment() {
             <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
             <CancelConfirmationModal 
                 isVisible={isCancelModalVisible} onClose={closeModal} />
-            <Footer />
+            < Footer />
         </div>
     );
 }
