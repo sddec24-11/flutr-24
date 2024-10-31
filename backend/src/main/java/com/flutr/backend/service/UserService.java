@@ -48,6 +48,7 @@ public class UserService {
             throw new IllegalStateException("Invalid houseId: No such organization exists");
         }
     
+        newUser.setActive(true);
         newUser.setPassword(passwordEncoder.encode("butterfly123"));
         newUser.setHouseId(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getHouseId() : currentUser.getHouseId());
         newUser.setSubdomain(currentUser.getRole() == UserRole.SUPERUSER ? newUser.getSubdomain() : currentUser.getSubdomain());
