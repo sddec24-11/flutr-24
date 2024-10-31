@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.*;
 
 import com.flutr.backend.dto.Response;
 import com.flutr.backend.dto.houseButterflies.EditHouseButterflyRequest;
@@ -20,6 +21,7 @@ import com.flutr.backend.service.MasterService;
 
 import java.util.List;
 
+@CrossOrigin(origins = {"http://206.81.3.155", "http://flutr.org"}, maxAge = 3600)
 @RestController
 @RequestMapping("/master")
 public class MasterController {

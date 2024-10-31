@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = {"http://206.81.3.155", "http://flutr.org"}, maxAge = 3600)
 @RestController
 @RequestMapping("/releases")
 public class ReleaseController {
