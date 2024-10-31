@@ -7,6 +7,9 @@ import Row from 'react-bootstrap/Row';
 import Container from 'react-bootstrap/Container';
 import "../styles/settingsStyles.css";
 import Checkbox from "../components/Checkbox";
+import Modal from 'react-bootstrap/Modal';
+import {Link} from "react-router-dom"
+import axios from 'axios';
 
 export default function Settings(){
     const [logo, setLogo] = useState();
@@ -19,6 +22,10 @@ export default function Settings(){
         console.log(e.target.files);
         setFacilityImage(URL.createObjectURL(e.target.files[0]));
     }
+    const [suppliers, setSuppliers] = useState([]);
+    const [accounts, setAccounts] = useState([]);
+
+
 
     useEffect(() => {
         if(window.sessionStorage.getItem("authorizationLevel") !== "ADMIN"){
@@ -26,6 +33,40 @@ export default function Settings(){
             document.location.href = "/login";
         }
     });
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/all", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey")
+                }
+            });
+            response.json().then(json => {
+                console.log(json.payload);
+                setSuppliers(json.payload);
+            })
+        }
+        fetchData();
+    }, [])
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("http://206.81.3.155:8282/api/users/all", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey")
+                }
+            });
+            response.json().then(json => {
+                console.log(json.payload);
+                setAccounts(json.payload);
+            })
+        }
+        fetchData();
+    }, [])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -56,6 +97,7 @@ export default function Settings(){
                 setBackgroundColor(json.payload.colors[2]);
 
                 setBOTD(json.payload.otd.active);
+                setStats(json.payload.statsActive);
                 setNews(json.payload.news.active);
                 setNewsContent(json.payload.news.newsContent);
 
@@ -74,26 +116,32 @@ export default function Settings(){
     const [orgYouTube, setOrgYouTube] = useState("");
 
     const [activeTab, setActiveTab] = useState(1);
+    const [outerTab, setOuter] = useState(1);
 
     const handleInfo = (e) => {
         e.preventDefault();
         setActiveTab(1);
+        setOuter(1);
     }
     const handleStyles = (e) => {
         e.preventDefault();
         setActiveTab(2);
+        setOuter(1);
     }
     const handleHome = (e) => {
         e.preventDefault();
         setActiveTab(3);
+        setOuter(1);
     }
     const handleEmployees = (e) => {
         e.preventDefault();
         setActiveTab(4);
+        setOuter(2);
     }
     const handleSuppliers = (e) => {
         e.preventDefault();
         setActiveTab(5);
+        setOuter(2);
     }
 
     const [primaryColor, setPrimaryColor] = useState("#E89623");
@@ -113,49 +161,59 @@ export default function Settings(){
 
 
     const handleSubmit = async () => {
+        console.log("Attempting PUT");
         try{
-            const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem('accessKey')
-                },
-                body: JSON.stringify({
-                    houseId: window.sessionStorage.getItem('houseID'),
-                    name: orgName,
-                    address: orgAddress,
-                    website: orgWebsite,
-                    logoUrl: "https://example.com/newlogo.png",
-                    socials: {
-                      "instagramActive":instaState,
-                      "instagramLink": orgInsta,
-                      "facebookActive": faceState,
-                      "facebookLink": orgFaceBook,
-                      "twitterActive": xState,
-                      "twitterLink": orgX,
-                      "youtubeActive": ytState,
-                      "youtubeLink": orgYouTube,
-                    },
-                    colors: [primaryColor, secondaryColor, backgroundColor],
-                    otd: {
-                        active: botdState,
-                        buttID: ""
-                    },
-                    news: {
-                        active: newsState,
-                        newsContent: newsContent
-                    },
-                    timezone: "CST",
-                    subheading: ""
-                  }),
-            });
-            const message = await response.json();
-            if(message.success){
-                alert("Butterfly House Successfully Updated!")
-            }
-            else{
-                
-            }
+            const formdata = new FormData();
+            formdata.append("updatedOrgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
+            name: orgName,
+            address: orgAddress,
+            website: orgWebsite,
+            logoUrl: "https://example.com/newlogo.png",
+            socials: {
+              "instagramActive":instaState,
+              "instagramLink": orgInsta,
+              "facebookActive": faceState,
+              "facebookLink": orgFaceBook,
+              "twitterActive": xState,
+              "twitterLink": orgX,
+              "youtubeActive": ytState,
+              "youtubeLink": orgYouTube,
+            },
+            colors: [primaryColor, secondaryColor, backgroundColor],
+            otd: {
+                active: botdState
+            },
+            news: {
+                active: newsState,
+                newsContent: newsContent
+            },
+            timezone: "CST",
+            subheading: "",
+            statsActive: statsState}));
+            formdata.append("logoFile", logo);
+            formdata.append("facilityImageFile", facilityImage);
+            const myHeaders = new Headers();
+            myHeaders.append("Authorization", window.sessionStorage.getItem('accessKey'));
+
+            const requestOptions = {
+            method: "PUT",
+            headers: myHeaders,
+            body: formdata,
+            redirect: "follow"
+            };
+
+            fetch("http:// 206.81.3.155:8282/api/orgs/edit", requestOptions)
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+            // const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
+            //     method: 'PUT',
+            //     headers: {
+            //         // 'Content-Type': 'application/x-www-form-urlformencoded',
+            //         'Authorization': window.sessionStorage.getItem('accessKey')
+            //     },
+            //     body: data,
+            // });
 
         } catch (error) {
             console.log('Failed to fetch', error);
@@ -198,7 +256,70 @@ export default function Settings(){
         setNewsContent(e.target.value);
     }
 
-    
+    const handleNewSupplier = (e) => {
+        e.preventDefault();
+        window.location.href = "/add/suppliers";
+    }
+    const handleNewEmployee = (e) => {
+        e.preventDefault();
+        window.location.href = "/add/employee";
+    }
+
+    const [username, setUsername] = useState("");
+    const handleUsername = (e) => {
+        setUsername(e.target.value);
+    }
+    const handlePassword = async (username) => {
+        try{
+            console.log(username);
+
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
+    const handleDeactivate = async (username) => {
+        try{
+            const response = await fetch(`http://206.81.3.155:8282/api/users/deactivate/${username}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                }
+            })
+            response.json().then(json => {
+                if(json.success){
+                    // console.log(json.payload);
+                    window.location.reload();
+                }
+            })
+
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
+
+    const handleEmployeeAdd = async () => {
+        try{
+            const response = await fetch('http://206.81.3.155:8282/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                },
+                body: JSON.stringify({
+                    username: username,
+                    role: "EMPLOYEE"
+                })
+            })
+            response.json().then(json => {
+                if(json.success){
+                    window.location.reload();
+                }
+            });
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
 
     return (
         <div>
@@ -300,14 +421,64 @@ export default function Settings(){
                         </Row>
                     </Container>
                 </div>}
+                {activeTab === 4 &&
+                    <div id="employeeList">
+                    <Container style={{width: '100%'}}>
+                        <Row xs={6}>
+                            <Col xs={4}><strong>Username</strong></Col>
+                            <Col xs={3}><strong>Role</strong></Col>
+                            <Col xs={2}><strong>Active?</strong></Col>
+                            <Col xs={2}><strong>Organization</strong></Col>
+                            <Col xs={1}></Col>
+                        </Row>
+                        {accounts.map((r) => {
+                            return(
+                                <Row style={{border: '1px solid #000000'}}>
+                                    <Col xs={4}><h4>{r.username}</h4></Col>
+                                    <Col xs={3}><h4>{r.role}</h4></Col>
+                                    <Col xs={2}><h4 style={{color: (r.active) ? "#49eb34" : "#FF0000"}}>{(r.active) ? "Yes" : "No"}</h4></Col>
+                                    <Col xs={2}><h4>{r.houseId}</h4></Col>
+                                    {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>
+                                </Row>
+                            )
+                        })}
+                    </Container>
+                    <input value={username} onChange={handleUsername}></input>
+                    <button onClick={handleEmployeeAdd}>Add New Employee</button>
+            </div>}
+                {activeTab === 5 &&
+                <div id="supplierList">
+                    <Container style={{width: '100%'}}>
+                        <Row xs={6}>
+                            <Col xs={6}><strong>Full Name</strong></Col>
+                            <Col xs={3}><strong>Abbreviation</strong></Col>
+                            <Col xs={2}><strong>Active?</strong></Col>
+                            <Col xs={1}></Col>
+                        </Row>
+                        {suppliers.map((r) => {
+                            return(
+                                <Row style={{border: '1px solid #000000'}}>
+                                    <Col xs={6}><h4>{r.fullName}</h4></Col>
+                                    <Col xs={3}><h4>{r.abbreviation}</h4></Col>
+                                    <Col xs={2}><h4>{r.active}</h4></Col>
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
+                                </Row>
+                            )
+                        })}
+                    </Container>
+                    <button onClick={handleNewSupplier}>Add New Supplier</button>
+            </div>}
+                {outerTab === 1 &&
                 <div className="bottomButtons">
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handlePreview}>Preview</button>
                     <button onClick={handleSubmit}>Save and Submit</button>
-                </div>
+                </div>}
                 
                 
             </div>
+            
         </div>
     )
 }

@@ -6,22 +6,22 @@ export default function ButterflyEditCard({
   butterfly,
   index,
   handleUpdate,
-  common_name,
-  lifespan,
+  commonName,
+  lifespan
 }) {
-  const [common, setCommon] = useState(common_name);
+  const [common, setCommon] = useState(commonName);
   const [life, setLifespan] = useState(lifespan);
 
   // Handle changes to the common name
   const handleCommonChange = (e) => {
     setCommon(e.target.value); // Update local state
-    handleUpdate(index, { common_name: e.target.value, lifespan: life }); // Inform parent about changes
+    handleUpdate(index, { commonName: e.target.value, lifespan: life }); // Inform parent about changes
   };
 
   // Handle changes to the lifespan
   const handleLifespanChange = (e) => {
     setLifespan(e.target.value); // Update local state
-    handleUpdate(index, { common_name: common, lifespan: e.target.value }); // Inform parent about changes
+    handleUpdate(index, { commonName: common, lifespan: e.target.value }); // Inform parent about changes
   };
 
   return (
@@ -39,10 +39,10 @@ export default function ButterflyEditCard({
         <Card.Img
           variant="top"
           style={{ width: "100%", padding: "0", borderRadius: "11px" }}
-          src={require(`../images/${butterfly.image}`)}
+          src={butterfly.imgWingsOpen}
         />
         <Card.Body>
-          <Card.Title style={{ alignContent: "center" }}>{butterfly.sci_name}</Card.Title>
+          <Card.Title style={{ alignContent: "center" }}>{butterfly.buttId}</Card.Title>
           <Card.Text>Common name:</Card.Text>
           <input value={common} onChange={handleCommonChange} />
           <Card.Text>Lifespan (days)</Card.Text>
