@@ -424,7 +424,7 @@ return (
             </div>
 
             <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
-            <CancelConfirmationModal isVisible={isCancelModalVisible} onClose={closeModal} />                     
+            <CancelConfirmationModal isVisible={isCancelModalVisible} nClose={closeModal} />                     
             <Footer />
         </div>
     );
