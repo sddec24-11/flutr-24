@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -41,20 +44,23 @@ public class OrgController {
 
     @PutMapping("/edit")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Response<OrgInfo>> editOrg(@RequestBody OrgInfo orgInfo) {
+    public ResponseEntity<Response<OrgInfo>> editOrg(
+        @RequestPart("orgInfo") OrgInfo orgInfo, 
+        @RequestPart(value = "logoFile", required = false) MultipartFile logoFile,
+        @RequestPart(value = "facilityImageFile", required = false) MultipartFile facilityImageFile) {
         try {
-            OrgInfo updatedOrgInfo = orgService.editOrg(orgInfo);
+            OrgInfo updatedOrgInfo = orgService.editOrg(orgInfo, logoFile, facilityImageFile);
             return ResponseEntity.ok(new Response<>(true, updatedOrgInfo, null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));
-        } catch (SecurityException e) {
+        } catch  (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new Response<>(false, null, new Response.ErrorDetails(403, e.getMessage())));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
         }
     }
 
-    @GetMapping("/view/{houseId}")
+    @GetMapping("/adminView/{houseId}")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Response<OrgInfo>> getOrgInfo(@PathVariable String houseId) {
         try {
@@ -79,7 +85,7 @@ public class OrgController {
         }
     }
 
-    @GetMapping("/{houseId}")
+    @GetMapping("/view/{houseId}")
     public ResponseEntity<Response<OrgInfo>> publicGetOrgInfo(@PathVariable String houseId) {
         try {
             OrgInfo orgInfo = orgService.publicGetOrgInfo(houseId);
