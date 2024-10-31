@@ -36,7 +36,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("/api/suppliers/view/all", {
+            const response = await fetch("http://206.81.3.155/api/suppliers/view/all", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +53,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("/api/users/all", {
+            const response = await fetch("http://206.81.3.155/api/users/all", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -70,7 +70,7 @@ export default function Settings(){
 
     useEffect(() => {
         const fetchData = async () => {
-            const response = await fetch("/api/orgs/view/" + window.sessionStorage.getItem("houseID"), {
+            const response = await fetch("http://206.81.3.155/api/orgs/view/" + window.sessionStorage.getItem("houseID"), {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ export default function Settings(){
             
 
             
-            const response = await fetch("/api/orgs/edit", {
+            const response = await fetch("http://206.81.3.155/api/orgs/edit", {
                 method: 'PUT',
                 headers: {
                     // 'Content-Type': 'application/x-www-form-urlformencoded',
@@ -272,7 +272,7 @@ export default function Settings(){
     }
     const handleDeactivate = async (username) => {
         try{
-            const response = await fetch(`/api/users/deactivate/${username}`,{
+            const response = await fetch(`http://206.81.3.155/api/users/deactivate/${username}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ export default function Settings(){
 
     const handleEmployeeAdd = async () => {
         try{
-            const response = await fetch('/api/users/register', {
+            const response = await fetch('http://206.81.3.155/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

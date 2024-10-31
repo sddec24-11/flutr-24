@@ -14,7 +14,7 @@ export default function MasterButterflyCreate(){
 
       const handleSubmit = async () => {
         try{
-            const response = await fetch("/api/master/addButterfly",{
+            const response = await fetch("http://206.81.3.155/api/master/addButterfly",{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

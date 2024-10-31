@@ -36,7 +36,7 @@ export default function Gallery({data}){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`/api/orgs/${data}`, {
+          const response = await fetch(`http://206.81.3.155/api/orgs/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function Gallery({data}){
       };
       const fetchButterflies = async () => {
         try{
-          const response = await fetch("/api/butterflies/all", {
+          const response = await fetch("http://206.81.3.155/api/butterflies/all", {
             method: 'GET',
             headers: {
               'Content-Type': 'applocation/json',

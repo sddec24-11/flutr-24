@@ -40,7 +40,7 @@ export default function EditSupplier(){
     const handleSubmit = async () => {
         try{
             console.log("Reporting it is : " + active);
-            const response = await fetch('/api/suppliers/edit', {
+            const response = await fetch('http://206.81.3.155/api/suppliers/edit', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
