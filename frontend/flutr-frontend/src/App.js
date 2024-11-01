@@ -13,7 +13,7 @@ import Shipments from './pages/Shipments.js';
 import AddShipment from './pages/AddShipment.js';
 import EditShipment from './pages/EditShipment.js'
 import AddRelease from './pages/AddRelease.js';
-import MasterButterfly from "./pages/MasterButterfly.js";
+import MasterButterflyCreate from "./pages/MasterButterflyCreate.js";
 import EditButterflies from "./pages/EditButterflies.js";
 import AddOrg from "./pages/AddOrg.js";
 import ChangePassword from "./pages/ChangePassword.js";
@@ -22,30 +22,43 @@ import { RotatingLines } from "react-loader-spinner";
 
 import React, {useState, useEffect, useRef, useMemo} from "react";
 import Logout from "./pages/Logout.js";
+import MasterButterflyEdit from "./pages/MasterButterflyEdit.js";
+import MasterButterflyList from "./pages/MasterButterflyList.js";
+import ButterflyGuestView from "./pages/ButterflyGuestView.js";
+import EditSupplier from "./pages/EditSuppliers.js";
+import AddSupplier from "./pages/AddSuppliers.js";
 
 export default function App() {
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(true);
   const apiFetched = useRef(false);
-  // "http://206.81.3.155:8282/api/orgs/list"
+
+  const filterData = (responseData) => {
+    responseData.payload.filter(item => {
+      return item.name !== null && item.subdomain !== null;
+    })
+  }
   useEffect(() => {
     const fetchData = async () => {
+      console.log("Trying fetch");
       try{
-        const response = await fetch("https://3600aebd-7e20-4f96-ad57-ee19fbe31342.mock.pstmn.io/api/orgs/list", {
+        const response = await fetch("http://206.81.3.155:8282/api/orgs/all", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
         },
         });
         response.json().then(json => {
-          setLocations(json);
-          window.sessionStorage.setItem("locations", JSON.stringify(json));
-          console.log(json);
+          console.log("Its here: " + JSON.stringify(json.payload));
+          window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          window.location.reload();
+          // window.sessionStorage.setItem("locations", JSON.stringify(json.payload));
+          // setLocations(filterData(json));
+          // window.sessionStorage.setItem("locations", JSON.stringify(filterData(json)));
         });
       } catch (error) {
         console.error("Failed to fetch locations:", error);
       } finally {
-        setLoading(false);
       }
       
     };
@@ -56,6 +69,7 @@ export default function App() {
       setLocations(JSON.parse(window.sessionStorage.getItem("locations")));
       setLoading(false);
     }
+
 }, []);
 
 const AppRouter = ({locations}) => {
@@ -74,23 +88,30 @@ const AppRouter = ({locations}) => {
                 <Route path="/editshipment" element={<EditShipment />} />
                 <Route path="/addrelease" element={<AddRelease/>} />
 
+              
                 {locations.map((r, index) => (
-                    <Route path={"/" + r.path} element={<LocationHome data={r}/>} key={index}/>
+                    <Route path={"/" + r.subdomain} element={<LocationHome data={r.houseId}/>} key={index}/>
                 ))}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.path + "/stats"} element={<Stats data={r} />} key={`${index} stat`}/>
+                    return<Route path={"/" + r.subdomain + "/stats"} element={<Stats data={r.houseId} />} key={`${index} stat`}/>
                 })}
                 {locations.map((r, index) => {
-                    return<Route path={"/" + r.path + "/gallery"} element={<Gallery data={r} />} key={`${index} gallery`}/>
+                    return<Route path={"/" + r.subdomain + "/gallery"} element={<Gallery data={r.houseId} />} key={`${index} gallery`}/>
                 })}
-                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0]} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0]} kioskMode={true}/>} />
-                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0]} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens" element={<LocationHome data={locations[0].houseId} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/stats" element={<Stats data={locations[0].houseId} kioskMode={true}/>} />
+                <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseId} kioskMode={true}/>} />
+                <Route path="/butterfly/view" element={<ButterflyGuestView/>}/>
                 <Route path="settings" element={<Settings />} />
                 <Route path="*" element={<NotFound />} />
-                <Route path="masterbutterfly" element={<MasterButterfly/>}/>
+                <Route path="/masterbutterfly/create" element={<MasterButterflyCreate/>}/>
+                <Route path="/masterbutterfly/edit" element={<MasterButterflyEdit/>}/>
+                <Route path="/masterbutterfly/list" element={<MasterButterflyList/>}/>
                 <Route path="/edit/butterfly" element={<EditButterflies/>}/>
                 <Route path="/addOrg" element={<AddOrg/>}/>
+                <Route path="/edit/suppliers" element={<EditSupplier/>}/>
+                <Route path="/add/suppliers" element={<AddSupplier/>}/>
+
             </Routes>
         </BrowserRouter>
   );

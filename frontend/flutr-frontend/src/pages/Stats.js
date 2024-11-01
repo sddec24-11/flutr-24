@@ -1,6 +1,6 @@
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SocialModal from "../components/SocialModal";
 import PageTitle from "../components/PageTitle";
 import Container from "react-bootstrap/esm/Container";
@@ -9,6 +9,53 @@ import Col from "react-bootstrap/esm/Col";
 
 
 export default function Stats({data, kioskMode}){
+    const [locationData, setLocationData] = useState({});
+    const [statData, setStats] = useState({});
+    const [loaded, setLoaded] = useState(false);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                setLocationData(json.payload);
+                setLoaded(true);
+              });
+            } catch (error) {
+              console.error("Failed to fetch location:", error);
+            } finally {
+              
+            }
+            
+          };
+          const fetchStats = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setStats(json.payload);
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch stats:", error);
+            } finally {
+              
+            }
+            
+          };
+        fetchData();
+        fetchStats();
+    }, []);
     const [insta, setInsta] = useState(false);
     const [fb, setFB] = useState(false);
     const [x, setX] = useState(false);
@@ -27,30 +74,31 @@ export default function Stats({data, kioskMode}){
   const handleYT = () => setYT(true);
     const stats = {butterflyCount: 123, speciesCount: 45, highCount: 100, lowCount: 2, highSpecies: "Blue Morpho", lowSpecies: "Dan"}
 
+    if(loaded){
     return(
-        <div style={{backgroundColor: data.colorScheme.background}}>
-            <Navbar location={data} kioskMode={kioskMode}/>
-            <PageTitle title={data.name + "'s Statistics"}/>
-            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
-            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
-            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
-            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
+        <div style={{backgroundColor: locationData.colors[0]}}>
+            <Navbar location={locationData} kioskMode={kioskMode}/>
+            <PageTitle title={locationData.name + "'s Statistics"}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={locationData.socials.facebookLink}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={locationData.socials.twitterLink}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={locationData.socials.youtubeLink}/>
                 <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
-                    <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: data.colorScheme.primary}}><strong>Statistics</strong></h2>
+                    <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>Statistics</strong></h2>
                 </div>
                 <div style={{backgroundColor: "#FFFFFF", borderRadius: "15px", width: "86.45%", margin: 'auto', marginTop: '16px'}}>
                     <Container>
                         <Row>
                             <Col>
                                 <div style={{width: '100%', margin: 'auto', textAlign: "center"}}>
-                                    <h1 style={{color: data.colorScheme.primary}}>{stats.butterflyCount}</h1>
-                                    <h4 style={{color: data.colorScheme.primary}}>butterflies in flight</h4>
+                                    <h1 style={{color: locationData.colors[0]}}>{statData.totalInFlight}</h1>
+                                    <h4 style={{color: locationData.colors[0]}}>butterflies in flight</h4>
                                 </div>
                             </Col>
                             <Col>
                                 <div style={{width: '100%', margin:'auto', textAlign: "center"}}>
-                                    <h1 style={{color: data.colorScheme.primary}}>{stats.speciesCount}</h1>
-                                    <h4 style={{color: data.colorScheme.primary}}>species in flight</h4>
+                                    <h1 style={{color: locationData.colors[0]}}>{statData.speciesInFlight}</h1>
+                                    <h4 style={{color: locationData.colors[0]}}>species in flight</h4>
                                 </div>
                             </Col>
                         </Row>
@@ -73,7 +121,7 @@ export default function Stats({data, kioskMode}){
                         
                     </div>
                 </div>
-                <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
+                <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
-    )
+    )}
 }

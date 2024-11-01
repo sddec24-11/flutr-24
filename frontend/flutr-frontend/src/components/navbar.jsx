@@ -12,14 +12,16 @@ function Navbar({location, kioskMode}) {
     const toggleActiveClass = () => {
       setIsActive(!isActive);
     };
+
+    
+              
+    
     
     //clean up function to remove the active class
     const removeActive = () => {
       setIsActive(false)
     }
-    // const [pickColor, setPickColor] = useState("#dbeafe");
     if(location != null){
-      // setPickColor(location.color);
       var opener = '/';
       if(kioskMode){
         opener = '/kiosk/';
@@ -27,16 +29,16 @@ function Navbar({location, kioskMode}) {
       return (
         <div className="App">
           <header className="App-header">
-            <nav className={`${styles.navbar}`}style={{backgroundColor: location.color}}>
+            <nav className={`${styles.navbar}`}style={{backgroundColor: location.colors[0]}}>
               {}
               
-              <a href={opener + location.path} className={`${styles.logo}`}><img src={require(`../images/${location.logo}`)} alt={location.logo}/></a>
+              <a href={opener + location.website} className={`${styles.logo}`}><img src={location.logoUrl} alt={location.logoUrl}/></a>
               <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
                 <li onClick={removeActive}>
-                  <a href={opener + location.path + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
+                  <a href={opener + location.website + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
                 </li>
                 <li onClick={removeActive}>
-                  <a href={opener + location.path + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
+                  <a href={opener + location.website + '/gallery'} className={`${styles.navLink}`}><strong>Gallery</strong></a>
                 </li>
 
                 {window.sessionStorage.getItem("authorized") && 
@@ -52,8 +54,14 @@ function Navbar({location, kioskMode}) {
                   <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>}
                   {window.sessionStorage.getItem("authorizationLevel" ) === "ADMIN" &&
                   <Dropdown.Item href="/settings">Settings</Dropdown.Item>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Divider/>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Item href="/addOrg">Add Organization</Dropdown.Item>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Item href="/masterbutterfly/list">MASTER Butterfly List</Dropdown.Item>}
                   <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
-                
+                  <Dropdown.Divider/>
                   <Dropdown.Item href="/logout">Logout</Dropdown.Item>
                 </NavDropdown>}
               </ul>
@@ -83,7 +91,6 @@ function Navbar({location, kioskMode}) {
               <li onClick={removeActive}>
                 <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
-
               {window.sessionStorage.getItem("authorized") && 
               <NavDropdown
                   id="nav-dropdown"
@@ -93,8 +100,17 @@ function Navbar({location, kioskMode}) {
                   <Dropdown.Item href="/shipments">View Shipments</Dropdown.Item>
                   <Dropdown.Item href="/addshipment">Add Shipment</Dropdown.Item>
                   <Dropdown.Item href="">Import/Export Shipments</Dropdown.Item>
-                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>
-                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>
+                  {["ADMIN", "SUPERUSER"].includes(window.sessionStorage.getItem("authorizationLevel")) &&
+                  <Dropdown.Item href="/edit/butterfly">Edit Butterflies</Dropdown.Item>}
+                  {["ADMIN", "SUPERUSER"].includes(window.sessionStorage.getItem("authorizationLevel")) &&
+                  <Dropdown.Item href="/settings">Settings</Dropdown.Item>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Divider/>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Item href="/addOrg">Add Organization</Dropdown.Item>}
+                  {window.sessionStorage.getItem("authorizationLevel") === "SUPERUSER" &&
+                  <Dropdown.Item href="/masterbutterfly/list">MASTER Butterfly List</Dropdown.Item>}
+                  <Dropdown.Divider/>
                   <Dropdown.Item href="/changePassword">Change Password</Dropdown.Item>
                   <Dropdown.Item href="/logout">Logout</Dropdown.Item>
                 </NavDropdown>}

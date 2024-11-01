@@ -15,6 +15,7 @@ export default function AddOrg(){
     const [orgName, setOrgName] = useState();
     const [orgAddress, setOrgAddress] = useState();
     const [orgEmail, setOrgEmail] = useState();
+    const [orgSubdomain, setOrgSubdomain] = useState();
     const [file, setFile] = useState();
     const handleUpload = (e) => {
         console.log(e.target.files);
@@ -28,6 +29,9 @@ export default function AddOrg(){
     }
     const handleEmail = (e) => {
         setOrgEmail(e.target.value);
+    }
+    const handleSubdomain = (e) => {
+        setOrgSubdomain(e.target.value);
     }
 
     const handleCancel = (e) => {
@@ -48,12 +52,14 @@ export default function AddOrg(){
                         name: orgName,
                         address: orgAddress,
                         adminEmail: orgEmail,
+                        subdomain: orgSubdomain,
                     }),
                 });
                 const message = await response.json();
                 if(message.error == null){
                     if(message.success){
                         console.log("Success! " + message.payload);
+                        window.sessionStorage.removeItem("locations");
                         document.location.href = "/";
                     }
                 }
@@ -91,9 +97,8 @@ export default function AddOrg(){
                                 <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgEmail} onChange={handleEmail}></input></Col>
                             </Row>
                             <Row style={{width: '100%', paddingTop: '10px'}}>
-                                <Col xs={3} style={{color: '#469FCE'}}>Facility image:</Col>
-                                <Col xs={4}><div><input type="file" onChange={handleUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
-                                <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={file}/></Col>
+                                <Col xs={3} style={{color: '#469FCE'}}>Organization Subdomain:</Col>
+                                <Col xs={8}><input style={{width: '100%', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgSubdomain} onChange={handleSubdomain}></input></Col>
                             </Row>
                             <Row style={{paddingTop: '10px'}}>
                                 <Col><button style={{width: '100%',height: '55px',color:"#FFFFFF", border: '0px', backgroundColor: '#469FCE', borderRadius: '15px'}} onClick={handleCancel}>Cancel</button></Col>

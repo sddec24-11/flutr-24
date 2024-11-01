@@ -9,7 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.flutr.backend.dto.Response;
 import com.flutr.backend.dto.houseButterflies.EditHouseButterflyRequest;
@@ -27,9 +29,12 @@ public class MasterController {
 
     @PostMapping("/addButterfly")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
-    public ResponseEntity<Response<String>> addButterfly(@RequestBody Butterfly butterfly) {
+    public ResponseEntity<Response<String>> addButterfly(
+            @RequestPart("butterfly") Butterfly butterfly, 
+            @RequestPart("imgWingsOpen") MultipartFile imgWingsOpen,
+            @RequestPart("imgWingsClosed") MultipartFile imgWingsClosed) {
         try {
-            masterService.addButterfly(butterfly);
+            masterService.addButterfly(butterfly, imgWingsOpen, imgWingsClosed);
             return ResponseEntity.ok(new Response<>(true, "Butterfly added successfully to Master DB and all houses.", null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
@@ -38,9 +43,12 @@ public class MasterController {
 
     @PutMapping("/editButterfly")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
-    public ResponseEntity<Response<String>> editButterfly(@RequestBody Butterfly butterfly) {
+    public ResponseEntity<Response<String>> editButterfly(
+            @RequestPart("butterfly") Butterfly butterfly,
+            @RequestPart(value = "imgWingsOpen", required = false) MultipartFile imgWingsOpen,
+            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed) {
         try {
-            masterService.editButterfly(butterfly);
+            masterService.editButterfly(butterfly, imgWingsOpen, imgWingsClosed);
             return ResponseEntity.ok(new Response<>(true, "Butterfly details updated successfully across all houses.", null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));

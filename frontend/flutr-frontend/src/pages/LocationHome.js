@@ -6,7 +6,7 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import News from "../components/News";
 import PageTitle from "../components/PageTitle";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import Button from 'react-bootstrap/Button';
 
@@ -21,11 +21,6 @@ const butterfly = {
     coo: ["Bermuda","Jamaica"]
 }
 
-const colorScheme = {
-    primary: "#087648",
-    secondary: "#7DAD87",
-    background: "#96C09F"
-}
 
 const stats = {butterflyCount: 123, speciesCount: 45}
 
@@ -37,14 +32,83 @@ export default function LocationHome({data, kioskMode}){
     const [x, setX] = useState(false);
     const [yt, setYT] = useState(false);
 
+    const [locationData, setLocationData] = useState({});
+    const [botdData, setBotdData] = useState({});
+    const [statData, setStats] = useState({});
+    const [loaded, setLoaded] = useState(false);
+    
+    useEffect(() => {
+        const fetchData = async () => {
+          try{
+            const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json',
+            },
+            });
+            response.json().then(json => {
+              setLocationData(json.payload);
+              setLoaded(true);
+            });
+          } catch (error) {
+            console.error("Failed to fetch location:", error);
+          } finally {
+          }
+          
+        };
+        const fetchBOTD = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/botd/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setBotdData(json.payload);
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch botd:", error);
+            } finally {
+              
+            }
+            
+          };
+          const fetchStats = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setStats(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch stats:", error);
+            } finally {
+            }
+            
+          };
+        fetchData();
+        fetchBOTD();
+        fetchStats();
+    }, []);
+
     const handleStats = (e) => {
         e.preventDefault();
-        document.location.href = `/${data.path}/stats`;
+        document.location.href = `/${locationData.website}/stats`;
     }
 
     const handleGallery = (e) => {
         e.preventDefault();
-        document.location.href = `/${data.path}/gallery`;
+        document.location.href = `/${locationData.website}/gallery`;
     }
 
 
@@ -58,42 +122,49 @@ export default function LocationHome({data, kioskMode}){
   const handleFB = () => setFB(true);
   const handleX = () => setX(true);
   const handleYT = () => setYT(true);
+  if(loaded){
     return(
-        <div style={{backgroundColor: colorScheme.background}}>
-            <PageTitle title={data.name + "'s Home"}/>
-            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={data.socialMedia.instagram}/>
-            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={data.socialMedia.facebook}/>
-            <SocialModal show={x} handleClose={handleClose} type={"X"} link={data.socialMedia.x}/>
-            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={data.socialMedia.youtube}/>
-            <Navbar location={data} kioskMode={kioskMode} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+        <div style={{backgroundColor: locationData.colors[2]}}>
+            <PageTitle title={locationData.name + "'s Home"}/>
+            <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
+            <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={locationData.socials.facebookLink}/>
+            <SocialModal show={x} handleClose={handleClose} type={"X"} link={locationData.socials.twitterLink}/>
+            <SocialModal show={yt} handleClose={handleClose} type={"YouTube"} link={locationData.socials.youtubeLink}/>
+            <Navbar location={locationData} kioskMode={kioskMode} authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
-                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: colorScheme.primary}}><strong>{data.name}</strong></h2>
+                <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>{locationData.name}</strong></h2>
             </div>
             <div style={{width: "90%", margin: "auto"}}>
                 <Container>
                     <Row xs={1} sm={2} md={2}>
-                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={butterfly} colorScheme={colorScheme} buttonFunction={handleGallery}/></Col>
+                        {locationData.otd.active &&
+                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={butterfly} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
                         <Col style={{paddingTop: '16px'}}>
                             <div>
-                                <News colorScheme={colorScheme} content={"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec egestas sapien ac ligula efficitur rhoncus. Sed faucibus augue ultricies sagittis ultricies. Sed nec suscipit leo. In imperdiet vestibulum quam. Proin vel mi scelerisque, eleifend lacus ut, sodales erat. Phasellus mattis ultricies elit et cursus. Nam finibus nisi sed elit placerat ornare. Suspendisse eu consectetur ex, eu tincidunt odio. Fusce pretium purus non congue varius. "}/>
+                                {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent}/>}
+                                {locationData.statsActive && 
                                 <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
-                                    <h3 style={{color: colorScheme.primary, paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
-                                    <div style={{backgroundColor: colorScheme.secondary, width: '75%', margin: 'auto'}}>
-                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.butterflyCount}</h1>
-                                        <h4 style={{color: colorScheme.primary, fontSize: '28px'}}>butterflies in flight</h4>
-                                        <h1 style={{color: colorScheme.primary, fontSize: '150px'}}>{stats.speciesCount}</h1>
-                                        <h4 style={{color: colorScheme.primary, fontSize: '28px', paddingBottom: '10px'}}>species in flight</h4>
+                                    <h3 style={{color: locationData.colors[0], paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
+                                    <div style={{backgroundColor: locationData.colors[1], width: '75%', margin: 'auto'}}>
+                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{statData.totalInFlight}</h1>
+                                        <h4 style={{color: locationData.colors[0], fontSize: '28px'}}>butterflies in flight</h4>
+                                        <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{statData.speciesInFlight}</h1>
+                                        <h4 style={{color: locationData.colors[0], fontSize: '28px', paddingBottom: '10px'}}>species in flight</h4>
                                     </div>
                                     <div>
-                                        <button onClick={handleStats} style={{backgroundColor: colorScheme.primary, color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
+                                        <button onClick={handleStats} style={{backgroundColor: locationData.colors[0], color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>See More</button>
                                     </div>
-                                </div>
+                                </div> }
                             </div>
                         </Col> 
                     </Row>
                 </Container>
             </div>
-            <Footer location={data} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
+            <Footer location={locationData} kioskMode={kioskMode} insta={handleInsta} facebook={handleFB} x={handleX} youtube={handleYT}/>
         </div>
     )
+                                }
+                                else{
+                                    return(<div>Loading location data...</div>)
+                                }
 }

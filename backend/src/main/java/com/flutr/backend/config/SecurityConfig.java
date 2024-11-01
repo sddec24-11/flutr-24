@@ -11,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -20,24 +21,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            .cors(cors -> cors.configurationSource(request -> {
+                CorsConfiguration config = new CorsConfiguration();
+                config.setAllowCredentials(true);
+                config.addAllowedOriginPattern("https://flutr.org");
+                config.addAllowedOriginPattern("https://*.flutr.org");
+                config.addAllowedOrigin("http://206.81.3.155");
+                config.addAllowedMethod("*");
+                config.addAllowedHeader("*");
+                config.setMaxAge(3600L);
+                return config;
+            }))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-            .requestMatchers("/butterflies/all").permitAll()
-            .requestMatchers("/butterflies/fullDetails/**").permitAll()
-            .requestMatchers("/butterflies/details").permitAll()
-            .requestMatchers("/releases/inflight/**").permitAll()
-            .requestMatchers("/releases/botd/**").permitAll()
-            .requestMatchers("/orgs/all").permitAll()  // Allow public access to get all orgs
-            .requestMatchers("/orgs/**").permitAll()  // Allow public access to get specific org info by houseId
-            .requestMatchers("/hello").permitAll()  // Allow hello tests without authentication
-            .requestMatchers("/hellohello").permitAll()  // Allow hello tests without authentication
-            .requestMatchers("/users/login").permitAll()  // Allow login without authentication
-                .anyRequest().authenticated()  // All other requests need to be authenticated
-            )
-            /* .authorizeHttpRequests(auth -> auth
-                .anyRequest().permitAll() 
-            ) */
+                .requestMatchers("/butterflies/all/**", "/butterflies/fullDetails/**", "/butterflies/details/**", 
+                                 "/releases/inflight/**", "/releases/botd/**", "/orgs/all", "/orgs/view/**",
+                                 "/hello", "/hellohello", "/users/login").permitAll()
+                .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
             
         return http.build();
