@@ -3,6 +3,7 @@ package com.flutr.backend.controller;
 import com.flutr.backend.dto.Response;
 import com.flutr.backend.dto.users.PasswordChangeRequest;
 import com.flutr.backend.model.User;
+import com.flutr.backend.model.UserRole;
 import com.flutr.backend.service.UserService;
 import com.flutr.backend.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,10 @@ public class UserController {
             UserDetails userDetails = userDetailsService.loadUserByUsername(loginRequest.getUsername());
             if (passwordEncoder.matches(loginRequest.getPassword(), userDetails.getPassword())) {
                 User user = (User) userDetails;
+                if (!user.isActive() && !user.getRole().equals(UserRole.SUPERUSER)) {
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                            .body(new Response<>(false, null, new Response.ErrorDetails(401, "Account is inactive")));
+                }
                 String houseId = user.getHouseId();
                 String subdomain = user.getSubdomain();
                 String role = user.getRole().toString();
