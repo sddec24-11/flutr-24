@@ -118,6 +118,30 @@ public class UserService {
         userRepository.save(userToDeactivate);
     }
 
+    public void reactivateUserByUsername(String username) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new IllegalStateException("Current user not found"));
+    
+        if (authentication.getName().equals(username)) {
+            throw new SecurityException("Users cannot reactivate themselves");
+        }
+    
+        User userToReactivate = userRepository.findByUsername(username)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with username: " + username));
+    
+        if (currentUser.getRole() != UserRole.SUPERUSER && !userToReactivate.getHouseId().equals(currentUser.getHouseId())) {
+            throw new SecurityException("Not authorized to reactivate user outside your house");
+        }
+    
+        if (currentUser.getRole() == UserRole.ADMIN && userToReactivate.getRole() == UserRole.SUPERUSER) {
+            throw new SecurityException("Admins cannot reactivate superusers");
+        }
+    
+        userToReactivate.setActive(true);
+        userRepository.save(userToReactivate);
+    }
+
     public List<User> findAllUsers() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User currentUser = findUserByUsername(authentication.getName())

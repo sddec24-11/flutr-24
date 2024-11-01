@@ -83,6 +83,13 @@ public class UserController {
         return ResponseEntity.ok(new Response<>(true, "User deactivated successfully."));
     }
 
+    @PostMapping("/reactivate/{username}")
+    @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
+    public ResponseEntity<Response<String>> reactivateUser(@PathVariable String username) {
+        userService.reactivateUserByUsername(username);
+        return ResponseEntity.ok(new Response<>(true, "User reactivated successfully."));
+    }
+
     @GetMapping("/all")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Response<Iterable<User>>> getAllUsers() {
