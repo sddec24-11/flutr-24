@@ -351,6 +351,33 @@ export default function AddShipment() {
             };
         }));
     };
+
+    const handleInputChange = (event, buttIdIn, key) => {
+        const input = Math.max(0, parseInt(event.target.value, 10) || 0);
+    
+        setData(data.map(butterfly => {
+            if (butterfly.buttId === buttIdIn) {
+                let newVal = input;
+                let newTotal = butterfly.totalRemaining;
+    
+                if (key === 'numberReceived') {
+                    const difference = newVal - butterfly[key];
+                    newTotal += difference;
+                } else {
+                    const maxAvailable = butterfly[key] + butterfly.totalRemaining;
+                    newVal = Math.min(newVal, maxAvailable);
+                    newTotal -= (newVal - butterfly[key]);
+                }
+    
+                return {
+                    ...butterfly,
+                    [key]: newVal,
+                    totalRemaining: newTotal,
+                };
+            }
+            return butterfly;
+        }));
+    };
     
 
     return (
@@ -415,7 +442,7 @@ export default function AddShipment() {
                                 {['numberReceived', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
                                     <td key={key}>
                                         <button tabIndex={-1} onClick={() => incrementVal(item.buttId, key)}>+</button>
-                                        <input type="numeric" className="value-box" defaultValue = {item[key]} onBlur = {(e) => handleBlur(e, item.buttId, key)}></input>
+                                        <input tabIndex={-1} type="numeric" className="value-box" value={item[key]} onChange={(e) => handleInputChange(e, item.buttId, key)} onBlur = {(e) => handleBlur(e, item.buttId, key)}></input>
                                         <button tabIndex={-1} onClick={() => decrementVal(item.buttId, key)}>-</button>     
                                     </td>
                                 ))}
