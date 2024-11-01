@@ -29,6 +29,7 @@ useEffect(() => {
       response.json().then(json => {
         console.log(json.payload);
         setButterflies(json.payload);
+        setEditPoints(butterflies.map(() => -1));
       })
     } catch (error) {
 
@@ -84,16 +85,19 @@ useEffect(() => {
                     </Row>
                     <Row xs={1} sm={2} md={2} lg={3}>
                       {butterflies
-                        .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
+                        // .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
                         .map((r, index) => (
+                          <div key={index}>
+                            {r.buttId.toLowerCase().includes(searchInput.toLowerCase()) &&
                           <ButterflyEditCard
-                            key={r.id}
                             butterfly={r}
                             index={index}
                             handleUpdate={handleUpdate}
-                            commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
-                            lifespan={editPoints[index] !== -1 ? changeList[editPoints[index]].lifespan : r.lifespan}
-                          />
+                            commonName={editPoints[index] !== -1 ? r.commonName : changeList[editPoints[index]].commonName}
+                            lifespan={editPoints[index] !== -1 ? r.lifespan : changeList[editPoints[index]].lifespan}
+                          />}
+                          </div>
+                          
                         ))}
                     </Row>
                 </Container>

@@ -28,7 +28,7 @@ export default function Settings(){
 
 
     useEffect(() => {
-        if(window.sessionStorage.getItem("authorizationLevel") !== "ADMIN"){
+        if(["ADMIN", "SUPERUSER"].includes(window.sessionStorage.getItem("authorizationLevel"))){
             alert("Sorry You Can't View This Page");
             document.location.href = "/login";
         }
@@ -164,11 +164,10 @@ export default function Settings(){
         console.log("Attempting PUT");
         try{
             const formdata = new FormData();
-            formdata.append("updatedOrgInfo", JSON.stringify({houseId: window.sessionStorage.getItem('houseID'),
+            formdata.append("orgInfo", {houseId: window.sessionStorage.getItem('houseID'),
             name: orgName,
             address: orgAddress,
             website: orgWebsite,
-            logoUrl: "https://example.com/newlogo.png",
             socials: {
               "instagramActive":instaState,
               "instagramLink": orgInsta,
@@ -188,13 +187,14 @@ export default function Settings(){
                 newsContent: newsContent
             },
             timezone: "CST",
-            subheading: "",
-            statsActive: statsState}));
-            formdata.append("logoFile", logo);
-            formdata.append("facilityImageFile", facilityImage);
+            statsActive: statsState});
+            // formdata.append("logoFile", logo);
+            // formdata.append("facilityImageFile", facilityImage);
             
-
-            
+            for (const value of formdata.values()) {
+                console.log(value);
+              }
+            // http://206.81.3.155:8282
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
                 headers: {
@@ -204,8 +204,9 @@ export default function Settings(){
                 body: formdata,
             });
             response.json().then(json => {
+                if(json.payload !== null){
                 console.log(json.payload);
-                setAccounts(json.payload);
+                setAccounts(json.payload);}
             });
 
         } catch (error) {
