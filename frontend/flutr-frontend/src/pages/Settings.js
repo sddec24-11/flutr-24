@@ -28,7 +28,7 @@ export default function Settings(){
 
 
     useEffect(() => {
-        if(["ADMIN", "SUPERUSER"].includes(window.sessionStorage.getItem("authorizationLevel"))){
+        if(window.sessionStorage.getItem("authorizationLevel") !== "SUPERUSER"){
             alert("Sorry You Can't View This Page");
             document.location.href = "/login";
         }
@@ -430,7 +430,7 @@ export default function Settings(){
                                 <Row style={{border: '1px solid #000000'}}>
                                     <Col xs={4}><h4>{r.username}</h4></Col>
                                     <Col xs={3}><h4>{r.role}</h4></Col>
-                                    <Col xs={2}><h4 style={{color: (r.active) ? "#49eb34" : "#FF0000"}}>{(r.active) ? "Yes" : "No"}</h4></Col>
+                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
                                     <Col xs={2}><h4>{r.houseId}</h4></Col>
                                     {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
                                     <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>
@@ -455,7 +455,7 @@ export default function Settings(){
                                 <Row style={{border: '1px solid #000000'}}>
                                     <Col xs={6}><h4>{r.fullName}</h4></Col>
                                     <Col xs={3}><h4>{r.abbreviation}</h4></Col>
-                                    <Col xs={2}><h4>{r.active}</h4></Col>
+                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
                                     <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
                                 </Row>
                             )

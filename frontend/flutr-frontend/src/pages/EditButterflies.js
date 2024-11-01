@@ -11,7 +11,7 @@ export default function EditButterflies() {
   const [changeList, setChangeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [butterflies, setButterflies] = useState([]);
-  const [editPoints, setEditPoints] = useState(butterflies.map(() => -1));
+  const [editPoints, setEditPoints] = useState([]);
   const [showExtras, setExtras] = useState(false);
 
   const toggleTools = () => {
@@ -29,10 +29,10 @@ useEffect(() => {
       response.json().then(json => {
         console.log(json.payload);
         setButterflies(json.payload);
-        setEditPoints(butterflies.map(() => -1));
+        setEditPoints(new Array(json.payload.length).fill(-1));
       })
     } catch (error) {
-
+      console.error(error);
     }
   };
   fetchButterflies();
@@ -43,28 +43,23 @@ useEffect(() => {
     const updatedChangeList = [...changeList];
     const updatedEditPoints = [...editPoints];
 
-    // Check if the butterfly has been edited before
-    if (editPoints[index] === -1) {
-      // If not, add a new entry
+    if(updatedEditPoints[index] === -1){
       updatedEditPoints[index] = updatedChangeList.length;
       updatedChangeList.push({
-        id: butterflies[index].buttId,
+        id:butterflies[index].buttId,
         ...updatedValues,
       });
-    } else {
-      // If yes, update the existing entry
-      updatedChangeList[editPoints[index]] = {
+    } else{
+      updatedChangeList[updatedEditPoints[index]] = {
         id: butterflies[index].buttId,
         ...updatedValues,
       };
     }
-
     setChangeList(updatedChangeList);
     setEditPoints(updatedEditPoints);
   };
 
   const handleChangeSearch = (e) => {
-    e.preventDefault();
     setSearchInput(e.target.value);
   };
 
@@ -85,20 +80,34 @@ useEffect(() => {
                     </Row>
                     <Row xs={1} sm={2} md={2} lg={3}>
                       {butterflies
-                        // .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
-                        .map((r, index) => (
-                          <div key={index}>
-                            {r.buttId.toLowerCase().includes(searchInput.toLowerCase()) &&
-                          <ButterflyEditCard
-                            butterfly={r}
-                            index={index}
-                            handleUpdate={handleUpdate}
-                            commonName={editPoints[index] !== -1 ? r.commonName : changeList[editPoints[index]].commonName}
-                            lifespan={editPoints[index] !== -1 ? r.lifespan : changeList[editPoints[index]].lifespan}
-                          />}
-                          </div>
+                        .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
+                        .map((r, index) => {
+                          if (r.commonName.toLowerCase().includes(searchInput.toLowerCase())) {
+                            return (
+                              <div key={r.buttId}>
+                                <ButterflyEditCard
+                                  butterfly={r}
+                                  index={index}
+                                  handleUpdate={handleUpdate}
+                                  commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
+                                  lifespan={editPoints[index] !== -1 ? changeList[editPoints[index]].lifespan : r.lifespan}
+                                />
+                              </div>
+                            );
+                          }
+                          return null;
+                          // <div key={index}>
+                          //   {r.buttId.toLowerCase().includes(searchInput.toLowerCase()) &&
+                          // <ButterflyEditCard
+                          //   butterfly={r}
+                          //   index={index}
+                          //   handleUpdate={handleUpdate}
+                          //   commonName={editPoints[index] !== -1 ? r.commonName : changeList[editPoints[index]].commonName}
+                          //   lifespan={editPoints[index] !== -1 ? r.lifespan : changeList[editPoints[index]].lifespan}
+                          // />}
+                          // </div>
                           
-                        ))}
+})}
                     </Row>
                 </Container>
             </div>
