@@ -136,7 +136,7 @@ export default function EditShipment() {
 
         const fetchOptions = async () => {
             try {
-                const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -168,7 +168,7 @@ export default function EditShipment() {
     //fetch all active suppliers
     const fetchSuppliers = async (retries = 3) => {
         try {
-            const response = await fetch("/api/suppliers/view/active", {
+            const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/active", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -296,7 +296,7 @@ export default function EditShipment() {
         while (retries > 0) {
             try {
                 let id = shipmentData.shipmentId;
-                const response = await fetch(`api/shipments/edit/${id}`, {
+                const response = await fetch(`http://206.81.3.155:8282/api/shipments/edit/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
