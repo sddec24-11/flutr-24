@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Landing from "./pages/Landing.js";
-import Contact from "./pages/Contact.js";
 import About from "./pages/About.js";
 import NotFound from "./pages/404.js";
 import LocationHome from "./pages/LocationHome.js";
@@ -78,7 +77,6 @@ const AppRouter = ({locations}) => {
             <Routes>
                 <Route index element={<Landing data={locations} />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
                 <Route path="/logout" element={<Logout />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/changePassword" element={<ChangePassword/>} />

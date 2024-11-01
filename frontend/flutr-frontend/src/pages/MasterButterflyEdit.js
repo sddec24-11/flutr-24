@@ -148,7 +148,7 @@ export default function MasterButterflyEdit(){
         window.history.back();
       }
     return(
-        <div>
+        <div class="main-container">
             <Navbar/>
             <h3>Edit Butterfly</h3>
             <div>

@@ -28,11 +28,12 @@ export default function Settings(){
 
 
     useEffect(() => {
-        if(window.sessionStorage.getItem("authorizationLevel") !== "SUPERUSER"){
-            alert("Sorry You Can't View This Page");
+        const authorizationLevel = window.sessionStorage.getItem("authorizationLevel");
+        if (authorizationLevel !== "SUPERUSER" && authorizationLevel !== "ADMIN") {
+            alert("Sorry, you can't view this page");
             document.location.href = "/login";
         }
-    });
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -316,7 +317,7 @@ export default function Settings(){
     }
 
     return (
-        <div>
+        <div class="main-container">
             <Navbar authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
             <div style={{width: "100%", margin: 'auto', height: '50px', height: 'auto', textAlign: 'center'}}>
                 <h3 style={{paddingTop: '50px', paddingBottom: '50px', color:'#469FCE'}}>Organization Settings</h3>

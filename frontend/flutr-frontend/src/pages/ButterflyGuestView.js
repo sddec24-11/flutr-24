@@ -38,7 +38,7 @@ export default function ButterflyGuestView(){
 
     if(loaded){
     return(
-        <div>
+        <div  class="main-container">
             <Navbar/>
             <div>
                 <div style={{width:'50%', margin: 'auto', textAlign: 'center'}}>

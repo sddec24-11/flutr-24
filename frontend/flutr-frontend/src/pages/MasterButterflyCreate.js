@@ -89,7 +89,7 @@ export default function MasterButterflyCreate(){
         }
     });
     return(
-        <div>
+        <div  class="main-container">
             <Navbar/>
             <h3>Add Butterfly</h3>
             <div>

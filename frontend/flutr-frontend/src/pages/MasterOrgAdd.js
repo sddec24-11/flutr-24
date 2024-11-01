@@ -33,7 +33,7 @@ export default function MasterOrgAdd(){
 
 
     return(
-        <div>
+        <div class="main-container">
             <Navbar/>
             <h3>Add Organization</h3>
             <div>
