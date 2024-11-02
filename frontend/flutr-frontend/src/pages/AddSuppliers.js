@@ -55,7 +55,7 @@ export default function AddSupplier(){
         window.history.back();
     }
     return(
-        <div>
+        <div  class="main-container">
             <h1>Edit a supplier.</h1>
             <h4>Full Name:</h4>
             <input value={fullName} onChange={handleName}></input>

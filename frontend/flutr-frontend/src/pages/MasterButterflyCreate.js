@@ -12,26 +12,50 @@ export default function MasterButterflyCreate(){
         // Do something with the files
       }, [])
 
+    const [open, setOpen] = useState();
+    const [openFile, setOpenFile] = useState();
+    const handleOpenUpload = (e) => {
+        const file = e.target.files[0];
+        setOpen(URL.createObjectURL(file));
+        setOpenFile(file);
+    }
+    const [closed, setClosed] = useState();
+    const [closedFile, setClosedFile] = useState();
+    const handleClosedUpload = (e) => {
+        const file = e.target.files[0];
+        setClosed(URL.createObjectURL(file));
+        setClosedFile(file);
+    }
+
       const handleSubmit = async () => {
         try{
+          const body = {
+            buttId: scientific,
+            commonName: common,
+            family: family,
+            subFamily: subFam,
+            lifespan: longevity,
+            range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
+            plant: hostPlant,
+            habitat: habitat,
+            funFacts: funFacts
+          }
+          const formdata = new FormData();
+          formdata.append('butterfly', new Blob([JSON.stringify(body)], {type: "application/json"}));
+          formdata.append('imgWingsOpen', openFile);
+          formdata.append('imgWingsClosed', closedFile);
             const response = await fetch("http://206.81.3.155:8282/api/master/addButterfly",{
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                         'Authorization': window.sessionStorage.getItem("accessKey"),
                 },
-                body: JSON.stringify({
-                    buttId: scientific,
-                    commonName: common,
-                    family: family,
-                    subFamily: subFam,
-                    lifespan: longevity,
-                    range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
-                    plant: hostPlant,
-                    habitat: habitat,
-                    funFacts: funFacts,
-                }),
+                body: formdata
             });
+            response.json().then(json => {
+              if(json.success !== null && json.success){
+                window.history.back();
+              }
+            })
         } catch (error){
             console.log('Failed to fetch', error);
         }
@@ -89,7 +113,7 @@ export default function MasterButterflyCreate(){
         }
     });
     return(
-        <div>
+        <div  class="main-container">
             <Navbar/>
             <h3>Add Butterfly</h3>
             <div>
@@ -136,13 +160,15 @@ export default function MasterButterflyCreate(){
                         <Col><Checkbox state={afState} setState={setAFState}/></Col>
                         <Col>Africa</Col>
                     </Row>
-                    <Row>
-                        <Col>Wings Open</Col>
-                        <Col>Wings Closed</Col>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}>Wings Open:</Col>
+                        <Col xs={4}><div><input type="file" onChange={handleOpenUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={open}/></Col>
                     </Row>
-                    <Row>
-                        <Col><ImageUploader/></Col>
-                        <Col><ImageUploader/></Col>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}><div id="label">Wings Closed:</div></Col>
+                        <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
                     </Row>
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handleSubmit}>Submit</button>

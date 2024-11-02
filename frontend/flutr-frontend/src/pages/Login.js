@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.css";
 import styles from '../styles/formLookStyles.css';
 import { Navigate } from "react-router-dom";
-import Contact from "./Contact";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";

@@ -74,7 +74,7 @@ export default function AddOrg(){
     }
 
     return(
-        <div>
+        <div  class="main-container">
             <Navbar/>
             <div>
                 <div style={{width: "100%", margin: 'auto', height: '50px', height: 'auto', textAlign: 'center'}}>

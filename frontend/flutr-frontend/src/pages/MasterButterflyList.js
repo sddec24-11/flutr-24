@@ -86,7 +86,7 @@ export default function MasterButterflyList(){
 
   if(loaded){
     return(
-        <div style={{backgroundColor: "#FFFFFF"}}>
+        <div  class="main-container" style={{backgroundColor: "#FFFFFF"}}>
             <PageTitle title={"All Butterflies"}/>
             <Navbar />
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
