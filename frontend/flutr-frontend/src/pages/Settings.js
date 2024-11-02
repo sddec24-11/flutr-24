@@ -215,7 +215,8 @@ export default function Settings(){
             response.json().then(json => {
                 if(json.payload !== null){
                 console.log(json.payload);
-                setAccounts(json.payload);}
+                alert("Successfully updated organization!");
+                window.location.reload();}
             });
 
         } catch (error) {
