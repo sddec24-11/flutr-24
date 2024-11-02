@@ -13,6 +13,21 @@ export default function MasterButterflyEdit(){
         // Do something with the files
       }, [])
 
+    const [open, setOpen] = useState();
+    const [openFile, setOpenFile] = useState();
+    const handleOpenUpload = (e) => {
+        const file = e.target.files[0];
+        setOpen(URL.createObjectURL(file));
+        setOpenFile(file);
+    }
+    const [closed, setClosed] = useState();
+    const [closedFile, setClosedFile] = useState();
+    const handleClosedUpload = (e) => {
+        const file = e.target.files[0];
+        setClosed(URL.createObjectURL(file));
+        setClosedFile(file);
+    }
+
       const location = useLocation();
       const butterflyToEdit = location.state;
       useEffect(() => {
@@ -23,27 +38,52 @@ export default function MasterButterflyEdit(){
     });
       useEffect(() => {
         const fetchData = async () => {
-          console.log(butterflyToEdit);
-          console.log(encodeURIComponent(butterflyToEdit));
           try{
-            const response = await fetch(`http://206.81.3.155:8282/api/master/butterflyDetails/${encodeURIComponent(butterflyToEdit)}`,{
+            const response = await fetch(`http://206.81.3.155:8282/api/butterflies/fullDetails/${window.sessionStorage.getItem("houseID")}/${butterflyToEdit}`,{
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
                 'Authorization': window.sessionStorage.getItem("accessKey"),
               }
             });
-            const message = await response.json();
-            if(message.success){
-              console.log("Success! " + message.payload);
-              setScientific(response.buttId);
-              setCommon(response.common);
-              setFamily(response.family);
-              setSubFam(response.subFamily);
-              setLongevity(response.lifespan);
-              setHostPlant(response.plant);
-              setHabitat(response.habitat);
-              setFacts(response.funFacts);
+            response.json().then(json => {
+              if(json.payload !== null){
+                console.log(json.payload);
+                setScientific(json.payload.buttId);
+                setCommon(json.payload.commonName);
+                setFamily(json.payload.family);
+                setSubFam(json.payload.subFamily);
+                setLongevity(json.payload.lifespan);
+                setHostPlant(json.payload.plant);
+                setHabitat(json.payload.habitat);
+                setFacts(json.payload.funFacts);
+                json.payload.range.map((r) => {
+                    if(r === "North America"){
+                      setNAState(true);
+                    }
+                    else if(r === "Europe"){
+                      setEUState(true);
+                    }
+                    else if(r === "South America"){
+                      setSAState(true);
+                    }
+                    else if(r === "Australia"){
+                      setAUSState(true);
+                    }
+                    else if(r === "Asia"){
+                      setAsiaState(true);
+                    }
+                    else if(r === "Africa"){
+                      setAFState(true);
+                    }
+                  });
+                  setClosed(json.payload.imgWingsClosed);
+                  setOpen(json.payload.imgWingsOpen);
+                  
+              }
+            });
+            
+        
               // response.range.map((r) => {
               //   if(r === "North America"){
               //     setNAState(true);
@@ -64,10 +104,6 @@ export default function MasterButterflyEdit(){
               //     setAFState(true);
               //   }
               // })
-            }
-            else{
-              throw new Error(console.error);
-            }
           } catch (error) {
             console.error("Failed to fetch butterfly: ", error);
           } finally {
@@ -79,24 +115,33 @@ export default function MasterButterflyEdit(){
 
       const handleSubmit = async () => {
         try{
+          const body = {
+            buttId: scientific,
+            commonName: common,
+            family: family,
+            subFamily: subFam,
+            lifespan: longevity,
+            range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
+            plant: hostPlant,
+            habitat: habitat,
+            funFacts: funFacts
+          }
+          const formdata = new FormData();
+          formdata.append('butterfly', new Blob([JSON.stringify(body)], {type: "application/json"}));
+          formdata.append('imgWingsOpen', openFile);
+          formdata.append('imgWingsClosed', closedFile);
             const response = await fetch("http://206.81.3.155:8282/api/master/editButterfly",{
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                  'Authorization': window.sessionStorage.getItem("accessKey"),
                 },
-                body: JSON.stringify({
-                    buttId: scientific,
-                    commonName: common,
-                    family: family,
-                    subFamily: subFam,
-                    lifespan: longevity,
-                    range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
-                    plant: hostPlant,
-                    habitat: habitat,
-                    funFacts: funFacts,
-                }),
+                body: formdata
             });
+            response.json().then(json => {
+              if(json.success !== null && json.success){
+                window.history.back();
+              }
+            })
         } catch (error){
             console.log('Failed to fetch', error);
         }
@@ -199,9 +244,15 @@ export default function MasterButterflyEdit(){
                         <Col>Wings Open</Col>
                         <Col>Wings Closed</Col>
                     </Row>
-                    <Row>
-                        <Col><ImageUploader/></Col>
-                        <Col><ImageUploader/></Col>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}>Wings Open:</Col>
+                        <Col xs={4}><div><input type="file" onChange={handleOpenUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={open}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}><div id="label">Wings Closed:</div></Col>
+                        <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
                     </Row>
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handleSubmit}>Submit</button>
