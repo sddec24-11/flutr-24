@@ -26,6 +26,7 @@ import MasterButterflyList from "./pages/MasterButterflyList.js";
 import ButterflyGuestView from "./pages/ButterflyGuestView.js";
 import EditSupplier from "./pages/EditSuppliers.js";
 import AddSupplier from "./pages/AddSuppliers.js";
+import SettingsAttempt from "./pages/SettingsAttempt.js";
 
 export default function App() {
   const [locations, setLocations] = useState([]);
@@ -101,6 +102,8 @@ const AppRouter = ({locations}) => {
                 <Route path="/kiosk/reiman-gardens/gallery" element={<Gallery data={locations[0].houseId} kioskMode={true}/>} />
                 <Route path="/butterfly/view" element={<ButterflyGuestView/>}/>
                 <Route path="settings" element={<Settings />} />
+                <Route path="/settings2" element={<SettingsAttempt />} />
+
                 <Route path="*" element={<NotFound />} />
                 <Route path="/masterbutterfly/create" element={<MasterButterflyCreate/>}/>
                 <Route path="/masterbutterfly/edit" element={<MasterButterflyEdit/>}/>

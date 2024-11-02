@@ -1,6 +1,7 @@
 import { Button } from "bootstrap"
 import Navbar from "../components/navbar"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
+import {useForm} from "react-hook-form";
 import ColorPicker from "../components/ColorPick";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -11,24 +12,27 @@ import Modal from 'react-bootstrap/Modal';
 import {Link} from "react-router-dom"
 import axios from 'axios';
 
-export default function Settings(){
+export default function SettingsAttempt(){
     const [logo, setLogo] = useState();
-    const [logoFile, setLogoFile] = useState();
     const handleLogoUpload = (e) => {
-        const file = e.target.files[0];
-        setLogo(URL.createObjectURL(file));
-        setLogoFile(file);
+        console.log(e.target.files);
+        setLogo(URL.createObjectURL(e.target.files[0]));
     }
     const [facilityImage, setFacilityImage] = useState();
-    const [facilityImageFile, setFacilityImageFile] = useState();
     const handleFacilityImageUpload = (e) => {
-        const file = e.target.files[0];
-        setFacilityImage(URL.createObjectURL(file));
-        setFacilityImageFile(file);
+        console.log(e.target.files);
+        setFacilityImage(URL.createObjectURL(e.target.files[0]));
     }
     const [suppliers, setSuppliers] = useState([]);
     const [accounts, setAccounts] = useState([]);
+    const { updateInfo, handleFormSubmit} = useForm();
 
+    const onSubmit = async (data) => {
+        const formData = new FormData();
+        formData.append("orgInfo", {});
+        formData.append("logoFile");
+        formData.append("facilityImageFile",);
+    }
 
 
     useEffect(() => {
@@ -168,37 +172,62 @@ export default function Settings(){
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
+            // const body = {
+            //     houseId: window.sessionStorage.getItem('houseID'),
+            //     name: orgName,
+            //     address: orgAddress,
+            //     website: orgWebsite,
+            //     socials: {
+            //         "instagramActive":instaState,
+            //         "instagramLink": orgInsta,
+            //         "facebookActive": faceState,
+            //         "facebookLink": orgFaceBook,
+            //         "twitterActive": xState,
+            //         "twitterLink": orgX,
+            //         "youtubeActive": ytState,
+            //         "youtubeLink": orgYouTube,
+            //     },
+            //     colors: [primaryColor, secondaryColor, backgroundColor],
+            //     otd: {
+            //         active: botdState
+            //     },
+            //     news: {
+            //         active: newsState,
+            //         newsContent: newsContent
+            //     },
+            //     timezone: "CST",
+            //     statsActive: statsState
+            // }
             const body = {
-                houseId: window.sessionStorage.getItem('houseID'),
-                name: orgName,
-                address: orgAddress,
-                website: orgWebsite,
+                houseId: "reiman-gardens",
+                name: "Reiman Gardens",
+                address: "1407 University Blvd. Ames, IA 50011",
+                website: "reiman-gardens",
                 socials: {
-                    "instagramActive":instaState,
-                    "instagramLink": orgInsta,
-                    "facebookActive": faceState,
-                    "facebookLink": orgFaceBook,
-                    "twitterActive": xState,
-                    "twitterLink": orgX,
-                    "youtubeActive": ytState,
-                    "youtubeLink": orgYouTube,
+                    "instagramActive":true,
+                    "instagramLink": "https://www.instagram.com/reimangardens/?hl=en",
+                    "facebookActive": true,
+                    "facebookLink": "https://www.facebook.com/ReimanGardens/",
+                    "twitterActive": false,
+                    "twitterLink": "",
+                    "youtubeActive": false,
+                    "youtubeLink": "",
                 },
-                colors: [primaryColor, secondaryColor, backgroundColor],
+                colors: ["#087648", "#D9E5DC", "#96C09F"],
                 otd: {
-                    active: botdState
+                    active: true
                 },
                 news: {
-                    active: newsState,
-                    newsContent: newsContent
+                    active: true,
+                    newsContent: "newsContent"
                 },
                 timezone: "CST",
-                statsActive: statsState
+                statsActive: true
             }
             const formdata = new FormData();
-            formdata.append('orgInfo', new Blob([JSON.stringify(body)], {type: "application/json"}));
-            // formdata.append("orgInfo", JSON.stringify(body));
-            formdata.append("logoFile", logoFile);
-            formdata.append("facilityImageFile", facilityImageFile);
+            formdata.append("orgInfo", JSON.stringify(body));
+            // formdata.append("logoFile", logo);
+            // formdata.append("facilityImageFile", facilityImage);
             
             for (const [key, value] of formdata.entries()) {
                 console.log(key,value);
