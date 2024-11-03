@@ -91,9 +91,6 @@ function Navbar({location, kioskMode}) {
               <li onClick={removeActive}>
                 <a href='/about' className={`${styles.navLink}`}>About</a>
               </li>
-              <li onClick={removeActive}>
-                <a href='/masteredit' className={`${styles.navLink}`}>Master Edit</a>
-              </li>
               {window.sessionStorage.getItem("authorized") && 
               <NavDropdown
                   id="nav-dropdown"
