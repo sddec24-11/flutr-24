@@ -87,6 +87,8 @@ export default function Settings(){
                 setOrgName(json.payload.name);
                 setOrgWebsite(json.payload.website);
                 setOrgAddress(json.payload.address);
+                setLogo(json.payload.logoUrl);
+                setFacilityImage(json.payload.facilityImgUrl);
 
                 setInsta(json.payload.socials.instagramActive);
                 setOrgInsta(json.payload.socials.instagramLink);
@@ -196,13 +198,16 @@ export default function Settings(){
             }
             const formdata = new FormData();
             formdata.append('orgInfo', new Blob([JSON.stringify(body)], {type: "application/json"}));
-            // formdata.append("orgInfo", JSON.stringify(body));
-            formdata.append("logoFile", logoFile);
-            formdata.append("facilityImageFile", facilityImageFile);
+            if(logoFile !== undefined){
+                formdata.append("logoFile", logoFile);
+            }
+            if(facilityImageFile !== undefined){
+                formdata.append("facilityImageFile", facilityImageFile);
+            }
             
             for (const [key, value] of formdata.entries()) {
                 console.log(key,value);
-              }
+            }
             // http://206.81.3.155:8282
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
@@ -216,7 +221,8 @@ export default function Settings(){
                 if(json.payload !== null){
                 console.log(json.payload);
                 alert("Successfully updated organization!");
-                window.location.reload();}
+                window.location.reload();
+            }
             });
 
         } catch (error) {
