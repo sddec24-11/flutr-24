@@ -6,7 +6,7 @@ import "../styles/addShipmentStyles.css";
 
 export default function AddShipment() {
     useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
+        if(!window.sessionStorage.getItem("authorized")){
             alert("Sorry, you cant view this page.");
             document.location.href = '/login';
         }
