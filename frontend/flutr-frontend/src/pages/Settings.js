@@ -302,6 +302,27 @@ export default function Settings(){
         }
     }
 
+    const handleReactivate = async (username) => {
+        try{
+            const response = await fetch(`http://206.81.3.155:8282/api/users/reactivate/${username}`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                }
+            })
+            response.json().then(json => {
+                if(json.success){
+                    // console.log(json.payload);
+                    window.location.reload();
+                }
+            })
+
+        } catch(error){
+            console.log('Failed to fetch', error);
+        }
+    }
+
     const handleEmployeeAdd = async () => {
         try{
             const response = await fetch('http://206.81.3.155:8282/api/users/register', {
@@ -443,7 +464,9 @@ export default function Settings(){
                                     <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
                                     <Col xs={2}><h4>{r.houseId}</h4></Col>
                                     {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
-                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>
+                                    {r.active && <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>}
+                                    {!(r.active) && <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%'}}>Activate</div></Col>}
+
                                 </Row>
                             )
                         })}
