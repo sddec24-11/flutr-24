@@ -455,54 +455,64 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 4 &&
-                    <div id="employeeList">
-                    <Container style={{width: '100%'}}>
-                        <Row xs={6}>
-                            <Col xs={4}><strong>Username</strong></Col>
-                            <Col xs={3}><strong>Role</strong></Col>
-                            <Col xs={2}><strong>Active?</strong></Col>
-                            <Col xs={2}><strong>Organization</strong></Col>
-                            <Col xs={1}></Col>
-                        </Row>
-                        {accounts.map((r) => {
-                            return(
-                                <Row style={{border: '1px solid #000000'}}>
-                                    <Col xs={4}><h4>{r.username}</h4></Col>
-                                    <Col xs={3}><h4>{r.role}</h4></Col>
-                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
-                                    <Col xs={2}><h4>{r.houseId}</h4></Col>
-                                    {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
-                                    {r.active && <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>}
-                                    {!(r.active) && <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%'}}>Activate</div></Col>}
+                    <div id="shipments-table-container">
+                        <table className="paging-table" style={{width: '100%'}}>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Role</th>
+                                    <th>Active?</th>
+                                    <th>Organization</th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {accounts.map((r, index) => (
+                                    <tr key={index}>
+                                        <td>{r.username}</td>
+                                        <td>{r.role}</td>
+                                        <td>{(r.active) ? "Yes" : "No"}</td>
+                                        <td>{r.houseId}</td>
+                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r.username)}>Reset Password</div></td>
+                                        {r.active && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Deactivate</div></td>}
+                                        {!(r.active) && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Activate</div></td>}
 
-                                </Row>
-                            )
-                        })}
-                    </Container>
-                    <input value={username} onChange={handleUsername}></input>
-                    <button onClick={handleEmployeeAdd}>Add New Employee</button>
+                                    </tr>
+                                ))}
+                                <tr>
+                                    <td colSpan={4}><input style={{width: '100%'}} placeholder="New Employee Username" value={username} onChange={handleUsername}></input></td>
+                                    <td colSpan={2}><div style={{width: '100%',backgroundColor: '#469FCE', color: "#E1EFFE", textAlign: 'center'}} onClick={handleEmployeeAdd}>Add New Employee</div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    
             </div>}
                 {activeTab === 5 &&
-                <div id="supplierList">
-                    <Container style={{width: '100%'}}>
-                        <Row xs={6}>
-                            <Col xs={6}><strong>Full Name</strong></Col>
-                            <Col xs={3}><strong>Abbreviation</strong></Col>
-                            <Col xs={2}><strong>Active?</strong></Col>
-                            <Col xs={1}></Col>
-                        </Row>
-                        {suppliers.map((r) => {
-                            return(
-                                <Row style={{border: '1px solid #000000'}}>
-                                    <Col xs={6}><h4>{r.fullName}</h4></Col>
-                                    <Col xs={3}><h4>{r.abbreviation}</h4></Col>
-                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
-                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
-                                </Row>
-                            )
-                        })}
-                    </Container>
-                    <button onClick={handleNewSupplier}>Add New Supplier</button>
+                <div id="shipments-table-container">
+                    <table className="paging-table" style={{width: '100%'}}>
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Abbreviation</th>
+                                <th>Active?</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {suppliers.map((r, index) => (
+                                <tr key={index}>
+                                    <td>{r.fullName}</td>
+                                    <td>{r.abbreviation}</td>
+                                    <td>{(r.active) ? "Yes" : "No"}</td>
+                                    <td style={{backgroundColor: '#469FCE'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%', color: "#E1EFFE", textAlign:'center'}}>Edit</div></Link></td>
+                                </tr>
+                            ))}
+                            <tr>
+                                <td colSpan={4}><div style={{width: '100%', textAlign: 'center', backgroundColor:'#469FCE', color:"#E1EFFE"}} onClick={handleNewSupplier}>Add New Supplier</div></td>
+                            </tr>
+                        </tbody>
+                    </table>
             </div>}
                 {outerTab === 1 &&
                 <div className="bottomButtons">
