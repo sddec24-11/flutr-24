@@ -175,6 +175,8 @@ export default function Settings(){
                 name: orgName,
                 address: orgAddress,
                 website: orgWebsite,
+                logoUrl: logo,
+                facilityImgUrl: facilityImage,
                 socials: {
                     "instagramActive":instaState,
                     "instagramLink": orgInsta,
