@@ -7,10 +7,13 @@ import { useLocation } from "react-router-dom";
 
 
 export default function AddRelease(){
+    
+
     useEffect(() => {
-        if(!window.sessionStorage.getItem("authorized")){
-            alert("Sorry, you cant view this page.");
-            document.location.href = '/login';
+        const authorizationLevel = window.sessionStorage.getItem("authorizationLevel");
+        if (authorizationLevel !== "SUPERUSER" && authorizationLevel !== "ADMIN" && authorizationLevel !== "EMPLOYEE") {
+            alert("Sorry, you can't view this page");
+            document.location.href = "/login";
         }
     }, []);
     
