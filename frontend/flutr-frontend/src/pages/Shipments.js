@@ -12,50 +12,53 @@ export default function Shipments() {
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 8;
 
+    useEffect(() => {
+        const authorizationLevel = window.sessionStorage.getItem("authorizationLevel");
+        if (authorizationLevel !== "SUPERUSER" && authorizationLevel !== "ADMIN" && authorizationLevel !== "EMPLOYEE") {
+            alert("Sorry, you can't view this page");
+            document.location.href = "/login";
+        }
+    }, []);
+
     // Function to fetch shipments
-    const fetchShipments = async (retries = 3) => {
-        try {
-            const response = await fetch("/api/shipments/view/all", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey")
+    useEffect(() => {
+        const maxRetries = 3;
+
+        const fetchShipments = async (retries = maxRetries) => {
+            try {
+                const response = await fetch("http://206.81.3.155:8282/api/shipments/view/all", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey")
+                    }
+                });
+
+                const message = await response.json();
+
+                if (message.error == null) {
+                    setShipmentList(message.payload.reverse());
+                    setLoading(false);
+                } else {
+                    console.error("Fetch attempt failed with error: ", error.message);
+                    setError("Failed to load shipments.");
                 }
-            });
+            } catch (error) {
+                console.error("Fetch attempt failed with error:", error.message);
 
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchShipments(retries - 1), 1000);
+                } else {
+                    setError('Failed to load shipments after multiple attempts.');
+                    console.error("Failed to load shipments after retries:", error);
+                    setLoading(false);
+                }
             }
+        };
 
-            const message = await response.json();
-            if (message.error) {
-                throw new Error(message.error);
-            } else {
-                setShipmentList(message.payload);
-            }
-        } catch (error) {
-            if (retries > 0) {
-                console.log(`Retrying... Attempts left: ${retries}`);
-                await fetchShipments(retries - 1); // Retry
-            } else {
-                setError('Failed to load shipments: ' + error.message);
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-  
-    useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
-            alert("Sorry, you cant view this page.");
-            document.location.href = '/login';
-        }
-    });
-
-    // Effect to fetch shipments on mount
-    useEffect(() => {
         fetchShipments();
-    }, [])
+    }, []);
 
     const totalPages = Math.ceil(shipmentList.length / rowsPerPage);
     const startIndex = (currentPage - 1) * rowsPerPage;
@@ -85,7 +88,7 @@ export default function Shipments() {
 
     return (
         <div class="main-container">
-            <Navbar authenticated={window.sessionStorage.getItem("authorizationLevel")}/>
+            <Navbar />
             <h1 className="shipments-header">Shipments</h1>
 
             {loading ? (
@@ -101,6 +104,7 @@ export default function Shipments() {
                                 <th>Arrival Date</th>
                                 <th>Supplier</th>
                                 <th style={{ width: "100px" }}></th>
+                                <th style={{ width: "100px" }}></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -109,6 +113,11 @@ export default function Shipments() {
                                     <td>{formatDate(shipment.shipmentDate)}</td>
                                     <td>{formatDate(shipment.arrivalDate)}</td>
                                     <td>{shipment.abbreviation}</td>
+                                    <td>
+                                        <Link to="/addrelease" state={shipment}>
+                                            <p style={{ backgroundColor: '#E4976C', color: "#E1EFFE", margin: "0" }}>release</p>
+                                        </Link>
+                                    </td>
                                     <td>
                                         <Link to="/editshipment" state={shipment}>
                                             <p style={{ backgroundColor: "#469FCE", color: "#E1EFFE", margin: "0" }}>edit</p>

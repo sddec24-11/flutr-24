@@ -18,7 +18,7 @@ export default function ButterflyGuestView(){
     useEffect(() => {
         const fetchButterfly = async () => {
             try{
-              const response = await fetch(`/api/butterflies/fullDetails/${butterflyToLookUp.houseId}/${butterflyToLookUp.buttId}`, {
+              const response = await fetch(`http://206.81.3.155:8282/api/butterflies/fullDetails/${butterflyToLookUp.houseId}/${butterflyToLookUp.buttId}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default function ButterflyGuestView(){
 
     if(loaded){
     return(
-        <div>
+        <div  class="main-container">
             <Navbar/>
             <div>
                 <div style={{width:'50%', margin: 'auto', textAlign: 'center'}}>

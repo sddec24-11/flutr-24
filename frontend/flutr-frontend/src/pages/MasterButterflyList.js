@@ -49,7 +49,7 @@ export default function MasterButterflyList(){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`/api/master/allButterflies`, {
+          const response = await fetch(`http://206.81.3.155:8282/api/master/allButterflies`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export default function MasterButterflyList(){
 
   if(loaded){
     return(
-        <div style={{backgroundColor: "#FFFFFF"}}>
+        <div  class="main-container" style={{backgroundColor: "#FFFFFF"}}>
             <PageTitle title={"All Butterflies"}/>
             <Navbar />
             <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>

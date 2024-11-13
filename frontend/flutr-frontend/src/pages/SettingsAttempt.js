@@ -1,6 +1,7 @@
 import { Button } from "bootstrap"
 import Navbar from "../components/navbar"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
+import {useForm} from "react-hook-form";
 import ColorPicker from "../components/ColorPick";
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -11,24 +12,27 @@ import Modal from 'react-bootstrap/Modal';
 import {Link} from "react-router-dom"
 import axios from 'axios';
 
-export default function Settings(){
+export default function SettingsAttempt(){
     const [logo, setLogo] = useState();
-    const [logoFile, setLogoFile] = useState();
     const handleLogoUpload = (e) => {
-        const file = e.target.files[0];
-        setLogo(URL.createObjectURL(file));
-        setLogoFile(file);
+        console.log(e.target.files);
+        setLogo(URL.createObjectURL(e.target.files[0]));
     }
     const [facilityImage, setFacilityImage] = useState();
-    const [facilityImageFile, setFacilityImageFile] = useState();
     const handleFacilityImageUpload = (e) => {
-        const file = e.target.files[0];
-        setFacilityImage(URL.createObjectURL(file));
-        setFacilityImageFile(file);
+        console.log(e.target.files);
+        setFacilityImage(URL.createObjectURL(e.target.files[0]));
     }
     const [suppliers, setSuppliers] = useState([]);
     const [accounts, setAccounts] = useState([]);
+    const { updateInfo, handleFormSubmit} = useForm();
 
+    const onSubmit = async (data) => {
+        const formData = new FormData();
+        formData.append("orgInfo", {});
+        formData.append("logoFile");
+        formData.append("facilityImageFile",);
+    }
 
 
     useEffect(() => {
@@ -87,8 +91,6 @@ export default function Settings(){
                 setOrgName(json.payload.name);
                 setOrgWebsite(json.payload.website);
                 setOrgAddress(json.payload.address);
-                setLogo(json.payload.logoUrl);
-                setFacilityImage(json.payload.facilityImgUrl);
 
                 setInsta(json.payload.socials.instagramActive);
                 setOrgInsta(json.payload.socials.instagramLink);
@@ -170,46 +172,66 @@ export default function Settings(){
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
+            // const body = {
+            //     houseId: window.sessionStorage.getItem('houseID'),
+            //     name: orgName,
+            //     address: orgAddress,
+            //     website: orgWebsite,
+            //     socials: {
+            //         "instagramActive":instaState,
+            //         "instagramLink": orgInsta,
+            //         "facebookActive": faceState,
+            //         "facebookLink": orgFaceBook,
+            //         "twitterActive": xState,
+            //         "twitterLink": orgX,
+            //         "youtubeActive": ytState,
+            //         "youtubeLink": orgYouTube,
+            //     },
+            //     colors: [primaryColor, secondaryColor, backgroundColor],
+            //     otd: {
+            //         active: botdState
+            //     },
+            //     news: {
+            //         active: newsState,
+            //         newsContent: newsContent
+            //     },
+            //     timezone: "CST",
+            //     statsActive: statsState
+            // }
             const body = {
-                houseId: window.sessionStorage.getItem('houseID'),
-                name: orgName,
-                address: orgAddress,
-                website: orgWebsite,
-                logoUrl: logo,
-                facilityImgUrl: facilityImage,
+                houseId: "reiman-gardens",
+                name: "Reiman Gardens",
+                address: "1407 University Blvd. Ames, IA 50011",
+                website: "reiman-gardens",
                 socials: {
-                    "instagramActive":instaState,
-                    "instagramLink": orgInsta,
-                    "facebookActive": faceState,
-                    "facebookLink": orgFaceBook,
-                    "twitterActive": xState,
-                    "twitterLink": orgX,
-                    "youtubeActive": ytState,
-                    "youtubeLink": orgYouTube,
+                    "instagramActive":true,
+                    "instagramLink": "https://www.instagram.com/reimangardens/?hl=en",
+                    "facebookActive": true,
+                    "facebookLink": "https://www.facebook.com/ReimanGardens/",
+                    "twitterActive": false,
+                    "twitterLink": "",
+                    "youtubeActive": false,
+                    "youtubeLink": "",
                 },
-                colors: [primaryColor, secondaryColor, backgroundColor],
+                colors: ["#087648", "#D9E5DC", "#96C09F"],
                 otd: {
-                    active: botdState
+                    active: true
                 },
                 news: {
-                    active: newsState,
-                    newsContent: newsContent
+                    active: true,
+                    newsContent: "newsContent"
                 },
                 timezone: "CST",
-                statsActive: statsState
+                statsActive: true
             }
             const formdata = new FormData();
-            formdata.append('orgInfo', new Blob([JSON.stringify(body)], {type: "application/json"}));
-            if(logoFile !== undefined){
-                formdata.append("logoFile", logoFile);
-            }
-            if(facilityImageFile !== undefined){
-                formdata.append("facilityImageFile", facilityImageFile);
-            }
+            formdata.append("orgInfo", JSON.stringify(body));
+            // formdata.append("logoFile", logo);
+            // formdata.append("facilityImageFile", facilityImage);
             
             for (const [key, value] of formdata.entries()) {
                 console.log(key,value);
-            }
+              }
             // http://206.81.3.155:8282
             const response = await fetch("http://206.81.3.155:8282/api/orgs/edit", {
                 method: 'PUT',
@@ -222,9 +244,7 @@ export default function Settings(){
             response.json().then(json => {
                 if(json.payload !== null){
                 console.log(json.payload);
-                alert("Successfully updated organization!");
-                window.location.reload();
-            }
+                setAccounts(json.payload);}
             });
 
         } catch (error) {
@@ -292,27 +312,6 @@ export default function Settings(){
     const handleDeactivate = async (username) => {
         try{
             const response = await fetch(`http://206.81.3.155:8282/api/users/deactivate/${username}`,{
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey"),
-                }
-            })
-            response.json().then(json => {
-                if(json.success){
-                    // console.log(json.payload);
-                    window.location.reload();
-                }
-            })
-
-        } catch(error){
-            console.log('Failed to fetch', error);
-        }
-    }
-
-    const handleReactivate = async (username) => {
-        try{
-            const response = await fetch(`http://206.81.3.155:8282/api/users/reactivate/${username}`,{
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -455,64 +454,52 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 4 &&
-                    <div id="shipments-table-container">
-                        <table className="paging-table" style={{width: '100%'}}>
-                            <thead>
-                                <tr>
-                                    <th>Username</th>
-                                    <th>Role</th>
-                                    <th>Active?</th>
-                                    <th>Organization</th>
-                                    <th></th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {accounts.map((r, index) => (
-                                    <tr key={index}>
-                                        <td>{r.username}</td>
-                                        <td>{r.role}</td>
-                                        <td>{(r.active) ? "Yes" : "No"}</td>
-                                        <td>{r.houseId}</td>
-                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r.username)}>Reset Password</div></td>
-                                        {r.active && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Deactivate</div></td>}
-                                        {!(r.active) && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Activate</div></td>}
-
-                                    </tr>
-                                ))}
-                                <tr>
-                                    <td colSpan={4}><input style={{width: '100%'}} placeholder="New Employee Username" value={username} onChange={handleUsername}></input></td>
-                                    <td colSpan={2}><div style={{width: '100%',backgroundColor: '#469FCE', color: "#E1EFFE", textAlign: 'center'}} onClick={handleEmployeeAdd}>Add New Employee</div></td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    
+                    <div id="employeeList">
+                    <Container style={{width: '100%'}}>
+                        <Row xs={6}>
+                            <Col xs={4}><strong>Username</strong></Col>
+                            <Col xs={3}><strong>Role</strong></Col>
+                            <Col xs={2}><strong>Active?</strong></Col>
+                            <Col xs={2}><strong>Organization</strong></Col>
+                            <Col xs={1}></Col>
+                        </Row>
+                        {accounts.map((r) => {
+                            return(
+                                <Row style={{border: '1px solid #000000'}}>
+                                    <Col xs={4}><h4>{r.username}</h4></Col>
+                                    <Col xs={3}><h4>{r.role}</h4></Col>
+                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
+                                    <Col xs={2}><h4>{r.houseId}</h4></Col>
+                                    {/* <Col xs={1} style={{backgroundColor: '#E4976C'}}><button onClick={() => {handlePassword(r.username)}} style={{width: '100%'}}>Reset Password</button></Col> */}
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%'}}>Deactivate</div></Col>
+                                </Row>
+                            )
+                        })}
+                    </Container>
+                    <input value={username} onChange={handleUsername}></input>
+                    <button onClick={handleEmployeeAdd}>Add New Employee</button>
             </div>}
                 {activeTab === 5 &&
-                <div id="shipments-table-container">
-                    <table className="paging-table" style={{width: '100%'}}>
-                        <thead>
-                            <tr>
-                                <th>Full Name</th>
-                                <th>Abbreviation</th>
-                                <th>Active?</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {suppliers.map((r, index) => (
-                                <tr key={index}>
-                                    <td>{r.fullName}</td>
-                                    <td>{r.abbreviation}</td>
-                                    <td>{(r.active) ? "Yes" : "No"}</td>
-                                    <td style={{backgroundColor: '#469FCE'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%', color: "#E1EFFE", textAlign:'center'}}>Edit</div></Link></td>
-                                </tr>
-                            ))}
-                            <tr>
-                                <td colSpan={4}><div style={{width: '100%', textAlign: 'center', backgroundColor:'#469FCE', color:"#E1EFFE"}} onClick={handleNewSupplier}>Add New Supplier</div></td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="supplierList">
+                    <Container style={{width: '100%'}}>
+                        <Row xs={6}>
+                            <Col xs={6}><strong>Full Name</strong></Col>
+                            <Col xs={3}><strong>Abbreviation</strong></Col>
+                            <Col xs={2}><strong>Active?</strong></Col>
+                            <Col xs={1}></Col>
+                        </Row>
+                        {suppliers.map((r) => {
+                            return(
+                                <Row style={{border: '1px solid #000000'}}>
+                                    <Col xs={6}><h4>{r.fullName}</h4></Col>
+                                    <Col xs={3}><h4>{r.abbreviation}</h4></Col>
+                                    <Col xs={2}><h4>{(r.active) ? "Yes" : "No"}</h4></Col>
+                                    <Col xs={1} style={{backgroundColor: '#E4976C'}}><Link to="/edit/suppliers" state={r}><div style={{width: '100%'}}>edit</div></Link></Col>
+                                </Row>
+                            )
+                        })}
+                    </Container>
+                    <button onClick={handleNewSupplier}>Add New Supplier</button>
             </div>}
                 {outerTab === 1 &&
                 <div className="bottomButtons">

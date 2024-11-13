@@ -1,31 +1,29 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Card from "react-bootstrap/Card";
 import Col from "react-bootstrap/Col";
 
 export default function ButterflyEditCard({
   butterfly,
-  index,
   handleUpdate,
-  commonName,
-  lifespan
 }) {
-  const [common, setCommon] = useState(commonName);
-  const [life, setLifespan] = useState(lifespan);
+  const [common, setCommon] = useState(butterfly.commonName);
+  const [life, setLifespan] = useState(butterfly.lifespan);
+
 
   // Handle changes to the common name
   const handleCommonChange = (e) => {
     setCommon(e.target.value); // Update local state
-    handleUpdate(index, { commonName: e.target.value, lifespan: life }); // Inform parent about changes
+    handleUpdate(butterfly.buttId, { commonName: e.target.value, lifespan: life }); // Inform parent about changes
   };
 
   // Handle changes to the lifespan
   const handleLifespanChange = (e) => {
     setLifespan(e.target.value); // Update local state
-    handleUpdate(index, { commonName: common, lifespan: e.target.value }); // Inform parent about changes
+    handleUpdate(butterfly.buttId, { commonName: common, lifespan: e.target.value }); // Inform parent about changes
   };
 
   return (
-    <Col key={index}>
+    <Col key={butterfly.buttId}>
       <Card
         style={{
           backgroundColor: "#E1EFFE",

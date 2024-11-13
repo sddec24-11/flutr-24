@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.css";
 import styles from '../styles/formLookStyles.css';
 import { Navigate } from "react-router-dom";
-import Contact from "./Contact";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -26,7 +25,7 @@ export default function Login(){
 
     const handleSubmit = async () => {
         try{
-            const response = await fetch("/api/users/login", {
+            const response = await fetch("http://206.81.3.155:8282/api/users/login", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

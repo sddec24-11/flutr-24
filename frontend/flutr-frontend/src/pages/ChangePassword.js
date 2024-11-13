@@ -5,7 +5,6 @@ import {useForm} from "react-hook-form";
 import "bootstrap/dist/css/bootstrap.css";
 import styles from '../styles/formLookStyles.css';
 import { Navigate } from "react-router-dom";
-import Contact from "./Contact";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
@@ -30,7 +29,7 @@ export default function ChangePassword(){
     const handleSubmit = async () => {
         if(password === repeatPassword){
             try{
-                const response = await fetch("/api/users/change-password", {
+                const response = await fetch("http://206.81.3.155:8282/api/users/change-password", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

@@ -24,7 +24,6 @@
     border-spacing: 0;
     border: 2px solid #469FCE;
     border-radius: 10px;
-    line-height: 70px;
     table-layout: fixed;
 }
 
@@ -38,12 +37,20 @@
     letter-spacing: 0.5px;
 }
 
+.add-table th {
+    height: 80px;
+}
+
 .add-table tbody {
     color: #469FCE;
     background-color: transparent;
     font-size: 20px;
     font-weight: 400;
     border: none; 
+}
+
+.add-table td {
+    height: 80px;
 }
 
 .add-table tbody tr:nth-child(odd) {
@@ -87,15 +94,22 @@
     width: 51px;
     height: 55px;
     line-height: 45px;
-    align-items: center;
     border: 4px solid #8ABCD7;
     border-radius: 15px;
     margin: 0 10px;
     background-color: #F5F5F5;
     vertical-align: middle;
-  }
+    color: #469FCE; 
+    text-align: center;
+}
 
-  .ship-info-input {
+.value-box:focus {
+    outline: transparent;
+    border: 4px solid #E4976C;
+
+}
+
+.ship-info-input {
     display: flex;
     justify-content: space-between;
     gap: 20px;
@@ -111,7 +125,7 @@
     width:380px;
 }
 
-.ship-info-input label {
+.ship-info-input label, p {
     color: #469FCE;
     font-size: 20px;
     margin-bottom: 8px;
@@ -199,6 +213,19 @@ button.tab-btn {
     align-items: center;
     z-index: 1000; 
   }
+
+  .cancel-confirmation-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; 
+  }
   
 
   .modal-content {
@@ -237,5 +264,7 @@ button.tab-btn {
       transform: scale(1);
     }
   }
+
+  
   
 

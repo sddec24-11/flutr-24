@@ -70,6 +70,8 @@ public class ReleaseService {
                 throw new RuntimeException("Shipment not found with ID: " + request.getShipmentId());
             }
 
+            Date releaseDate = request.getReleaseDate() != null ? request.getReleaseDate() : new Date(); 
+
             // Update butterfly details with release info
             request.getButterflyUpdates().forEach(update -> {
                 shipment.getButterflyDetails().forEach(detail -> {
@@ -97,10 +99,10 @@ public class ReleaseService {
                         if (houseButterfly != null) {
                             // Calculate the endDate
                             Calendar cal = Calendar.getInstance();
-                            cal.setTime(new Date()); // sets to current date
+                            cal.setTime(releaseDate); // sets to current date
                             cal.add(Calendar.DAY_OF_MONTH, houseButterfly.getLifespan()); // adds the lifespan
 
-                            Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), new Date(), cal.getTime());
+                            Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), releaseDate, cal.getTime());
                             mongoTemplate.insert(inflight, "inflight");
                         }
                     }

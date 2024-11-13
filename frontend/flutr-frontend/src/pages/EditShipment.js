@@ -5,22 +5,86 @@ import Footer from "../components/footer";
 import "../styles/addShipmentStyles.css";
 import { useLocation } from "react-router-dom";
 
-const NotificationModal = ({ isVisible, onClose }) => {
-    if (!isVisible) return null;
-
-    return (
-        <div className='notification-modal'>
-            <div className='modal-content'>
-                <h2>Successfully submitted!</h2>
-                <p>Would you like to edit another shipment or return home?</p>
-                <button onClick={() => { onClose(); window.location.href = "/shipments"; }}>Edit Another Shipment</button>
-                <button onClick={() => { onClose(); window.location.href = '/'; }}>Return Home</button>
-            </div>
-        </div>
-    );
-};
 
 export default function EditShipment() {
+    useEffect(() => {
+        const authorizationLevel = window.sessionStorage.getItem("authorizationLevel");
+        if (authorizationLevel !== "SUPERUSER" && authorizationLevel !== "ADMIN" && authorizationLevel !== "EMPLOYEE") {
+            alert("Sorry, you can't view this page");
+            document.location.href = "/login";
+        }
+    }, []);
+    
+    const isUserAuthorized = () => {
+        const accessKey = window.sessionStorage.getItem("accessKey");
+        return accessKey && accessKey.trim() !== "";
+    };
+    
+    const NotificationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleAddShipment = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = "/shipments";
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        const handleReturnHome = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Successfully submitted!</h2>
+                    <p>Would you like to edit another shipment or return home?</p>
+                    <button onClick={handleAddShipment}>Edit Another Shipment</button>
+                    <button onClick={handleReturnHome}>Return Home</button>
+                </div>
+            </div>
+        );
+    };
+    
+    const CancelConfirmationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleConfirmCancel = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Are you sure you want to cancel?</h2>
+                    <p>All unsaved changes will be lost.</p>
+                    <button onClick={onClose}>Go Back</button>
+                    <button onClick={handleConfirmCancel}>Confirm Cancel</button>
+                </div>
+            </div>
+        );
+    };
+    
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setIsCancelModalVisible(false);
+    };
+
     const location = useLocation();
     const shipment = location.state;
 
@@ -33,25 +97,14 @@ export default function EditShipment() {
     });
 
     const [suppliers, setSuppliers] = useState([]);
+    const [butterflyOptions, setButterflyOptions] = useState([]);
     const [error, setError] = useState(null);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
 
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
     const supplierInputRef = useRef(null);
-
-        const butterflyOptions = [
-        {value: "Butterfly 1" },
-        {value: "Butterfly 2" },
-        {value: "Butterfly 3" },
-        {value: "Butterfly 4" },
-        {value: "Butterfly 5" },
-        {value: "Butterfly 6" },
-        {value: "Butterfly 7" },
-        {value: "Butterfly 8" },
-        {value: "Butterfly 9" },
-        {value: "testing very long butterfly species name" },
-    ];
 
     //set shipments upon mount
     useEffect(() => {
@@ -77,10 +130,46 @@ export default function EditShipment() {
         fetchSuppliers();
     }, []);
 
+    //set butterfly dropdown
+    useEffect(() => {
+        let attempts = 0;
+        const maxRetries = 3;
+
+        const fetchOptions = async () => {
+            try {
+                const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    setButterflyOptions(message.payload);
+                } else {
+                    console.log(message.error);
+                }
+            } catch (error) {
+                attempts++;
+                if (attempts < maxRetries) {
+                    console.log(`Retry attempt ${attempts}`);
+                    fetchOptions();
+                } else {
+                    setError('Failed to load butterflies after multiple attempts.');
+                    console.error('Failed to load butterflies:', error);
+                }
+            }
+        };
+    
+        fetchOptions();
+    }, []);  
+
     //fetch all active suppliers
     const fetchSuppliers = async (retries = 3) => {
         try {
-            const response = await fetch("/api/suppliers/view/active", {
+            const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/active", {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,12 +211,13 @@ export default function EditShipment() {
         buttId: species,
         numberReceived: 0,
         numberReleased: 0,
+        poorEmergence: 0,
+        noEmergence: 0,
         emergedInTransit: 0,
         damaged: 0,
         diseased: 0,
         parasite: 0,
-        poorEmergence: 0,
-        totalRemaining: 0,
+        totalRemaining: 0
     });
     
     //remove butterfly obj based on 
@@ -207,7 +297,7 @@ export default function EditShipment() {
         while (retries > 0) {
             try {
                 let id = shipmentData.shipmentId;
-                const response = await fetch(`api/shipments/edit/${id}`, {
+                const response = await fetch(`http://206.81.3.155:8282/api/shipments/edit/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -243,11 +333,8 @@ export default function EditShipment() {
 
     //TODO: return user to home page?
     const handleCancel = () => {
-
+        setIsCancelModalVisible(true);
     }
-
-    const closeModal = () => setIsModalVisible(false);
-
 
 return (
         <div class="main-container">
@@ -281,11 +368,11 @@ return (
                     <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
-                        {butterflyOptions.map((option) => (
-                            <option key={option.value} value={option.value}>
-                                {option.value}
-                        </option>
-                        ))}
+                                {butterflyOptions.map((butterfly) => (
+                                    <option key={butterfly.buttId} value={butterfly.buttId}>
+                                        {butterfly.buttId}
+                                    </option>
+                                ))}
                     </select>
                 </div>
             </div>
@@ -298,23 +385,28 @@ return (
                             <th>Received</th>
                             <th>Released</th>
                             <th>Poor Emergence</th>
+                            <th>No Emergence</th>
                             <th>Emerged in Transit</th>
-                            <th>Damaged in Transit</th>
+                            <th>Damaged</th>
                             <th>Diseased</th>
-                            <th>Parasites</th>
-                            <th style={{width:'6%'}}>Total</th>
-                            <th style={{width:'6%', background:'#E4976C', border:'none'}}></th>
+                            <th>Parasite</th>
+                            <th style={{width:'6%'}}>Remaining</th>
+                            <th style={{width:'5%', background:'#E4976C', border:'none'}}></th>
                         </tr>
                     </thead>
                     <tbody>
                         {shipmentData.butterflyDetails.map(item => (
                             <tr key={item.buttId}>
                                 <td>{item.buttId}</td>
-                                {['numberReceived', 'numberReleased', 'poorEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
+                                {['numberReceived', 'numberReleased', 'poorEmergence', 'noEmergence', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
                                     <td key={key}>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
+                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center"}}>
                                         <div className="value-box">{item[key]}</div>
-                                        <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
+                                            <div style={{ display: "flex", flexDirection: "column", padding: "10px 0px"}}>
+                                                <button style = {{marginBottom: "5px"}} onClick={() => updateButterflyValue(item.buttId, key, true)}>+</button>
+                                                <button onClick={() => updateButterflyValue(item.buttId, key, false)}>-</button>
+                                            </div>
+                                        </div>
                                     </td>
                                 ))}
                                 <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>
@@ -328,11 +420,12 @@ return (
             </div>
 
             <div className="submit-cancel-buttons">
-                <button type="button" className="btn cancel-btn" onClick={closeModal}>Cancel</button>
+                <button type="button" className="btn cancel-btn" onClick={handleCancel}>Cancel</button>
                 <button type="button" className="btn submit-btn" onClick={handleSubmit}>Submit</button>
             </div>
 
-            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />                
+            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
+            <CancelConfirmationModal isVisible={isCancelModalVisible} nClose={closeModal} />                     
             <Footer />
         </div>
     );

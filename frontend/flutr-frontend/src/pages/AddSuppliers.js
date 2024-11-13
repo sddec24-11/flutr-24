@@ -29,7 +29,7 @@ export default function AddSupplier(){
 
     const handleSubmit = async () => {
         try{
-            const response = await fetch('/api/suppliers/add', {
+            const response = await fetch('http://206.81.3.155206.81.3.155/api/suppliers/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export default function AddSupplier(){
         window.history.back();
     }
     return(
-        <div>
+        <div  class="main-container">
             <h1>Edit a supplier.</h1>
             <h4>Full Name:</h4>
             <input value={fullName} onChange={handleName}></input>

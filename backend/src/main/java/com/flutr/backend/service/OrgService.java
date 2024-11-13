@@ -182,6 +182,7 @@ public class OrgService {
         adminUser.setHouseId(org.getHouseId());
         adminUser.setSubdomain(org.getSubdomain());
         adminUser.setRole(UserRole.ADMIN);
+	    adminUser.setActive(true);
 
         userRepository.save(adminUser);
     }

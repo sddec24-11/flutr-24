@@ -3,16 +3,19 @@ import ButterflyEditCard from "../components/ButterflyEditCard";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import Button from "react-bootstrap/esm/Button";
+import Footer from "../components/footer";
 
 
 export default function EditButterflies() {
-  const [changeList, setChangeList] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [butterflies, setButterflies] = useState([]);
-  const [editPoints, setEditPoints] = useState(butterflies.map(() => -1));
   const [showExtras, setExtras] = useState(false);
+
+
+  const debounceTimer = useRef(null);
+  const pendingUpdates = useRef({});
 
   const toggleTools = () => {
     setExtras(!showExtras);
@@ -20,7 +23,7 @@ export default function EditButterflies() {
 useEffect(() => {
   const fetchButterflies = async () => {
     try{
-      const response = await fetch(`/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
+      const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -31,44 +34,74 @@ useEffect(() => {
         setButterflies(json.payload);
       })
     } catch (error) {
-
+      console.error(error);
     }
   };
   fetchButterflies();
 }, []);
 
   // Updates the change list with new values when a butterfly is edited
-  const handleUpdate = (index, updatedValues) => {
-    const updatedChangeList = [...changeList];
-    const updatedEditPoints = [...editPoints];
+ const handleUpdate = (buttId, updatedValues) => {
+  setButterflies((prevButterflies) => 
+    prevButterflies.map((butterfly) =>
+      butterfly.buttId === buttId ? {...butterfly, ...updatedValues} : butterfly
+      )
+      );
 
-    // Check if the butterfly has been edited before
-    if (editPoints[index] === -1) {
-      // If not, add a new entry
-      updatedEditPoints[index] = updatedChangeList.length;
-      updatedChangeList.push({
-        id: butterflies[index].buttId,
-        ...updatedValues,
+  
+    // Store pending updates to apply when debounce ends
+    pendingUpdates.current[buttId] = updatedValues;
+    
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => {
+      // Perform the PUT request with the latest updates
+      Object.keys(pendingUpdates.current).forEach(id => {
+        updateButterflyServer(id, pendingUpdates.current[id]);
       });
-    } else {
-      // If yes, update the existing entry
-      updatedChangeList[editPoints[index]] = {
-        id: butterflies[index].buttId,
-        ...updatedValues,
-      };
-    }
+      pendingUpdates.current = {};
+    }, 1000); // 1 second delay
+ };
 
-    setChangeList(updatedChangeList);
-    setEditPoints(updatedEditPoints);
-  };
+ const updateButterflyServer = async (buttId, updatedValues) => {
+  try {
+    const body = JSON.stringify({buttId: buttId,...updatedValues});
+    console.log(body);
+    await fetch(`http://206.81.3.155:8282/api/butterflies/edit`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": window.sessionStorage.getItem("accessKey")
+      },
+      body: body,
+    });
+    console.log(`Butterfly with ID ${buttId} updated successfully.`);
+  } catch (error) {
+    console.error("Error updating butterfly:", error);
+  }
+};
 
   const handleChangeSearch = (e) => {
-    e.preventDefault();
     setSearchInput(e.target.value);
   };
 
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      // Ensure any pending updates are made
+      Object.keys(pendingUpdates.current).forEach(id => {
+        updateButterflyServer(id, pendingUpdates.current[id]);
+      });
+    };
+    
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  
+
   return (
-    <div>
+    <div  class="main-container">
       <Navbar />
       <div style={{width: "100%", backgroundColor: "#FFFFFF",margin: 'auto', paddingTop: "30px", paddingBottom: "30px"}}>
                 <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: '#8ABCD7'}}><strong>Edit Butterflies</strong></h2>
@@ -80,24 +113,29 @@ useEffect(() => {
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
                                     <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
                                 </svg>
-                            </Button></Col>
+                            </Button>
+                        </Col>
                     </Row>
                     <Row xs={1} sm={2} md={2} lg={3}>
                       {butterflies
                         .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
-                        .map((r, index) => (
-                          <ButterflyEditCard
-                            key={r.id}
-                            butterfly={r}
-                            index={index}
-                            handleUpdate={handleUpdate}
-                            commonName={editPoints[index] !== -1 ? changeList[editPoints[index]].commonName : r.commonName}
-                            lifespan={editPoints[index] !== -1 ? changeList[editPoints[index]].lifespan : r.lifespan}
-                          />
-                        ))}
+                        .map((r) => {
+                            return (
+                              <div key={r.buttId}>
+                                <ButterflyEditCard
+                                  butterfly={r}
+                                  handleUpdate={handleUpdate}
+                                />
+                              </div>
+                            );
+                          return null;
+                          
+})}
                     </Row>
                 </Container>
+                
             </div>
+            <Footer/>
     </div>
   );
 }

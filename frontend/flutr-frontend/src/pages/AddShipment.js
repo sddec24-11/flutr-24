@@ -6,87 +6,173 @@ import "../styles/addShipmentStyles.css";
 
 export default function AddShipment() {
     useEffect(() => {
-        if(!window.sessionStorage.getItem("authenticated")){
-            alert("Sorry, you cant view this page.");
-            document.location.href = '/login';
+        const authorizationLevel = window.sessionStorage.getItem("authorizationLevel");
+        if (authorizationLevel !== "SUPERUSER" && authorizationLevel !== "ADMIN" && authorizationLevel !== "EMPLOYEE") {
+            alert("Sorry, you can't view this page");
+            document.location.href = "/login";
         }
-    });
+    }, []);
+
+    const isUserAuthorized = () => {
+        const accessKey = window.sessionStorage.getItem("accessKey");
+        return accessKey && accessKey.trim() !== "";
+    };
+
     const NotificationModal = ({ isVisible, onClose }) => {
         if (!isVisible) return null;
-        const handleAnotherShipment = () => {
-            onClose();
-            console.log('new shipment');
-            window.location.href = "/addshipment";
+    
+        const handleAddShipment = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = "/addshipment";
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
         };
     
         const handleReturnHome = () => {
-            onClose();
-            console.log('return home');
-            window.location.href = '/';
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
         };
+    
         return (
             <div className='notification-modal'>
                 <div className='modal-content'>
                     <h2>Successfully submitted!</h2>
-                    <p>Would you like to do another shipment or return home?</p>
-                    <button onClick={handleAnotherShipment}>Another Shipment</button>
+                    <p>Would you like to add another shipment or return home?</p>
+                    <button onClick={handleAddShipment}>Add Another Shipment</button>
                     <button onClick={handleReturnHome}>Return Home</button>
                 </div>
             </div>
         );
-    }
+    };
+
+    const CancelConfirmationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+    
+        const handleConfirmCancel = () => {
+            if (isUserAuthorized()) {
+                onClose();
+                window.location.href = `/${window.sessionStorage.getItem("subdomain")}`;
+            } else {
+                alert("Unauthorized access. Please log in.");
+                window.location.href = "/login";
+            }
+        };
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Are you sure you want to cancel?</h2>
+                    <p>All unsaved changes will be lost.</p>
+                    <button onClick={onClose}>Go Back</button>
+                    <button onClick={handleConfirmCancel}>Confirm Cancel</button>
+                </div>
+            </div>
+        );
+    };
+
+    const closeModal = () => {
+        setIsModalVisible(false);
+        setIsCancelModalVisible(false);
+    };
+    
     
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [suppliers, setSuppliers] = useState([]);
+    const [butterflyOptions, setButterflyOptions] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [isCancelModalVisible, setIsCancelModalVisible] = useState(false);
     
     const shipDateInputRef = useRef(null);
     const arriveDateInputRef = useRef(null);
     const supplierInputRef = useRef(null);
 
-    //TEMP
-    const butterflyOptions = [
-        {value: "Butterfly 1" },
-        {value: "Butterfly 2" },
-        {value: "Butterfly 3" },
-        {value: "Butterfly 4" },
-        {value: "Butterfly 5" },
-        {value: "Butterfly 6" },
-        {value: "Butterfly 7" },
-        {value: "Butterfly 8" },
-        {value: "Butterfly 9" },
-    ];
-
     //set supplier dropdown
     useEffect(() => {
-        const fetchOptions = async () => {
+        const maxRetries = 3;
+    
+        const fetchOptions = async (retries = maxRetries) => {
             try {
-                const response = await fetch("/api/suppliers/view/active", {
+                const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/active", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization' : window.sessionStorage.getItem("accessKey")
+                        'Authorization': window.sessionStorage.getItem("accessKey")
                     }
                 });
+    
                 const message = await response.json();
-                if (message.error == null)
-                {
+    
+                if (message.error == null) {
                     setSuppliers(message.payload);
-                }
-                else {
-                    console.log(message.error);
+                } else {
+                    console.error("Error from API response:", message.error);
+                    setError("Failed to load suppliers.");
                 }
             } catch (error) {
-                setError('Failed to load suppliers: ', error);
+                console.error("Fetch attempt failed with error:", error.message);
+    
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchOptions(retries - 1), 1000); // Retry with delay
+                } else {
+                    setError("Failed to load suppliers after multiple attempts.");
+                    console.error("Failed to load suppliers after retries:", error);
+                }
             }
         };
-    fetchOptions();
-}, []);
-
+    
+        fetchOptions();
+    }, []);
+    
+    //set butterfly dropdown
+    useEffect(() => {
+        const maxRetries = 3;
+    
+        const fetchOptions = async (retries = maxRetries) => {
+            try {
+                const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+    
+                const message = await response.json();
+    
+                if (message.error == null) {
+                    setButterflyOptions(message.payload);
+                } else {
+                    console.error("API Error:", message.error);
+                    setError("Failed to load butterfly options.");
+                }
+            } catch (error) {
+                console.error("Fetch attempt failed with error:", error.message);
+    
+                if (retries > 0) {
+                    console.log(`Retrying... Attempts left: ${retries - 1}`);
+                    setTimeout(() => fetchOptions(retries - 1), 1000); // Retry with delay
+                } else {
+                    setError("Failed to load butterflies after multiple attempts.");
+                    console.error("Failed to load butterflies after retries:", error);
+                }
+            }
+        };
+    
+        fetchOptions();
+    }, []);
+       
     //create new empty butterfly obj and add to list of butterflies in shipment
     const addButterfly = (speciesIn) => {
-        const exists = data.some(butterfly => butterfly.species === speciesIn);
+        const exists = data.some(butterfly => butterfly.buttId === speciesIn);
         if (exists) {
             console.log(`Butterfly with species '${speciesIn}' already exists.`);
             return;
@@ -96,12 +182,13 @@ export default function AddShipment() {
             buttId: speciesIn,
             numberReceived: 0,
             numberReleased: 0,
+            poorEmergence: 0,
+            noEmergence: 0,
             emergedInTransit: 0,
             damaged: 0,
             diseased: 0,
             parasite: 0,
-            poorEmergence: 0,
-            totalRemaining: 0,
+            totalRemaining: 0
         };
 
         setData(prev => [...prev, newButterfly]);
@@ -178,18 +265,17 @@ export default function AddShipment() {
         const arrivalDate = arriveDateInputRef.current?.value;
         const supplier = supplierInputRef.current?.value;
     
-        console.log(data);
-    
         if (!shipDate || !arrivalDate || supplier === 'true' || data.length === 0) {
             alert("Please fill in all required fields: shipment date, arrival date, supplier, and at least one butterfly");
             return;
         }
     
-        let retries = 3;
+        const maxRetries = 3;
+        let attempts = 0;
     
-        while (retries > 0) {
+        const submitData = async () => {
             try {
-                const response = await fetch("/api/shipments/add", {
+                const response = await fetch("http://206.81.3.155:8282/api/shipments/add", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -205,32 +291,95 @@ export default function AddShipment() {
     
                 const message = await response.json();
     
-                if (message.error == null) {
-                    console.log(message);
+                if (!message.error) {
+                    console.log("Submission successful:", message);
                     setIsModalVisible(true);
-                    return; // Exit after successful submission
                 } else {
+                    console.error("API Error:", message.error);
                     setError(message.error);
-                    return; // Exit on error message
                 }
             } catch (error) {
-                console.log('Failed to fetch', error);
-                retries -= 1; // Decrease the retry count
-                if (retries === 0) {
-                    alert('Failed to submit after 3 attempts. Please try again later.');
+                attempts++;
+                console.error(`Attempt ${attempts} failed:`, error.message);
+    
+                if (attempts < maxRetries) {
+                    console.log(`Retrying submission... Attempts left: ${maxRetries - attempts}`);
+                    setTimeout(submitData, 1000); // Retry with a delay
+                } else {
+                    alert("Failed to submit after multiple attempts. Please try again later.");
+                    setError("Submission failed after multiple attempts.");
                 }
             }
-        }
+        };
+    
+        submitData();
     };
-
-    //TODO: return user to home page?
+    
+    //return user to home page?
     const handleCancel = () => {
-
+        setIsCancelModalVisible(true);
     }
 
-    const closeModal = () => {
-        setIsModalVisible(false);
+    const handleBlur = (event, buttIdIn, keyIn) => {
+        const input = Math.max(0, parseInt(event.target.value, 10) || 0);
+    
+        setData(data.map(butterfly => {
+            if (butterfly.buttId !== buttIdIn) return butterfly;
+    
+            let newVal = input;
+            let newTotal = butterfly.totalRemaining;
+    
+            if (keyIn === 'numberReceived') {
+                const difference = newVal - butterfly[keyIn];
+                newTotal += difference;
+    
+                if (newTotal < 0) {
+                    newVal = butterfly[keyIn] + butterfly.totalRemaining;
+                    newTotal = 0;
+                }
+            } else {
+                const maxAvailable = butterfly[keyIn] + butterfly.totalRemaining;
+                newVal = Math.min(input, maxAvailable);
+                newTotal -= (newVal - butterfly[keyIn]);
+            }
+    
+            event.target.value = newVal;
+    
+            return {
+                ...butterfly,
+                [keyIn]: newVal,
+                totalRemaining: newTotal
+            };
+        }));
     };
+
+    const handleInputChange = (event, buttIdIn, key) => {
+        const input = Math.max(0, parseInt(event.target.value, 10) || 0);
+    
+        setData(data.map(butterfly => {
+            if (butterfly.buttId === buttIdIn) {
+                let newVal = input;
+                let newTotal = butterfly.totalRemaining;
+    
+                if (key === 'numberReceived') {
+                    const difference = newVal - butterfly[key];
+                    newTotal += difference;
+                } else {
+                    const maxAvailable = butterfly[key] + butterfly.totalRemaining;
+                    newVal = Math.min(newVal, maxAvailable);
+                    newTotal -= (newVal - butterfly[key]);
+                }
+    
+                return {
+                    ...butterfly,
+                    [key]: newVal,
+                    totalRemaining: newTotal,
+                };
+            }
+            return butterfly;
+        }));
+    };
+    
 
     return (
         <div class="main-container">
@@ -264,11 +413,11 @@ export default function AddShipment() {
                     <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
-                            {butterflyOptions.map((option) => (
-                                <option key={option.value} value={option.value}>
-                                    {option.value}
-                                 </option>
-                        ))}
+                                {butterflyOptions.map((butterfly) => (
+                                    <option key={butterfly.buttId} value={butterfly.buttId}>
+                                        {butterfly.buttId}
+                                    </option>
+                                ))}
                     </select>
                 </div>
             </div>
@@ -289,61 +438,40 @@ export default function AddShipment() {
                     </thead>
                     <tbody>
                         {data.map(item => (
-                        <tr key={item.buttId}>
-                            <td>{item.buttId}</td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'numberReceived')}>+</button>
-                                <div className="value-box">{item.numberReceived}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'numberReceived')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'emergedInTransit')}>+</button>
-                                <div className="value-box">{item.emergedInTransit}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'emergedInTransit')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'damaged')}>+</button>
-                                <div className="value-box">{item.damaged}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'damaged')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'diseased')}>+</button>
-                                <div className="value-box">{item.diseased}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'diseased')}>-</button>
-                            </td>
-                            <td>
-                                <button onClick={() => incrementVal(item.buttId, 'parasite')}>+</button>
-                                <div className="value-box">{item.parasite}</div>
-                                <button onClick={() => decrementVal(item.buttId, 'parasite')}>-</button>
-                            </td>
-                            <td id="total-remaining" style={{background:'#469FCE',color:'#E1EFFE'}}>
-                                {item.totalRemaining}
-                            </td>
-                            <td style={{background:'#E4976C'}}>
-                                <p style={{color:'#E1EFFE', margin:"0"}}
-                                    onClick={() => removeButterfly(item.buttId)}>
-                                    remove
-                                </p>
-                            </td>
-                        </tr>
+                            <tr key={item.buttId}>
+                                <td>{item.buttId}</td>
+                                {['numberReceived', 'emergedInTransit', 'damaged', 'diseased', 'parasite'].map(key => (
+                                    <td key={key}>
+                                        <button tabIndex={-1} onClick={() => incrementVal(item.buttId, key)}>+</button>
+                                        <input tabIndex={-1} type="numeric" className="value-box" value={item[key]} onChange={(e) => handleInputChange(e, item.buttId, key)} onBlur = {(e) => handleBlur(e, item.buttId, key)}></input>
+                                        <button tabIndex={-1} onClick={() => decrementVal(item.buttId, key)}>-</button>     
+                                    </td>
+                                ))}
+                                <td style={{ background: '#469FCE', color: '#E1EFFE' }}>{item.totalRemaining}</td>
+                                <td style={{ background: '#E4976C' }}>
+                                    <p style={{ color: '#E1EFFE', margin: "0" }} onClick={() => removeButterfly(item.buttId)}>remove</p>
+                                </td>
+                            </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
 
             <div class="submit-cancel-buttons">
-                <button type="button" class="btn cancel-btn"
+                <button tabIndex={-1} type="button" class="btn cancel-btn"
                         onClick={() => handleCancel()}>
                             Cancel
                 </button>
-                <button type="submit" class="btn submit-btn" 
+                <button tabIndex={-1} type="submit" class="btn submit-btn" 
                         onClick={() => handleSubmit()}>
                             Submit
                 </button>
             </div>
 
             <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
-            <Footer />
+            <CancelConfirmationModal 
+                isVisible={isCancelModalVisible} onClose={closeModal} />
+            < Footer />
         </div>
     );
 }

@@ -45,7 +45,7 @@ export default function Gallery({data, kioskMode}){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`/api/orgs/view/${data}`, {
+          const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export default function Gallery({data, kioskMode}){
       };
       const fetchButterflies = async () => {
         try{
-          const response = await fetch(`/api/butterflies/details/${data}`, {
+          const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ export default function Gallery({data, kioskMode}){
   const handleYT = () => setYT(true);
   if(loaded){
     return(
-        <div style={{backgroundColor: locationData.colors[2]}}>
+        <div  style={{backgroundColor: locationData.colors[2]}}>
             <PageTitle title={locationData.name + "'s Gallery"}/>
             <SocialModal show={insta} handleClose={handleClose} type={"Instagram"} link={locationData.socials.instagramLink}/>
             <SocialModal show={fb} handleClose={handleClose} type={"Facebook"} link={locationData.socials.facebookLink}/>
