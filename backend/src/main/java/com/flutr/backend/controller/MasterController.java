@@ -31,8 +31,8 @@ public class MasterController {
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
     public ResponseEntity<Response<String>> addButterfly(
             @RequestPart("butterfly") Butterfly butterfly, 
-            @RequestPart("imgWingsOpen") MultipartFile imgWingsOpen,
-            @RequestPart("imgWingsClosed") MultipartFile imgWingsClosed) {
+            @RequestPart(value = "imgWingsOpen", required = false) MultipartFile imgWingsOpen,
+            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed) {
         try {
             masterService.addButterfly(butterfly, imgWingsOpen, imgWingsClosed);
             return ResponseEntity.ok(new Response<>(true, "Butterfly added successfully to Master DB and all houses.", null));
