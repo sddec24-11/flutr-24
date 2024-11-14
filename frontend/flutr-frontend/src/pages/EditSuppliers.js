@@ -71,15 +71,15 @@ export default function EditSupplier(){
         <div>
             <Navbar/>
 
-            <h1>Edit a supplier.</h1>
-            <h4>Full Name:</h4>
-            <input value={fullName} onChange={handleName}></input>
-            <h4>Abbreviation:</h4>
-            <input value={abbreviation} onChange={handleAbrev}></input>
-            <h4>Active:</h4>
-            <Checkbox state={active} setState={setActive}/>
-            <button onClick={handleCancel}>Cancel</button>
-            <button onClick={handleSubmit}>Submit</button>
+            <h1 style={{color: '#469FCE', marginTop:"2%", marginLeft:"8%"}}>Edit A Supplier</h1>
+            <h4 style={{color: '#469FCE', marginTop:"2%", marginLeft:"8%"}}>Full Name:</h4>
+            <input style={{marginLeft:"8%"}} value={fullName} onChange={handleName}></input>
+            <h4 style={{color: '#469FCE', marginTop:"2%", marginLeft:"8%"}}>Abbreviation:</h4>
+            <input style={{marginLeft:"8%"}} value={abbreviation} onChange={handleAbrev}></input>
+            <h4 style={{color: '#469FCE', marginTop:"2%", marginLeft:"8%"}}>Active:</h4>
+            <Col style={{marginLeft: "8%"}}><Checkbox state={active} setState={setActive}/></Col>
+            <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"24px", marginBottom:"8px", marginRight:"8px", marginLeft:"8%"}} onClick={handleCancel}>Cancel</button>
+            <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"24px", marginBottom:"8px"}} onClick={handleSubmit}>Submit</button>
             <Footer/>
         </div>
     )}

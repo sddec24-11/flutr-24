@@ -66,16 +66,16 @@ export default function ChangePassword(){
             <Navbar />
             <div style={{margin: '8%'}}>
                 <div style={{width:'33%', margin: 'auto', border: '4px solid #469FCE', borderRadius: '15px', backgroundColor: '#F5F5F5'}}>
-                    <h3 style={{margin: 'auto', paddingLeft:'30%', paddingTop: '7%', color:'#469FCE'}}>Change Your Password</h3>
+                    <h3 style={{margin: 'auto', paddingLeft:'20%', paddingTop: '7%', color:'#469FCE'}}>Change Your Password</h3>
                     <div className={styles.formLook} style={{padding:'1%'}}>
                         <Container>
                             <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px'}} type="password" value={oldPassword} onChange={handleOldPassword} placeholder="old password"></input></Row>
-                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px'}} type="password" value={password} onChange={handlePassword} placeholder="password"></input></Row>
-                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px', marginBottom: '10px'}} type="password" value={repeatPassword} onChange={handleRepeatPassword} placeholder="repeat password"></input></Row>
+                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px'}} type="password" value={password} onChange={handlePassword} placeholder="new password"></input></Row>
+                            <Row><input style={{width: '85%', margin: 'auto', borderRadius: '15px', marginTop: '10px', marginBottom: '10px'}} type="password" value={repeatPassword} onChange={handleRepeatPassword} placeholder="repeat new password"></input></Row>
                             {/* <Row><p>{errorMessage}</p></Row> */}
                             <Row style={{marginTop: '10px', width: '85%', margin: 'auto'}}>
                                 <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
-                                <Col ><button onClick={handleSubmit} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Login</button></Col>
+                                <Col ><button onClick={handleSubmit} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Confirm</button></Col>
                             </Row>
                         </Container>
 
