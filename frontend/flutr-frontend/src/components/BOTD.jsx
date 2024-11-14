@@ -16,7 +16,7 @@ export default function BOTD({butterfly, colorScheme, numberInFlight, buttonFunc
                         <p style={{color: colorScheme[0]}}><strong>{plural}</strong><ul>{butterfly.coo.map((r) => {
                             return (<li>{r}</li>)
                         })}</ul></p>
-                        <p style={{color: colorScheme[0]}}><strong>Fan fact: </strong>{butterfly.fun_fact}</p>
+                        <p style={{color: colorScheme[0]}}><strong>Fun fact: </strong>{butterfly.fun_fact}</p>
                     </div>
                     <button onClick={buttonFunction} style={{backgroundColor: colorScheme[0], color: "#FFFFFF", width: '25%', paddingTop:'15px', paddingBottom: '15px', borderRadius: '15px', marginTop: '15px', marginBottom: '15px'}}>View Gallery</button>
                 </div>
