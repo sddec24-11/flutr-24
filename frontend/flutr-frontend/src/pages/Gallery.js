@@ -133,7 +133,7 @@ export default function Gallery({data, kioskMode}){
                         .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
                         .map((r, index) => {
                             return(
-                                <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId}}><ButterflyCard index={index} butterfly={r} /></Link>
+                                <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId, locationData: locationData, kioskMode: kioskMode}}><ButterflyCard index={index} butterfly={r} /></Link>
                             )
                         })}
                     </Row>
