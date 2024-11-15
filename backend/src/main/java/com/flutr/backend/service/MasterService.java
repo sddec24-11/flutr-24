@@ -41,7 +41,7 @@ public class MasterService {
             String openUrl = storageService.uploadFile("flutr-butt-images", openKey, imgWingsOpenFile);
             newButterfly.setImgWingsOpen(openUrl);
         } else {
-            newButterfly.setImgWingsClosed(defaultImageUrl);
+            newButterfly.setImgWingsOpen(defaultImageUrl);
         }
         if (imgWingsClosedFile != null && !imgWingsClosedFile.isEmpty()) {
             String closedKey = newButterfly.getButtId() + "_closed." + getFileExtension(imgWingsClosedFile.getOriginalFilename());
