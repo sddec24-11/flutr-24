@@ -103,7 +103,9 @@ public class ReleaseService {
                             cal.add(Calendar.DAY_OF_MONTH, houseButterfly.getLifespan()); // adds the lifespan
 
                             Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), releaseDate, cal.getTime());
+                            loggingService.log("HANDLE_RELEASE", "INFO", "Preparing to insert inflight data for Butterfly ID: " + detail.getButtId());
                             mongoTemplate.insert(inflight, "inflight");
+                            loggingService.log("HANDLE_RELEASE", "INFO", "Inflight data inserted for Butterfly ID: " + detail.getButtId());
                         }
                     }
                 });

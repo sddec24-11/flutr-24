@@ -21,9 +21,9 @@ public class HouseButterflies extends Butterfly {
     public HouseButterflies(String buttId, String commonName, String family, String subFamily, int lifespan,
             List<String> range, String plant, String habitat, String funFacts, String imgWingsOpen,
             String imgWingsClosed, int noInFlight, int totalFlown, int totalReceived, boolean isBOTD, Date firstFlownOn,
-            Date lastFlownOn) {
+            Date lastFlownOn, String extraImg1, String extraImg2) {
         super(buttId, commonName, family, subFamily, lifespan, range, plant, habitat, funFacts, imgWingsOpen,
-                imgWingsClosed);
+                imgWingsClosed, extraImg1, extraImg2);
         this.noInFlight = noInFlight;
         this.totalFlown = totalFlown;
         this.totalReceived = totalReceived;
