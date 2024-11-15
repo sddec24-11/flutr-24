@@ -95,9 +95,9 @@ public class ReleaseService {
                                 detail.getNoEmergence());
                         detail.setTotalRemaining(totalRemaining);
                     
-                        HouseButterflies houseButterfly = mongoTemplate.findById(detail.getButtId(), HouseButterflies.class, "house_butterflies");
+                        Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+                        HouseButterflies houseButterfly = mongoTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
                         if (houseButterfly != null) {
-                            loggingService.log("release_checking", "info", "in the inflight loop");
                             // Calculate the endDate
                             Calendar cal = Calendar.getInstance();
                             cal.setTime(releaseDate); // sets to current date
@@ -107,8 +107,6 @@ public class ReleaseService {
                             loggingService.log("HANDLE_RELEASE", "INFO", "Preparing to insert inflight data for Butterfly ID: " + detail.getButtId());
                             mongoTemplate.insert(inflight, "inflight");
                             loggingService.log("HANDLE_RELEASE", "INFO", "Inflight data inserted for Butterfly ID: " + detail.getButtId());
-                        } else {
-                            loggingService.log("release_checking", "error", "housebutterfly is null apparently");
                         }
                     }
                 });
