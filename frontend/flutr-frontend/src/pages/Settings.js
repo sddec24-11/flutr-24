@@ -362,11 +362,11 @@ export default function Settings(){
             </div>
             <div className="tab-holder">
                 <div className="tabs">
-                    <div className="tabButtons" onClick={handleInfo}>Info</div>
-                    <div className="tabButtons" onClick={handleStyles}>Styles</div>
-                    <div className="tabButtons" onClick={handleHome}>Home</div>
-                    <div className="tabButtons" onClick={handleEmployees}>Employees</div>
-                    <div className="tabButtons" onClick={handleSuppliers}>Suppliers</div>
+                    <div className="tabButtons" onClick={handleInfo} style={{backgroundColor: activeTab === 1? '#469FCE': "#8ABCD7", border: activeTab === 1? '4px solid #469FCE': "4px solid #8ABCD7"}}>Info</div>
+                    <div className="tabButtons" onClick={handleStyles} style={{backgroundColor: activeTab === 2? '#469FCE': "#8ABCD7", border: activeTab === 2? '4px solid #469FCE': "4px solid #8ABCD7"}}>Styles</div>
+                    <div className="tabButtons" onClick={handleHome} style={{backgroundColor: activeTab === 3? '#469FCE': "#8ABCD7", border: activeTab === 3? '4px solid #469FCE': "4px solid #8ABCD7"}}>Home</div>
+                    <div className="tabButtons" onClick={handleEmployees} style={{backgroundColor: activeTab === 4? '#469FCE': "#8ABCD7", border: activeTab === 4? '4px solid #469FCE': "4px solid #8ABCD7"}}>Employees</div>
+                    <div className="tabButtons" onClick={handleSuppliers} style={{backgroundColor: activeTab === 5? '#469FCE': "#8ABCD7", border: activeTab === 5? '4px solid #469FCE': "4px solid #8ABCD7"}}>Suppliers</div>
                 </div>
             </div>
             
@@ -443,12 +443,12 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 3 && <div id="home">
-                    <Container>
+                    <Container style={{width: '75%', margin: 'auto', marginTop: '15px'}}>
                         <Row><Col><h4>Panels</h4></Col></Row>
-                        <Row><Col xs={1}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
-                        <Row><Col xs={1}><Checkbox state={statsState} setState={setStats}/></Col><Col>Statistics</Col></Row>
-                        <Row><Col xs={1}><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
-                        <Row style={{width: '100%'}}>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={statsState} setState={setStats}/></Col><Col>Statistics</Col></Row>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
+                        <Row style={{width: '100%', marginTop: '10px'}}>
                             <Col xs={3} style={{width: '75%'}}><textarea style={{width: '100%', height: '300px', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={newsContent} onChange={handleNewsContentChange} placeholder="news..."></textarea></Col>
                             <Col xs={1} style={{width: '25%'}}><div>Upload Image (Optional)</div></Col>
                         </Row>
