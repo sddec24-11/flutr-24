@@ -19,13 +19,15 @@ public class Butterfly {
     private String funFacts;
     private String imgWingsOpen;
     private String imgWingsClosed;
+    private String extraImg1;
+    private String extraImg2;
 
     public Butterfly() {
     }
 
     public Butterfly(String buttId, String commonName, String family, String subFamily, int lifespan,
             List<String> range, String plant, String habitat, String funFacts, String imgWingsOpen,
-            String imgWingsClosed) {
+            String imgWingsClosed, String extraImg1, String extraImg2) {
         this.buttId = buttId;
         this.commonName = commonName;
         this.family = family;
@@ -37,6 +39,8 @@ public class Butterfly {
         this.funFacts = funFacts;
         this.imgWingsOpen = imgWingsOpen;
         this.imgWingsClosed = imgWingsClosed;
+        this.extraImg1 = extraImg1;
+        this.extraImg2 = extraImg2;
     }
 
     public String getButtId() {
@@ -125,6 +129,22 @@ public class Butterfly {
 
     public void setLifespan(int lifespan) {
         this.lifespan = lifespan;
+    }
+
+    public String getExtraImg1() {
+        return extraImg1;
+    }
+
+    public void setExtraImg1(String extraImg1) {
+        this.extraImg1 = extraImg1;
+    }
+
+    public String getExtraImg2() {
+        return extraImg2;
+    }
+
+    public void setExtraImg2(String extraImg2) {
+        this.extraImg2 = extraImg2;
     }
 
     

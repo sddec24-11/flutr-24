@@ -141,7 +141,7 @@ public class OrgService {
             new OrgInfo.SocialMediaLinks(),
             "",
             new OrgInfo.Otd(false, ""),
-            new OrgInfo.News(false, ""),
+            new OrgInfo.News(false, "", ""),
             true,
             "CST"
         );
@@ -187,7 +187,7 @@ public class OrgService {
         userRepository.save(adminUser);
     }
 
-    public OrgInfo editOrg(OrgInfo updatedOrgInfo, MultipartFile logoFile, MultipartFile facilityImageFile) {
+    public OrgInfo editOrg(OrgInfo updatedOrgInfo, MultipartFile logoFile, MultipartFile facilityImageFile, MultipartFile newsImageFile) {
         loggingService.log("EDIT_ORG", "START", "Attempting to update Org with ID: " + updatedOrgInfo.getHouseId());
         MongoTemplate mongoTemplate = getMongoTemplate();
         MongoTemplate masterMongoTemplate = new MongoTemplate(MongoClients.create(), "Master_DB"); 
@@ -230,6 +230,13 @@ public class OrgService {
             } else {
                 existingOrgInfo.setFacilityImgUrl(updatedOrgInfo.getFacilityImgUrl());
                 existingOrg.setFacilityImage(updatedOrgInfo.getFacilityImgUrl());
+            }
+
+            if (newsImageFile != null && !newsImageFile.isEmpty()) {
+                String newsKey = updatedOrgInfo.getHouseId() + "/" + updatedOrgInfo.getHouseId() + "_news." + getFileExtension(newsImageFile.getOriginalFilename());
+                loggingService.log("EDIT_ORG", "UPLOAD", "Uploading news image file for Org: " + updatedOrgInfo.getHouseId());
+                String newsImageUrl = storageService.uploadFile(bucketName, newsKey, newsImageFile);
+                existingOrgInfo.getNews().setNewsImageUrl(newsImageUrl);
             }
         } catch (IOException e) {
             loggingService.log("EDIT_ORG", "FAILURE", "Failed to upload images: " + e.getMessage());

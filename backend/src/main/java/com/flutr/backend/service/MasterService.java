@@ -2,6 +2,7 @@ package com.flutr.backend.service;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -31,16 +32,37 @@ public class MasterService {
     @Autowired
     private StorageService storageService;
 
-    public void addButterfly(Butterfly newButterfly, MultipartFile imgWingsOpenFile, MultipartFile imgWingsClosedFile) throws IOException {
+    @Value("${butterfly.placeholder.url}")
+    private String defaultImageUrl;
+
+    public void addButterfly(Butterfly newButterfly, MultipartFile imgWingsOpenFile, MultipartFile imgWingsClosedFile, MultipartFile extraImg1File, MultipartFile extraImg2File) throws IOException {
         if (imgWingsOpenFile != null && !imgWingsOpenFile.isEmpty()) {
             String openKey = newButterfly.getButtId() + "_open." + getFileExtension(imgWingsOpenFile.getOriginalFilename());
             String openUrl = storageService.uploadFile("flutr-butt-images", openKey, imgWingsOpenFile);
             newButterfly.setImgWingsOpen(openUrl);
+        } else {
+            newButterfly.setImgWingsClosed(defaultImageUrl);
         }
         if (imgWingsClosedFile != null && !imgWingsClosedFile.isEmpty()) {
             String closedKey = newButterfly.getButtId() + "_closed." + getFileExtension(imgWingsClosedFile.getOriginalFilename());
             String closedUrl = storageService.uploadFile("flutr-butt-images", closedKey, imgWingsClosedFile);
             newButterfly.setImgWingsClosed(closedUrl);
+        } else {
+            newButterfly.setImgWingsClosed(defaultImageUrl);
+        }
+        if (extraImg1File != null && !extraImg1File.isEmpty()) {
+            String extra1Key = newButterfly.getButtId() + "_extra1." + getFileExtension(extraImg1File.getOriginalFilename());
+            String extra1Url = storageService.uploadFile("flutr-butt-images", extra1Key, extraImg1File);
+            newButterfly.setExtraImg1(extra1Url);
+        } else {
+            newButterfly.setExtraImg1("");
+        }
+        if (extraImg2File != null && !extraImg2File.isEmpty()) {
+            String extra2Key = newButterfly.getButtId() + "_extra2." + getFileExtension(extraImg2File.getOriginalFilename());
+            String extra2Url = storageService.uploadFile("flutr-butt-images", extra2Key, extraImg2File);
+            newButterfly.setExtraImg2(extra2Url);
+        } else {
+            newButterfly.setExtraImg2("");
         }
         masterMongoTemplate.insert(newButterfly, "butterflies");
 
@@ -60,8 +82,8 @@ public class MasterService {
         });
     }
 
-    public void editButterfly(Butterfly updatedButterfly, MultipartFile imgWingsOpenFile, MultipartFile imgWingsClosedFile) throws IOException {
-        final String openUrl, closedUrl;
+    public void editButterfly(Butterfly updatedButterfly, MultipartFile imgWingsOpenFile, MultipartFile imgWingsClosedFile, MultipartFile extraImg1File, MultipartFile extraImg2File) throws IOException {
+        final String openUrl, closedUrl, extraImg1Url, extraImg2Url;
         Query existsQuery = new Query();
         existsQuery.addCriteria(Criteria.where("buttId").is(updatedButterfly.getButtId()));
         Butterfly existingButterfly = masterMongoTemplate.findOne(existsQuery, Butterfly.class, "butterflies");
@@ -88,6 +110,22 @@ public class MasterService {
             closedUrl = updatedButterfly.getImgWingsClosed();
         }
 
+        if (extraImg1File != null && !extraImg1File.isEmpty()) {
+            String extra1Key = updatedButterfly.getButtId() + "_extra1." + getFileExtension(extraImg1File.getOriginalFilename());
+            extraImg1Url = storageService.uploadFile("flutr-butt-images", extra1Key, extraImg1File);
+            masterUpdate.set("extraImg1", extraImg1Url);
+        } else {
+            extraImg1Url = existingButterfly.getExtraImg1();
+        }
+    
+        if (extraImg2File != null && !extraImg2File.isEmpty()) {
+            String extra2Key = updatedButterfly.getButtId() + "_extra2." + getFileExtension(extraImg2File.getOriginalFilename());
+            extraImg2Url = storageService.uploadFile("flutr-butt-images", extra2Key, extraImg2File);
+            masterUpdate.set("extraImg2", extraImg2Url);
+        } else {
+            extraImg2Url = existingButterfly.getExtraImg2();
+        }
+
         masterUpdate.set("family", updatedButterfly.getFamily())
           .set("subFamily", updatedButterfly.getSubFamily())
           .set("range", updatedButterfly.getRange())
@@ -109,7 +147,9 @@ public class MasterService {
                 .set("habitat", updatedButterfly.getHabitat())
                 .set("funFacts", updatedButterfly.getFunFacts())
                 .set("imgWingsOpen", openUrl)
-                .set("imgWingsClosed", closedUrl);
+                .set("imgWingsClosed", closedUrl)
+                .set("extraImg1", extraImg1Url)
+                .set("extraImg2", extraImg2Url);
 
             houseMongoTemplate.updateFirst(query, update, HouseButterflies.class);
         });
@@ -121,6 +161,21 @@ public class MasterService {
             .set("commonName", commonName)
             .set("lifespan", lifespan);
         masterMongoTemplate.updateFirst(query, update, Butterfly.class, "butterflies");
+    }
+
+    public void deleteButterfly(String buttId) {
+        Query query = new Query(Criteria.where("buttId").is(buttId));
+        if (!masterMongoTemplate.exists(query, Butterfly.class, "butterflies")) {
+            throw new IllegalStateException("Butterfly with ID: " + buttId + " does not exist.");
+        }
+    
+        masterMongoTemplate.remove(query, Butterfly.class, "butterflies");
+    
+        List<Org> allOrgs = masterMongoTemplate.findAll(Org.class, "orgs");
+        allOrgs.forEach(org -> {
+            MongoTemplate houseMongoTemplate = new MongoTemplate(MongoClients.create(), org.getHouseId() + "_DB");
+            houseMongoTemplate.remove(query, HouseButterflies.class, "house_butterflies");
+        });
     }
 
     public List<Butterfly> getAllButterflies() {
