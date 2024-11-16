@@ -16,7 +16,7 @@ import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.service.StatsService;
 
 @RestController
-@RequestMapping("/api/stats")
+@RequestMapping("/stats")
 public class StatsController {
 
     @Autowired
