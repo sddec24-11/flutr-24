@@ -94,19 +94,21 @@ public class ReleaseService {
                                 detail.getPoorEmergence() +
                                 detail.getNoEmergence());
                         detail.setTotalRemaining(totalRemaining);
-                    
-                        Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
-                        HouseButterflies houseButterfly = mongoTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
-                        if (houseButterfly != null) {
-                            // Calculate the endDate
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTime(releaseDate); // sets to current date
-                            cal.add(Calendar.DAY_OF_MONTH, houseButterfly.getLifespan()); // adds the lifespan
+                        
+                        if (update.getNumberReleased() > 0) {
+                            Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+                            HouseButterflies houseButterfly = mongoTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
+                            if (houseButterfly != null) {
+                                // Calculate the endDate
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTime(releaseDate); // sets to current date
+                                cal.add(Calendar.DAY_OF_MONTH, houseButterfly.getLifespan()); // adds the lifespan
 
-                            Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), releaseDate, cal.getTime());
-                            loggingService.log("HANDLE_RELEASE", "INFO", "Preparing to insert inflight data for Butterfly ID: " + detail.getButtId());
-                            mongoTemplate.insert(inflight, "inflight");
-                            loggingService.log("HANDLE_RELEASE", "INFO", "Inflight data inserted for Butterfly ID: " + detail.getButtId());
+                                Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), releaseDate, cal.getTime());
+                                loggingService.log("HANDLE_RELEASE", "INFO", "Preparing to insert inflight data for Butterfly ID: " + detail.getButtId());
+                                mongoTemplate.insert(inflight, "inflight");
+                                loggingService.log("HANDLE_RELEASE", "INFO", "Inflight data inserted for Butterfly ID: " + detail.getButtId());
+                            }
                         }
                     }
                 });
