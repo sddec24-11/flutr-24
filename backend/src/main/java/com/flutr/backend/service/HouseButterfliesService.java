@@ -63,7 +63,7 @@ public class HouseButterfliesService {
     public List<ButterflyDetailsDTO> getButterflyDetails(String houseId) {
         MongoTemplate houseTemplate = getHouseMongoTemplate(houseId);
         Query query = new Query();
-        query.fields().include("buttId").include("commonName").include("imgWingsOpen").include("lifespan");
+        query.fields().include("buttId").include("commonName").include("imgWingsOpen").include("lifespan").include("noInFlight");
         List<HouseButterflies> butterflies = houseTemplate.find(query, HouseButterflies.class, "house_butterflies");
 
         if (butterflies.isEmpty()) {
@@ -71,7 +71,7 @@ public class HouseButterfliesService {
         }
 
         return butterflies.stream()
-            .map(b -> new ButterflyDetailsDTO(b.getButtId(), b.getCommonName(), b.getImgWingsOpen(), b.getLifespan()))
+            .map(b -> new ButterflyDetailsDTO(b.getButtId(), b.getCommonName(), b.getImgWingsOpen(), b.getLifespan(), b.getNoInFlight()))
             .collect(Collectors.toList());
     }
 

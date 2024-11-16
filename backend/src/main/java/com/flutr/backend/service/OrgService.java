@@ -125,7 +125,7 @@ public class OrgService {
         newOrgDatabase.createCollection("inflight");
         newOrgDatabase.createCollection("suppliers");
         newOrgDatabase.createCollection("shipments");
-        newOrgDatabase.createCollection("logging");
+        newOrgDatabase.createCollection("logs");
 
         MongoTemplate orgMongoTemplate = new MongoTemplate(mongoClient, org.getHouseId() + "_DB");
         MongoTemplate reimanTemplate = new MongoTemplate(mongoClient, "reiman-gardens_DB");
