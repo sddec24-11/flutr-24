@@ -24,6 +24,10 @@ public class LoggingService {
         return new MongoTemplate(MongoClients.create(), houseId + "_DB");
     }
 
+    private MongoTemplate getMongoTemplate(String houseId) {
+        return new MongoTemplate(MongoClients.create(), houseId + "_DB");
+    }
+
     private String getCurrentHouseId() {
         final String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
@@ -38,9 +42,29 @@ public class LoggingService {
         }
     }
 
+    private String getUsernameFromToken() {
+        final String authorizationHeader = request.getHeader("Authorization");
+        if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
+            String jwt = authorizationHeader.substring(7);
+            try {
+                return jwtUtil.extractUsername(jwt);
+            } catch (Exception e) {
+                throw new IllegalStateException("Failed to extract username from JWT", e);
+            }
+        } else {
+            throw new SecurityException("No JWT token found in request headers");
+        }
+    }
+
     public void log(String operation, String status, String details) {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        LogEntry logEntry = new LogEntry(operation, status, details);
+        LogEntry logEntry = new LogEntry(operation, getUsernameFromToken() + ": " + status, details);
+        mongoTemplate.save(logEntry, "logs");
+    }
+
+    public void log(String operation, String status, String details, String houseId) {
+        MongoTemplate mongoTemplate = getMongoTemplate(houseId);
+        LogEntry logEntry = new LogEntry(operation, "System: " + status, details);
         mongoTemplate.save(logEntry, "logs");
     }
 }

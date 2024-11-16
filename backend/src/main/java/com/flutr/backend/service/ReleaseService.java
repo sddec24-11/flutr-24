@@ -107,6 +107,14 @@ public class ReleaseService {
                                 Inflight inflight = new Inflight(detail.getButtId(), update.getNumberReleased(), releaseDate, cal.getTime());
                                 loggingService.log("HANDLE_RELEASE", "INFO", "Preparing to insert inflight data for Butterfly ID: " + detail.getButtId());
                                 mongoTemplate.insert(inflight, "inflight");
+                                Update updateHouseButterfly = new Update();
+                                updateHouseButterfly.inc("noInFlight", update.getNumberReleased());
+                                updateHouseButterfly.inc("totalFlown", update.getNumberReleased());
+                                if (houseButterfly.getFirstFlownOn() == null) {
+                                    updateHouseButterfly.set("firstFlownOn", releaseDate);
+                                }
+                                updateHouseButterfly.set("lastFlownOn", releaseDate);
+                                mongoTemplate.findAndModify(query, updateHouseButterfly, HouseButterflies.class, "house_butterflies");
                                 loggingService.log("HANDLE_RELEASE", "INFO", "Inflight data inserted for Butterfly ID: " + detail.getButtId());
                             }
                         }
@@ -129,7 +137,19 @@ public class ReleaseService {
         loggingService.log("PROCESS_INFLIGHT_AND_SET_BOTD", "START", "Starting inflight processing and BOTD selection");
         allOrgs.forEach(org -> {
             MongoTemplate houseMongoTemplate = new MongoTemplate(MongoClients.create(), org.getHouseId() + "_DB");
-            Query expiredQuery = new Query().addCriteria(Criteria.where("endDate").lte(new Date()));
+            Date now = new Date();
+            Query expiredQuery = new Query().addCriteria(Criteria.where("endDate").lte(now));
+            List<Inflight> expiredInflights = houseMongoTemplate.find(expiredQuery, Inflight.class, "inflight");
+        
+            expiredInflights.forEach(inflight -> {
+                Query updateButterflyQuery = new Query(Criteria.where("buttId").is(inflight.getButtId()));
+                HouseButterflies houseButterfly = houseMongoTemplate.findOne(updateButterflyQuery, HouseButterflies.class, "house_butterflies");
+                if (houseButterfly != null) {
+                    int newInFlight = Math.max(0, houseButterfly.getNoInFlight() - inflight.getNoInFlight());
+                    Update decreaseInflightUpdate = new Update().set("noInFlight", newInFlight);
+                    houseMongoTemplate.updateFirst(updateButterflyQuery, decreaseInflightUpdate, HouseButterflies.class);
+                }
+            });
             houseMongoTemplate.remove(expiredQuery, Inflight.class, "inflight");
 
             List<Inflight> remainingInflight = houseMongoTemplate.findAll(Inflight.class, "inflight");
@@ -142,9 +162,9 @@ public class ReleaseService {
                 update = new Update();
                 update.set("isBOTD", true);
                 houseMongoTemplate.updateFirst(Query.query(Criteria.where("buttId").is(randomButtId)), update, HouseButterflies.class);
-                loggingService.log("PROCESS_INFLIGHT_AND_SET_BOTD", "SUCCESS", "BOTD set for house ID: " + org.getHouseId());
+                loggingService.log("PROCESS_INFLIGHT_AND_SET_BOTD", "SUCCESS", "BOTD set for house ID: " + org.getHouseId(), org.getHouseId());
             } else {
-                loggingService.log("PROCESS_INFLIGHT_AND_SET_BOTD", "FAILURE", "No remaining inflight for house ID: " + org.getHouseId());
+                loggingService.log("PROCESS_INFLIGHT_AND_SET_BOTD", "FAILURE", "No remaining inflight for house ID: " + org.getHouseId(), org.getHouseId());
             }
         });
     }

@@ -1,5 +1,6 @@
 package com.flutr.backend.service;
 
+import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.model.Supplier;
 import com.flutr.backend.repository.ShipmentRepository;
@@ -10,6 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import static org.springframework.data.mongodb.core.query.Criteria.where;
@@ -65,6 +69,11 @@ public class ShipmentService {
 
         try {
             Shipment savedShipment = mongoTemplate.insert(shipment, "shipments");
+            shipment.getButterflyDetails().forEach(detail -> {
+                Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+                Update update = new Update().inc("totalReceived", detail.getNumberReceived());
+                mongoTemplate.findAndModify(query, update, HouseButterflies.class, "house_butterflies");
+            });
             loggingService.log("ADD_SHIPMENT", "SUCCESS", "Shipment added successfully with ID: " + shipment.getShipmentId());
             return savedShipment;
         } catch (Exception e) {
@@ -108,6 +117,7 @@ public class ShipmentService {
                         .filter(updatedDetail -> updatedDetail.getButtId().equals(existingDetail.getButtId()))
                         .findFirst()
                         .ifPresent(updatedDetail -> {
+                            int receivedDiff = updatedDetail.getNumberReceived() - existingDetail.getNumberReceived();
                             existingDetail.setNumberReceived(updatedDetail.getNumberReceived());
                             existingDetail.setNumberReleased(updatedDetail.getNumberReleased());
                             existingDetail.setEmergedInTransit(updatedDetail.getEmergedInTransit());
@@ -117,6 +127,10 @@ public class ShipmentService {
                             existingDetail.setPoorEmergence(updatedDetail.getPoorEmergence());
                             existingDetail.setNoEmergence(updatedDetail.getNoEmergence());
     
+                            Query query = new Query(Criteria.where("buttId").is(updatedDetail.getButtId()));
+                            Update update = new Update().inc("totalReceived", receivedDiff);
+                            mongoTemplate.findAndModify(query, update, HouseButterflies.class, "house_butterflies");
+
                             // Recalculate total remaining
                             existingDetail.setTotalRemaining(updatedDetail.getNumberReceived() -
                                     (updatedDetail.getNumberReleased() +
@@ -144,28 +158,22 @@ public class ShipmentService {
 
     public List<Shipment> viewShipmentsByDateAndAbbreviation(Date date, String abbreviation) {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("VIEW_SHIPMENTS", "START", "Viewing shipments for supplier: " + abbreviation + " on date: " + date);
         try {
             List<Shipment> shipments = mongoTemplate.find(query(where("shipmentDate").is(date).and("abbreviation").is(abbreviation)), Shipment.class, "shipments");
-            loggingService.log("VIEW_SHIPMENTS", "SUCCESS", "Shipments viewed successfully for supplier: " + abbreviation);
             return shipments;
         } catch (Exception e) {
-            loggingService.log("VIEW_SHIPMENTS", "FAILURE", e.getMessage());
             throw new RuntimeException("Error viewing shipments: " + e.getMessage());
         }
     }
 
     public List<Shipment> overviewShipments(Date startDate, Date endDate, String abbreviation) {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("OVERVIEW_SHIPMENTS", "START", "Overviewing shipments from: " + startDate + " to " + endDate + " for supplier: " + abbreviation);
         try {
             List<Shipment> shipments = abbreviation == null || abbreviation.isEmpty() ?
                     mongoTemplate.find(query(where("arrivalDate").gte(startDate).lte(endDate)), Shipment.class, "shipments") :
                     mongoTemplate.find(query(where("arrivalDate").gte(startDate).lte(endDate).and("abbreviation").is(abbreviation)), Shipment.class, "shipments");
-            loggingService.log("OVERVIEW_SHIPMENTS", "SUCCESS", "Overview completed for shipments.");
             return shipments;
         } catch (Exception e) {
-            loggingService.log("OVERVIEW_SHIPMENTS", "FAILURE", e.getMessage());
             throw new RuntimeException("Error overviewing shipments: " + e.getMessage());
         }
     }
@@ -184,13 +192,10 @@ public class ShipmentService {
 
     public List<Shipment> viewAllShipments() {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("VIEW_ALL_SHIPMENTS", "START", "Viewing all shipments");
         try {
             List<Shipment> shipments = mongoTemplate.findAll(Shipment.class, "shipments");
-            loggingService.log("VIEW_ALL_SHIPMENTS", "SUCCESS", "Viewed all shipments successfully");
             return shipments;
         } catch (Exception e) {
-            loggingService.log("VIEW_ALL_SHIPMENTS", "FAILURE", e.getMessage());
             throw new RuntimeException("Error viewing all shipments: " + e.getMessage());
         }
     }
