@@ -17,11 +17,20 @@
     width: 20%;
     height: 62px;
     background-color: #8ABCD7;
-    border: 4px solid #8ABCD7;
+    border: 8px solid #8ABCD7;
     border-radius: 10px 10px 0px 0px;
     text-align: center;
     color: white;
     display: table-cell;
+}
+.activeTab {
+    /* Styles for the active tab */
+    background-color: #6e96ac;
+    border: 8px solid #6e96ac;
+    color: white;
+}
+  .margin-left-8 {
+    margin-left: 8%;
 }
 #info{
     width: 65%;

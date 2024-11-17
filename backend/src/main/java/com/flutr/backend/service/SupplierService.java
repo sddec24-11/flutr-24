@@ -110,26 +110,20 @@ public class SupplierService {
 
     public List<Supplier> viewAllSuppliers() {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("VIEW_ALL_SUPPLIERS", "START", "Viewing all suppliers for house: " + getCurrentHouseId());
         try {
             List<Supplier> suppliers = mongoTemplate.findAll(Supplier.class, "suppliers");
-            loggingService.log("VIEW_ALL_SUPPLIERS", "SUCCESS", "Viewed all suppliers successfully");
             return suppliers;
         } catch (Exception e) {
-            loggingService.log("VIEW_ALL_SUPPLIERS", "FAILURE", e.getMessage());
             throw new RuntimeException("Error viewing all suppliers: " + e.getMessage(), e);
         }
     }
 
     public List<Supplier> viewActiveSuppliers() {
         MongoTemplate mongoTemplate = getMongoTemplate();
-        loggingService.log("VIEW_ACTIVE_SUPPLIERS", "START", "Viewing all active suppliers for house: " + getCurrentHouseId());
         try {
             List<Supplier> activeSuppliers = mongoTemplate.find(query(where("isActive").is(true)), Supplier.class, "suppliers");
-            loggingService.log("VIEW_ACTIVE_SUPPLIERS", "SUCCESS", "Viewed all active suppliers successfully");
             return activeSuppliers;
         } catch (Exception e) {
-            loggingService.log("VIEW_ACTIVE_SUPPLIERS", "FAILURE", e.getMessage());
             throw new RuntimeException("Error viewing active suppliers: " + e.getMessage(), e);
         }
     }

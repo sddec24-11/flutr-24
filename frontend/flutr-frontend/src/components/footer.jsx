@@ -108,7 +108,7 @@ function Footer({location, kioskMode, insta, facebook, x, youtube}){
     return (
       <div className="holder">
         <div className="contentFooter">
-            <p><span>&#169;</span> {currentYear} Reiman Gardens All Rights Reserved.</p>
+            <p><span style={{color: 'white' }}>&#169;</span> <span style={{ color: 'white' }}>{currentYear} Reiman Gardens All Rights Reserved.</span></p>
             <a href="/login"><h3 style={{color: 'white'}}>Organization Login</h3></a>
         </div>
       </div>

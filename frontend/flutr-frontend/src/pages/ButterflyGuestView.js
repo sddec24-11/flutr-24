@@ -86,7 +86,7 @@ export default function ButterflyGuestView(){
                             <p>{`Family: ${butterfly.family}`}</p>
                         </Col>
                         <Col>
-                            <p>{`Estimated number in Flight: ${butterfly.noInFlight}`}</p>
+                            <p>{`Estimated Number in Flight: ${butterfly.noInFlight}`}</p>
                         </Col>
                     </Row>
                     <Row>
@@ -94,7 +94,7 @@ export default function ButterflyGuestView(){
                             <p>{`Sub-family: ${butterfly.subFamily}`}</p>
                         </Col>
                         <Col>
-                            <p>{`Total pupae recieved: ${butterfly.totalReceived}`}</p>
+                            <p>{`Total Pupae Recieved: ${butterfly.totalReceived}`}</p>
                         </Col>
                     </Row>
                     <Row>
@@ -102,7 +102,7 @@ export default function ButterflyGuestView(){
                             <p>{`Estimated Lifespan: ${butterfly.lifespan}`}</p>
                         </Col>
                         <Col>
-                            <p>{`First flown on: ${butterfly.firstFlownOn}`}</p>
+                            <p>{`First Flown On: ${butterfly.firstFlownOn}`}</p>
                         </Col>
                     </Row>
                     <Row>
@@ -110,7 +110,7 @@ export default function ButterflyGuestView(){
                             <p>{`Species Range: ${butterfly.range}`}</p>
                         </Col>
                         <Col>
-                            <p>{`Last flown on: ${butterfly.lastFlownOn}`}</p>
+                            <p>{`Last Flown On: ${butterfly.lastFlownOn}`}</p>
                         </Col>
                     </Row>
                     <Row>

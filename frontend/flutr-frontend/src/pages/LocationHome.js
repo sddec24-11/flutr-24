@@ -36,7 +36,11 @@ export default function LocationHome({data, kioskMode}){
     const [botdData, setBotdData] = useState({});
     const [statData, setStats] = useState({});
     const [loaded, setLoaded] = useState(false);
+<<<<<<< HEAD
     const [successfulBOTD, setBOTDSuccess] = useState(false);
+=======
+    const [butterflies, setButterflies] = useState([]);
+>>>>>>> main
     
     useEffect(() => {
         const fetchData = async () => {
@@ -102,9 +106,26 @@ export default function LocationHome({data, kioskMode}){
             }
             
           };
+          const fetchButterflies = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+              });
+              response.json().then(json => {
+                console.log(json.payload);
+                setButterflies(json.payload);
+              })
+            } catch (error) {
+    
+            }
+          };
         fetchData();
         fetchBOTD();
         fetchStats();
+        fetchButterflies();
     }, []);
 
     const handleStats = (e) => {
@@ -143,8 +164,13 @@ export default function LocationHome({data, kioskMode}){
             <div style={{width: "90%", margin: "auto"}}>
                 <Container>
                     <Row xs={1} sm={2} md={2}>
+<<<<<<< HEAD
                         {(locationData.otd.active && successfulBOTD) &&
                         <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
+=======
+                        {locationData.otd.active &&
+                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={botdData.numberInFlight} butterfly={butterfly} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
+>>>>>>> main
                         <Col style={{paddingTop: '16px'}}>
                             <div>
                                 {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent}/>}

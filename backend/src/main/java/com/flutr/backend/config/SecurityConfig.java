@@ -37,7 +37,7 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/butterflies/all/**", "/butterflies/fullDetails/**", "/butterflies/details/**", 
                                  "/releases/inflight/**", "/releases/botd/**", "/orgs/all", "/orgs/view/**",
-                                 "/hello", "/hellohello", "/users/login").permitAll()
+                                 "/hello", "/hellohello", "/users/login", "/stats/**").permitAll()
                 .anyRequest().authenticated())
             .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
             

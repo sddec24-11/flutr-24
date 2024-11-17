@@ -35,7 +35,7 @@ export default function MasterButterflyCreate(){
             family: family,
             subFamily: subFam,
             lifespan: longevity,
-            range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
+            range: [naState ? "North America" : null, euState ? "Europe" : null, saState ? "South America" : null, ausState ? "Australia" : null, asiaState ? "Asia" : null, afState ? "Africa" : null].filter(Boolean),
             plant: hostPlant,
             habitat: habitat,
             funFacts: funFacts
@@ -72,7 +72,7 @@ export default function MasterButterflyCreate(){
       const [common, setCommon] = useState("");
       const [family, setFamily] = useState("");
       const [subFam, setSubFam] = useState("");
-      const [longevity, setLongevity] = useState(1);
+      const [longevity, setLongevity] = useState(14);
       const [hostPlant, setHostPlant] = useState("");
       const [habitat, setHabitat] = useState("");
       const [funFacts, setFacts] = useState("");
@@ -115,50 +115,71 @@ export default function MasterButterflyCreate(){
     return(
         <div  class="main-container">
             <Navbar/>
-            <h3>Add Butterfly</h3>
+            <Row><Col><h3 style={{color: '#469FCE', marginTop:"2%", marginLeft:"6%", marginBottom:"2%"}}>Add Butterfly</h3></Col></Row>
             <div>
                 <Container>
-                    <Row>
-                        <Col>Scientific name: </Col>
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Row style={{display: "flex", width: "30%", marginRight: "10%", marginBottom:"2%"}}>
+                        <Col style={{ width: '100%', color: '#469FCE'}}>Scientific name: </Col>
                         <Col><input value={scientific} onChange={handleScientific}></input></Col>
-                        <Col>Common name: </Col>
-                        <Col><input value={common} onChange={handleCommon}></input></Col>
-                    </Row>
-                    <Row>
-                        <Col>Family: </Col>
+                        </Row>
+                        <Row style={{display: "flex", width: "30%", marginLeft: "10%", marginBottom:"2%"}}>
+                          <Col style={{ width: '100%', color: '#469FCE'}}>Common name: </Col>
+                          <Col><input value={common} onChange={handleCommon}></input></Col>
+                        </Row>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Row style={{display: "flex", width: "30%", marginRight: "10%", marginBottom:"2%"}}>
+                        <Col style={{ width: '100%', color: '#469FCE'}}>Family: </Col>
                         <Col><input value={family} onChange={handleFamily}></input></Col>
-                        <Col>Sub-family: </Col>
-                        <Col><input value={subFam} onChange={handleSubFam}></input></Col>
-                    </Row>
-                    <Row>
-                        <Col>Longevity: </Col>
-                        <Col><input type="number" min={1} value={longevity} onChange={handleLongevity}></input></Col>
-                        <Col>Host plant: </Col>
-                        <Col><input value={hostPlant} onChange={handleHostPlant}></input></Col>
-                    </Row>
-                    <Row>
-                        <Col>Habitat: </Col>
+                        </Row>
+                        <Row style={{display: "flex", width: "30%", marginLeft: "10%", marginBottom:"2%"}}>
+                          <Col style={{ width: '100%', color: '#469FCE'}}>Sub-family: </Col>
+                          <Col><input value={subFam} onChange={handleSubFam}></input></Col>
+                          </Row>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Row style={{display: "flex", width: "30%", marginRight: "10%", marginBottom:"2%"}}>
+                        <Col style={{ width: '100%', color: '#469FCE'}}>Longevity: </Col>
+                        <Col><input value={longevity} onChange={handleLongevity}></input></Col>
+                        </Row>
+                        <Row style={{display: "flex", width: "30%", marginLeft: "10%", marginBottom:"2%"}}>
+                          <Col style={{ width: '100%', color: '#469FCE'}}>Host plant: </Col>
+                          <Col><input value={hostPlant} onChange={handleHostPlant}></input></Col>
+                        </Row>
+                    </div>
+
+                    <div style={{ display: 'flex', flexDirection: 'row' }}>
+                      <Row style={{display: "flex", width: "30%", marginRight: "10%", marginBottom:"2%"}}>
+                        <Col style={{ width: '100%', color: '#469FCE'}}>Habitat: </Col>
                         <Col><input value={habitat} onChange={handleHabitat}></input></Col>
-                        <Col>Fun facts:</Col>
-                        <Col><input value={funFacts} onChange={handleFacts}></input></Col>
+                        </Row>
+                        <Row style={{display: "flex", width: "30%", marginLeft: "10%", marginBottom:"2%"}}>
+                          <Col style={{ width: '100%', color: '#469FCE'}}>Fun facts: </Col>
+                          <Col><input value={funFacts} onChange={handleFacts}></input></Col>
+                        </Row>
+                    </div>
+
+                    <Row style={{marginBottom:"2%"}}>
+                    <Col><h4 style={{color: '#469FCE', marginTop:"2%"}}>Species Range</h4></Col>
                     </Row>
-                    <Row>
-                        <Col>Species range:</Col>
+                    <Row style={{marginBottom:"2%"}}>
                         <Col><Checkbox state={naState} setState={setNAState}/></Col>
-                        <Col>North America</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"18%"}}>North America</Col>
                         <Col><Checkbox state={euState} setState={setEUState}/></Col>
-                        <Col>Europe</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"18%"}}>Europe</Col>
                         <Col><Checkbox state={saState} setState={setSAState}/></Col>
-                        <Col>South/Central America</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"18%"}}>South/Central America</Col>
                     </Row>
-                    <Row>
-                        <Col></Col>
+                    <Row style={{marginBottom:"2%"}}>
                         <Col><Checkbox state={ausState} setState={setAUSState}/></Col>
-                        <Col>Australia</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"17%"}}>Australia</Col>
                         <Col><Checkbox state={asiaState} setState={setAsiaState}/></Col>
-                        <Col>Asia</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"17%"}}>Asia</Col>
                         <Col><Checkbox state={afState} setState={setAFState}/></Col>
-                        <Col>Africa</Col>
+                        <Col style={{width: '100%' ,color: '#469FCE', marginRight:"19%"}}>Africa</Col>
                     </Row>
                     <Row style={{width: '100%', paddingTop: '10px'}}>
                         <Col xs={3} style={{color: '#469FCE'}}>Wings Open:</Col>
@@ -170,8 +191,8 @@ export default function MasterButterflyCreate(){
                         <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
                         <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
                     </Row>
-                    <button onClick={handleCancel}>Cancel</button>
-                    <button onClick={handleSubmit}>Submit</button>
+                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px", marginRight:"8px"}} onClick={handleCancel}>Cancel</button>
+                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleSubmit}>Submit</button>
                     
                 </Container>
             </div>
