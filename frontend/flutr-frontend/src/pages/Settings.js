@@ -362,19 +362,11 @@ export default function Settings(){
             </div>
             <div className="tab-holder">
                 <div className="tabs">
-<<<<<<< HEAD
                     <div className="tabButtons" onClick={handleInfo} style={{backgroundColor: activeTab === 1? '#469FCE': "#8ABCD7", border: activeTab === 1? '4px solid #469FCE': "4px solid #8ABCD7"}}>Info</div>
                     <div className="tabButtons" onClick={handleStyles} style={{backgroundColor: activeTab === 2? '#469FCE': "#8ABCD7", border: activeTab === 2? '4px solid #469FCE': "4px solid #8ABCD7"}}>Styles</div>
                     <div className="tabButtons" onClick={handleHome} style={{backgroundColor: activeTab === 3? '#469FCE': "#8ABCD7", border: activeTab === 3? '4px solid #469FCE': "4px solid #8ABCD7"}}>Home</div>
                     <div className="tabButtons" onClick={handleEmployees} style={{backgroundColor: activeTab === 4? '#469FCE': "#8ABCD7", border: activeTab === 4? '4px solid #469FCE': "4px solid #8ABCD7"}}>Employees</div>
                     <div className="tabButtons" onClick={handleSuppliers} style={{backgroundColor: activeTab === 5? '#469FCE': "#8ABCD7", border: activeTab === 5? '4px solid #469FCE': "4px solid #8ABCD7"}}>Suppliers</div>
-=======
-                    <div className={`tabButtons ${activeTab === 1 ? 'activeTab' : ''}`} onClick={handleInfo}>Info</div>
-                    <div className={`tabButtons ${activeTab === 2 ? 'activeTab' : ''}`} onClick={handleStyles}>Styles</div>
-                    <div className={`tabButtons ${activeTab === 3 ? 'activeTab' : ''}`} onClick={handleHome}>Home</div>
-                    <div className={`tabButtons ${activeTab === 4 ? 'activeTab' : ''}`} onClick={handleEmployees}>Employees</div>
-                    <div className={`tabButtons ${activeTab === 5 ? 'activeTab' : ''}`} onClick={handleSuppliers}>Suppliers</div>
->>>>>>> main
                 </div>
             </div>
             
@@ -383,7 +375,6 @@ export default function Settings(){
                 <div id="info" style={{width: '62%', margin: 'auto'}}>
                     <Container>
                         <Row>
-<<<<<<< HEAD
                             <div style={{color: '#469FCE', marginTop: '59px'}}><strong>Organization Information</strong></div>
                         </Row>
                         <Row style={{marginTop: '20px'}}>
@@ -397,27 +388,6 @@ export default function Settings(){
                         <Row style={{marginTop: '20px'}}>
                             <Col xs={3} style={{color: '#469FCE'}}>Organization address: </Col>
                             <Col xs={9}><input value={orgAddress} onChange={handleAddressChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
-=======
-                            <Col><h4 style={{color: '#469FCE', marginTop:"8px", marginBottom:"3%", marginTop:"2%"}}>Organization Information</h4></Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3} style={{color: '#469FCE'}}>Organization name:</Col>
-                            <Col xs={9}><input value={orgName} onChange={handleNameChange} style={{width: '100%'}}></input></Col>
-                        <Row style={{marginTop: '20px'}}>
-                            <Col xs={3} style={{color: '#469FCE'}}>Organization name:</Col>
-                            <Col xs={9}><input value={orgName} onChange={handleNameChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3} style={{color: '#469FCE'}}>Organization website: </Col>
-                            <Col xs={9}><input value={orgWebsite} onChange={handleWebsiteChange} style={{width: '100%'}}></input></Col>
-                        <Row style={{marginTop: '20px'}}>
-                            <Col xs={3} style={{color: '#469FCE'}}>Organization website: </Col>
-                            <Col xs={9}><input value={orgWebsite} onChange={handleWebsiteChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
-                        </Row>
-                        <Row>
-                            <Col xs={3} style={{color: '#469FCE'}}>Organization address: </Col>
-                            <Col xs={9}><input value={orgAddress} onChange={handleAddressChange} style={{width: '100%'}}></input></Col>
->>>>>>> main
                         </Row>
                         <Row style={{width: '100%', paddingTop: '10px'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Facility image:</Col>
@@ -425,58 +395,32 @@ export default function Settings(){
                                 <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={facilityImage}/></Col>
                         </Row>
                         <Row style={{width: '100%', paddingTop: '10px'}}>
-<<<<<<< HEAD
                                 <Col xs={3} style={{color: '#469FCE'}}><div id="label">Logo: <p style={{fontSize: '15px'}}>Please upload a PNG with a transparent background no greater than 250 x 150 pixels.</p></div></Col>
-=======
-                                <Col xs={3} style={{color: '#469FCE'}}><div id="label">Logo: <p style={{fontSize: "12px"}}>Please upload a PNG with a transparent background no greater than 250 x 150 pixels.</p></div></Col>
->>>>>>> main
                                 <Col xs={4}><div><input type="file" onChange={handleLogoUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
                                 <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px', backgroundColor: primaryColor}} src={logo}/></Col>
                         </Row>
-<<<<<<< HEAD
                         <Row style={{paddingTop: '10px'}}>
                             <Col style={{color: '#469FCE'}}><strong>Social Media Links</strong></Col>
-=======
-                        <Row>
-                            <Col style={{color: '#469FCE'}}>Social Media Links</Col>
->>>>>>> main
                         </Row>
                         <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={instaState} setState={setInsta}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>Instagram: </Col>
-<<<<<<< HEAD
                             <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgInsta} onChange={handleInstaChange}></input></Col>
-=======
-                            <Col xs={9}><input style={{width: '100%'}} value={orgInsta} onChange={handleInstaChange}></input></Col>
->>>>>>> main
                         </Row>
                         <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={faceState} setState={setFace}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>Facebook: </Col>
-<<<<<<< HEAD
                             <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgFaceBook} onChange={handleFacebookChange}></input></Col>
-=======
-                            <Col xs={9}><input style={{width: '100%'}} value={orgFaceBook} onChange={handleFacebookChange}></input></Col>
->>>>>>> main
                         </Row>
                         <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={xState} setState={setX}/></Col>
-<<<<<<< HEAD
                             <Col xs={2} style={{color: '#469FCE'}}>X: </Col>
                             <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgX} onChange={handleXChange}></input></Col>
-=======
-                            <Col xs={2} style={{color: '#469FCE'}}>Twitter/X: </Col>
-                            <Col xs={9}><input style={{width: '100%'}} value={orgX} onChange={handleXChange}></input></Col>
->>>>>>> main
                         </Row>
                         <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={ytState} setState={setYT}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>YouTube: </Col>
-<<<<<<< HEAD
                             <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgYouTube} onChange={handleYTChange}></input></Col>
-=======
-                            <Col xs={9}><input style={{width: '100%'}} value={orgYouTube} onChange={handleYTChange}></input></Col>
->>>>>>> main
                         </Row>
                     </Container>
                 </div>}
@@ -502,7 +446,6 @@ export default function Settings(){
                     </Container>
                 </div>}
                 {activeTab === 3 && <div id="home">
-<<<<<<< HEAD
                     <Container style={{width: '75%', margin: 'auto', marginTop: '15px'}}>
                         <Row><Col><h4>Panels</h4></Col></Row>
                         <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
@@ -512,28 +455,6 @@ export default function Settings(){
                             <Col xs={3} style={{width: '75%'}}><textarea style={{width: '100%', height: '300px', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={newsContent} onChange={handleNewsContentChange} placeholder="news..."></textarea></Col>
                             <Col xs={1} style={{width: '25%'}}><div>Upload Image (Optional)</div></Col>
                         </Row>
-=======
-                    <Container>
-                        <Row><Col><h4 style={{color: '#469FCE', marginTop:"2%"}}>Panels</h4></Col></Row>
-                        <Row><Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col style={{marginRight: "8%", marginTop:"1.75%", marginBottom:"3%", color: '#469FCE'}}>Butterfly of the Day </Col>
-                            <Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={statsState} setState={setStats}/></Col><Col style={{marginRight: "8%", marginTop:"2.5%", marginBottom:"3%", color: '#469FCE'}}>Statistics</Col>
-                            <Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={newsState} setState={setNews}/></Col><Col style={{marginRight: "8%", marginTop:"2.5%", marginBottom:"3%", color: '#469FCE'}}>News</Col></Row>
-                        <div className="row">
-                        <div className="col-md-6">
-                            <textarea
-                                className="form-control"
-                                id="newsContent"
-                                rows="5"
-                                placeholder="News Content"
-                                value={newsContent}
-                                onChange={(e) => setNewsContent(e.target.value)}
-                            />
-                        </div>
-                            <div className="col-md-6 text-center">
-                                <label style={{color: '#469FCE'}} htmlFor="newsImage" className="form-label">Upload Image (Optional)</label>
-                            </div>
-                        </div>
->>>>>>> main
                     </Container>
                 </div>}
                 {activeTab === 4 &&
@@ -597,17 +518,10 @@ export default function Settings(){
                     </table>
             </div>}
                 {outerTab === 1 &&
-<<<<<<< HEAD
                 <div className="bottomButtons" style={{margin: 'auto', width: '70%', marginTop: '50px', marginBottom: '50px'}}>
                     <button onClick={handleCancel} style={{backgroundColor: '#8ABCD7', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>Cancel</button>
                     <button onClick={handlePreview} style={{backgroundColor: '#469FCE', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>Preview</button>
                     <button onClick={handleSubmit} style={{backgroundColor: '#E4976C', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px'}}>Save and Submit</button>
-=======
-                <div className="bottomButtons">
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginRight:"10px", marginBottom:"8px", marginLeft:"8px"}} onClick={handleCancel}>Cancel</button>
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginRight:"10px", marginBottom:"8px"}} onClick={handlePreview}>Preview</button>
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleSubmit}>Save and Submit</button>
->>>>>>> main
                 </div>}
                 
                 
