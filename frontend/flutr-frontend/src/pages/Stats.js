@@ -12,6 +12,10 @@ export default function Stats({data, kioskMode}){
     const [locationData, setLocationData] = useState({});
     const [statData, setStats] = useState({});
     const [loaded, setLoaded] = useState(false);
+    const [least, setLeast] = useState({});
+    const [most, setMost] = useState({});
+    const [families, setFamilies] = useState({});
+    const [continents, setContinents] = useState({});
     
     useEffect(() => {
         const fetchData = async () => {
@@ -53,8 +57,92 @@ export default function Stats({data, kioskMode}){
             }
             
           };
+          const fetchMost = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/stats/mostInFlight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setMost(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch most stats:", error);
+            } finally {
+            }
+            
+          };
+          const fetchLeast = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/stats/leastInFlight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setLeast(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch least stats:", error);
+            } finally {
+            }
+            
+          };
+          const fetchFamilies = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/stats/familyInFlight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setFamilies(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch family stats:", error);
+            } finally {
+            }
+            
+          };
+          const fetchContinents = async () => {
+            try{
+              const response = await fetch(`http://206.81.3.155:8282/api/stats/continentInFlight/${data}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json',
+              },
+              });
+              response.json().then(json => {
+                if(json.success){
+                    setContinents(json.payload);
+                    
+                }
+              });
+            } catch (error) {
+              console.error("Failed to fetch continent stats:", error);
+            } finally {
+            }
+            
+          };
         fetchData();
         fetchStats();
+        fetchMost();
+        fetchLeast();
+        // fetchFamilies();
+        // fetchContinents();
     }, []);
     const [insta, setInsta] = useState(false);
     const [fb, setFB] = useState(false);
@@ -112,8 +200,14 @@ export default function Stats({data, kioskMode}){
                             <Col><div style={{width: "100%", margin: 'auto', textAlign: 'center'}}><h4>Current Populations</h4></div></Col>
                         </Row>
                         <Row>
-                            <Col style={{}}><div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are currently {stats.highCount} of the {stats.highSpecies} currently in flight, making them the most represented species in flight.</p></div></div></Col>
-                            <Col style={{}}><div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are only {stats.lowCount} of the {stats.lowSpecies} currently in flight. See if you can spot one!</p></div></div></Col>
+                            <Col style={{}}>
+                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are currently {most.buttId} of the {most.noInFlight} currently in flight, making them the most represented species in flight.</p></div></div>
+                              {most.imgWingsOpen !== null && <img src={most.imgWingsOpen}/>}
+                            </Col>
+                            <Col style={{}}>
+                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are only {least.buttId} of the {least.noInFlight} currently in flight. See if you can spot one!</p></div></div>
+                              {least.imgWingsOpen !== null && <img src={most.imgWingsOpen}/>}
+                            </Col>
                         </Row>
                     </Container>
                     <div style={{width: '100%', margin: 'auto'}}>
