@@ -250,7 +250,10 @@ public class OrgService {
         existingOrgInfo.setSocials(updatedOrgInfo.getSocials());
         existingOrgInfo.setSubheading(updatedOrgInfo.getSubheading());
         existingOrgInfo.setOtd(updatedOrgInfo.getOtd());
-        existingOrgInfo.setNews(updatedOrgInfo.getNews());
+
+        existingOrgInfo.getNews().setActive(updatedOrgInfo.getNews().isActive());
+        existingOrgInfo.getNews().setNewsContent(updatedOrgInfo.getNews().getNewsContent());
+
         existingOrgInfo.setStatsActive(updatedOrgInfo.getStatsActive());
         existingOrgInfo.setTimezone(updatedOrgInfo.getTimezone());
     
