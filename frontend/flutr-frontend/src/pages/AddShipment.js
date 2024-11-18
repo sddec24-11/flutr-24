@@ -100,7 +100,7 @@ export default function AddShipment() {
     
         const fetchOptions = async (retries = maxRetries) => {
             try {
-                const response = await fetch("http://206.81.3.155:8282/api/suppliers/view/active", {
+                const response = await fetch("api/suppliers/view/active", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -138,7 +138,7 @@ export default function AddShipment() {
     
         const fetchOptions = async (retries = maxRetries) => {
             try {
-                const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
+                const response = await fetch(`api/butterflies/details/${window.sessionStorage.getItem("subdomain")}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -192,6 +192,8 @@ export default function AddShipment() {
 
         setData(prev => [...prev, newButterfly]);
     };
+
+    const handleButterflySelect({ butterflyOptions, })
     
     //remove butterfly from list of butterflies in shipment
     const removeButterfly = (speciesOut) => {
@@ -274,7 +276,7 @@ export default function AddShipment() {
     
         const submitData = async () => {
             try {
-                const response = await fetch("http://206.81.3.155:8282/api/shipments/add", {
+                const response = await fetch("api/shipments/add", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -409,7 +411,7 @@ export default function AddShipment() {
                 </div>
 
                 <div class="butterfly">
-                    <select id="butterfly" name="add-butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
+                    <select id="butterfly" name="add-butterfly" defaultValue = "Add Butterfly" style={{ background: '#E4976C', color: '#E1EFFE', width: "18%", textAlign: "center", outlineColor: "#E4976C", borderColor: "#E4976C" }}
                             onChange={(e) => addButterfly(e.target.value)}>
                         <option disabled selected value>Add Butterfly</option>
                                 {butterflyOptions.map((butterfly) => (
