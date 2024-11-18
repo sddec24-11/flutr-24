@@ -47,9 +47,10 @@ public class OrgController {
     public ResponseEntity<Response<OrgInfo>> editOrg(
         @RequestPart("orgInfo") OrgInfo orgInfo, 
         @RequestPart(value = "logoFile", required = false) MultipartFile logoFile,
-        @RequestPart(value = "facilityImageFile", required = false) MultipartFile facilityImageFile) {
+        @RequestPart(value = "facilityImageFile", required = false) MultipartFile facilityImageFile,
+        @RequestPart(value = "newsImageFile", required = false) MultipartFile newsImageFile) {
         try {
-            OrgInfo updatedOrgInfo = orgService.editOrg(orgInfo, logoFile, facilityImageFile);
+            OrgInfo updatedOrgInfo = orgService.editOrg(orgInfo, logoFile, facilityImageFile, newsImageFile);
             return ResponseEntity.ok(new Response<>(true, updatedOrgInfo, null));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));

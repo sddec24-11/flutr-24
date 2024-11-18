@@ -5,12 +5,14 @@ public class ButterflyDetailsDTO {
     private String commonName;
     private String imgWingsOpen;
     private int lifespan;
+    private int noInFlight;
 
-    public ButterflyDetailsDTO(String buttId, String commonName, String imgWingsOpen, int lifespan) {
+    public ButterflyDetailsDTO(String buttId, String commonName, String imgWingsOpen, int lifespan, int noInFlight) {
         this.buttId = buttId;
         this.commonName = commonName;
         this.imgWingsOpen = imgWingsOpen;
         this.lifespan = lifespan;
+        this.noInFlight = noInFlight;
     }
 
     public String getButtId() {
@@ -43,6 +45,14 @@ public class ButterflyDetailsDTO {
 
     public void setLifespan(int lifespan) {
         this.lifespan = lifespan;
+    }
+
+    public int getNoInFlight() {
+        return noInFlight;
+    }
+
+    public void setNoInFlight(int noInFlight) {
+        this.noInFlight = noInFlight;
     }
 
 }

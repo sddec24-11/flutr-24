@@ -3,6 +3,7 @@ package com.flutr.backend.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -32,9 +33,11 @@ public class MasterController {
     public ResponseEntity<Response<String>> addButterfly(
             @RequestPart("butterfly") Butterfly butterfly, 
             @RequestPart(value = "imgWingsOpen", required = false) MultipartFile imgWingsOpen,
-            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed) {
+            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed,
+            @RequestPart(value = "extraImg1", required = false) MultipartFile extraImg1,
+            @RequestPart(value = "extraImg2", required = false) MultipartFile extraImg2) {
         try {
-            masterService.addButterfly(butterfly, imgWingsOpen, imgWingsClosed);
+            masterService.addButterfly(butterfly, imgWingsOpen, imgWingsClosed, extraImg1, extraImg2);
             return ResponseEntity.ok(new Response<>(true, "Butterfly added successfully to Master DB and all houses.", null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
@@ -46,9 +49,11 @@ public class MasterController {
     public ResponseEntity<Response<String>> editButterfly(
             @RequestPart("butterfly") Butterfly butterfly,
             @RequestPart(value = "imgWingsOpen", required = false) MultipartFile imgWingsOpen,
-            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed) {
+            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed,
+            @RequestPart(value = "extraImg1", required = false) MultipartFile extraImg1,
+            @RequestPart(value = "extraImg2", required = false) MultipartFile extraImg2) {
         try {
-            masterService.editButterfly(butterfly, imgWingsOpen, imgWingsClosed);
+            masterService.editButterfly(butterfly, imgWingsOpen, imgWingsClosed, extraImg1, extraImg2);
             return ResponseEntity.ok(new Response<>(true, "Butterfly details updated successfully across all houses.", null));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
@@ -96,6 +101,19 @@ public class MasterController {
         try {
             List<Butterfly> butterflies = masterService.getAllButterflies();
             return ResponseEntity.ok(new Response<>(true, butterflies, null));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        }
+    }
+
+    @DeleteMapping("/deleteButterfly/{buttId}")
+    @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
+    public ResponseEntity<Response<String>> deleteButterfly(@PathVariable String buttId) {
+        try {
+            masterService.deleteButterfly(buttId);
+            return ResponseEntity.ok(new Response<>(true, "Butterfly deleted successfully.", null));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(new Response<>(false, null, new Response.ErrorDetails(400, e.getMessage())));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
         }
