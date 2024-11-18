@@ -6,6 +6,7 @@ import PageTitle from "../components/PageTitle";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
+import { Chart } from "react-google-charts";
 
 
 export default function Stats({data, kioskMode}){
@@ -14,7 +15,7 @@ export default function Stats({data, kioskMode}){
     const [loaded, setLoaded] = useState(false);
     const [least, setLeast] = useState({});
     const [most, setMost] = useState({});
-    const [families, setFamilies] = useState({});
+    const [families, setFamilies] = useState([['Family', 'Number In Flight']]);
     const [continents, setContinents] = useState({});
     
     useEffect(() => {
@@ -99,7 +100,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchFamilies = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/stats/familyInFlight/${data}`, {
+              const response = await fetch(`http://206.81.3.155:8282/api/stats/familyInflight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -107,9 +108,15 @@ export default function Stats({data, kioskMode}){
               });
               response.json().then(json => {
                 if(json.success){
-                    setFamilies(json.payload);
-                    
+                  console.log(json.payload);
+                    json.payload.map((entry)=> {
+                      console.log(entry);
+                      setFamilies([...families, [entry.family, entry.totalInFlight]]);
+                      // setFamilies(families.push([entry.family, entry.totalInFlight]));
+                      console.log(families);
+                    })
                 }
+                // console.log(families);
               });
             } catch (error) {
               console.error("Failed to fetch family stats:", error);
@@ -141,7 +148,7 @@ export default function Stats({data, kioskMode}){
         fetchStats();
         fetchMost();
         fetchLeast();
-        // fetchFamilies();
+        fetchFamilies();
         // fetchContinents();
     }, []);
     const [insta, setInsta] = useState(false);
@@ -162,6 +169,22 @@ export default function Stats({data, kioskMode}){
   const handleYT = () => setYT(true);
     const stats = {butterflyCount: 123, speciesCount: 45, highCount: 100, lowCount: 2, highSpecies: "Blue Morpho", lowSpecies: "Dan"}
 
+  const chartOptions = {
+    title: 'Families',
+    pieHole: 0.4,
+    // is3D: true,
+    pieStartAngle: 100,
+    sliceVisibilityThreshold: 0.02,
+    lengend: {
+      position: 'right',
+      alignment: 'center',
+      textStyle: {
+        color: "#233238",
+        fontSize: 14,
+      },
+    },
+    colors: ["#8AD1C2", "#9F8AD1", "#D18A99", "#BCD18A", "#D1C28A"],
+  }
     if(loaded){
     return(
         <div style={{backgroundColor: locationData.colors[0]}}>
@@ -194,19 +217,27 @@ export default function Stats({data, kioskMode}){
 
                         </Row>
                         <Row>
-
+                          <Col>
+                            <Chart
+                              chartType="PieChart"
+                              data={families}
+                              options={chartOptions}
+                              width={"100%"}
+                              height={"400px"}
+                              />
+                          </Col>
                         </Row>
                         <Row>
                             <Col><div style={{width: "100%", margin: 'auto', textAlign: 'center'}}><h4>Current Populations</h4></div></Col>
                         </Row>
                         <Row>
-                            <Col style={{}}>
+                            <Col style={{textAlign: 'center'}}>
+                              {most.imgWingsOpen !== null && <img style={{width: '50%'}} src={most.imgWingsOpen}/>}
                               <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are currently {most.buttId} of the {most.noInFlight} currently in flight, making them the most represented species in flight.</p></div></div>
-                              {most.imgWingsOpen !== null && <img src={most.imgWingsOpen}/>}
                             </Col>
-                            <Col style={{}}>
+                            <Col style={{textAlign: 'center'}}>
+                              {least.imgWingsOpen !== null && <img style={{width: '50%'}} src={most.imgWingsOpen}/>}
                               <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are only {least.buttId} of the {least.noInFlight} currently in flight. See if you can spot one!</p></div></div>
-                              {least.imgWingsOpen !== null && <img src={most.imgWingsOpen}/>}
                             </Col>
                         </Row>
                     </Container>
