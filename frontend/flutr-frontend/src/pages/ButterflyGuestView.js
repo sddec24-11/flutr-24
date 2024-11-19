@@ -17,6 +17,8 @@ export default function ButterflyGuestView(){
     const [loaded, setLoaded] = useState(false);
 
     const [butterfly, setButterfly] = useState({});
+    const [firstFlownString, setFirstString] = useState("Unknown");
+    const [lastFlownString, setLastString] = useState("Unknown");
 
     const [insta, setInsta] = useState(false);
     const [fb, setFB] = useState(false);
@@ -47,6 +49,14 @@ export default function ButterflyGuestView(){
               response.json().then(json => {
                 console.log(json.payload);
                 setButterfly(json.payload);
+                const firstDate = new Date(json.payload.firstFlownOn);
+                const firstMonth = monthNames[firstDate.getMonth()];
+                const firstYear = firstDate.getFullYear();
+                const lastDate = new Date(json.payload.lastFlownOn);
+                const lastMonth = monthNames[lastDate.getMonth()];
+                const lastYear = lastDate.getFullYear();
+                setFirstString(`${firstMonth} ${firstDate.getDate()}, ${firstYear}`);
+                setLastString(`${lastMonth} ${lastDate.getDate()}, ${lastYear}`)
                 setLoaded(true);
               })
             } catch (error) {
@@ -55,6 +65,7 @@ export default function ButterflyGuestView(){
           };
           fetchButterfly();
     },[])
+    const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
 
     if(loaded){
     return(
@@ -102,7 +113,7 @@ export default function ButterflyGuestView(){
                             <p>{`Estimated Lifespan: ${butterfly.lifespan}`}</p>
                         </Col>
                         <Col>
-                            <p>{`First Flown On: ${butterfly.firstFlownOn}`}</p>
+                            <p>{`First Flown On: ${firstFlownString}`}</p>
                         </Col>
                     </Row>
                     <Row>
@@ -110,7 +121,7 @@ export default function ButterflyGuestView(){
                             <p>{`Species Range: ${butterfly.range}`}</p>
                         </Col>
                         <Col>
-                            <p>{`Last Flown On: ${butterfly.lastFlownOn}`}</p>
+                            <p>{`Last Flown On: ${lastFlownString}`}</p>
                         </Col>
                     </Row>
                     <Row>

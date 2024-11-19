@@ -71,7 +71,7 @@ export default function LocationHome({data, kioskMode}){
               response.json().then(json => {
                 console.log("Trying BOTD Fetch 3");
                 if(json.success){
-                  console.log("Trying BOTD Fetch 4");
+                  console.log("Trying BOTD Fetch Success");
                     setBotdData(json.payload);
                     setBOTDSuccess(true);
                 }
@@ -122,7 +122,7 @@ export default function LocationHome({data, kioskMode}){
         fetchData();
         fetchBOTD();
         fetchStats();
-        fetchButterflies();
+        // fetchButterflies();
     }, []);
 
     const handleStats = (e) => {
@@ -162,7 +162,7 @@ export default function LocationHome({data, kioskMode}){
                 <Container>
                     <Row xs={1} sm={2} md={2}>
                         {(locationData.otd.active && successfulBOTD) &&
-                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
+                        <Col style={{paddingTop: '16px'}}><BOTD butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
                         <Col style={{paddingTop: '16px'}}>
                             <div>
                                 {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent} image={locationData.news.newsImageUrl}/>}
