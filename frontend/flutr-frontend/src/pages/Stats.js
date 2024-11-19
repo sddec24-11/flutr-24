@@ -239,6 +239,12 @@ export default function Stats({data, kioskMode}){
                                     layout="vertical"  // Arrange items vertically
                                     align="right"      // Align to the right
                                     verticalAlign="middle" // Center vertically
+                                    wrapperStyle={{
+                                      right: '5%',        // Push the legend to the right
+                                      top: '50%',      // Align the legend vertically to the middle
+                                      transform: 'translateY(-50%)', // Center the legend vertically in its container
+                                      marginRight: '20px', // Adjust margin to bring it closer
+                                    }}
                                   />
                                 </PieChart>
                               </ResponsiveContainer>
