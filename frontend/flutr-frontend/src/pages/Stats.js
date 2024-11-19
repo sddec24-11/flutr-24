@@ -216,15 +216,18 @@ export default function Stats({data, kioskMode}){
 
                         </Row>
                         <Row>
+                          <Col><div style={{width: "100%", margin: 'auto', textAlign: 'center'}}><h4>Butterfly Family Breakdown</h4></div></Col>
+                        </Row>
+                        <Row>
                           <Col style={{ width: '100%', margin: 'auto' }}>
-                            <div style={{ width: '100%', height: '500px', margin: 'auto', alignContent: 'center' }}>
+                            <div style={{ width: '100%', height: '300px', margin: 'auto', alignContent: 'center' }}>
                               <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                   <Pie
                                     data={families} 
                                     nameKey="family" 
                                     dataKey="totalInFlight" 
-                                    cx="30%" 
+                                    cx="50%" 
                                     cy="50%" 
                                     outerRadius={100} 
                                     innerRadius={30} 
@@ -236,15 +239,15 @@ export default function Stats({data, kioskMode}){
                                   </Pie>
                                   <Tooltip />
                                   <Legend
-                                    layout="vertical"  // Arrange items vertically
-                                    align="right"      // Align to the right
-                                    verticalAlign="middle" // Center vertically
-                                    wrapperStyle={{
-                                      right: '5%',        // Push the legend to the right
-                                      top: '50%',      // Align the legend vertically to the middle
-                                      transform: 'translateY(-50%)', // Center the legend vertically in its container
-                                      marginRight: '20px', // Adjust margin to bring it closer
-                                    }}
+                                    // layout="vertical"  // Arrange items vertically
+                                    // align="right"      // Align to the right
+                                    // verticalAlign="middle" // Center vertically
+                                    // wrapperStyle={{
+                                    //   right: '5%',        // Push the legend to the right
+                                    //   top: '50%',      // Align the legend vertically to the middle
+                                    //   transform: 'translateY(-50%)', // Center the legend vertically in its container
+                                    //   marginRight: '20px', // Adjust margin to bring it closer
+                                    // }}
                                   />
                                 </PieChart>
                               </ResponsiveContainer>

@@ -541,7 +541,7 @@ export default function Settings(){
                 {outerTab === 1 &&
                 <div className="bottomButtons" style={{margin: 'auto', width: '70%', marginTop: '50px', marginBottom: '50px'}}>
                     <button onClick={handleCancel} style={{backgroundColor: '#8ABCD7', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>Cancel</button>
-                    <button onClick={handlePreview} style={{backgroundColor: '#469FCE', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>Preview</button>
+                    <button onClick={handlePreview} style={{backgroundColor: '#469FCE', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>View Page</button>
                     <button onClick={handleSubmit} style={{backgroundColor: '#E4976C', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px'}}>Save and Submit</button>
                 </div>}
                 
