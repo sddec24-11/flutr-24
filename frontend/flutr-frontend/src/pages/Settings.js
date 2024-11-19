@@ -26,6 +26,18 @@ export default function Settings(){
         setFacilityImage(URL.createObjectURL(file));
         setFacilityImageFile(file);
     }
+    const [newsImage, setNewsImage] = useState();
+    const [newsImageFile, setNewsImageFile] = useState();
+    const handleNewsImageUpload = (e) => {
+        const file = e.target.files[0];
+        setNewsImage(URL.createObjectURL(file));
+        setNewsImageFile(file);
+    }
+    const handleNewsImageClear = (e) => {
+        e.preventDefault();
+        setNewsImage("");
+        setNewsImageFile(undefined);
+    }
     const [suppliers, setSuppliers] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
@@ -89,7 +101,6 @@ export default function Settings(){
                 setOrgAddress(json.payload.address);
                 setLogo(json.payload.logoUrl);
                 setFacilityImage(json.payload.facilityImgUrl);
-
                 setInsta(json.payload.socials.instagramActive);
                 setOrgInsta(json.payload.socials.instagramLink);
                 setFace(json.payload.socials.facebookActive);
@@ -107,6 +118,7 @@ export default function Settings(){
                 setStats(json.payload.statsActive);
                 setNews(json.payload.news.active);
                 setNewsContent(json.payload.news.newsContent);
+                setNewsImage(json.payload.news.newsImageUrl);
 
             })
         }
@@ -170,6 +182,10 @@ export default function Settings(){
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
+            const formdata = new FormData();
+            if(newsImageFile !== undefined){
+                formdata.append("newsImageFile", newsImageFile);
+            }
             const body = {
                 houseId: window.sessionStorage.getItem('houseID'),
                 name: orgName,
@@ -193,12 +209,13 @@ export default function Settings(){
                 },
                 news: {
                     active: newsState,
-                    newsContent: newsContent
+                    newsContent: newsContent,
+                    newsImageUrl: newsImage
                 },
                 timezone: "CST",
                 statsActive: statsState
             }
-            const formdata = new FormData();
+            console.log(body);
             formdata.append('orgInfo', new Blob([JSON.stringify(body)], {type: "application/json"}));
             if(logoFile !== undefined){
                 formdata.append("logoFile", logoFile);
@@ -206,6 +223,7 @@ export default function Settings(){
             if(facilityImageFile !== undefined){
                 formdata.append("facilityImageFile", facilityImageFile);
             }
+
             
             for (const [key, value] of formdata.entries()) {
                 console.log(key,value);
@@ -453,7 +471,10 @@ export default function Settings(){
                         <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
                         <Row style={{width: '100%', marginTop: '10px'}}>
                             <Col xs={3} style={{width: '75%'}}><textarea style={{width: '100%', height: '300px', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={newsContent} onChange={handleNewsContentChange} placeholder="news..."></textarea></Col>
-                            <Col xs={1} style={{width: '25%'}}><div>Upload Image (Optional)</div></Col>
+                            <Col xs={3}><div style={{width: '100%', height: '150px'}}><input type="file" onChange={handleNewsImageUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div>
+                                <button onClick={handleNewsImageClear}>Remove Image</button>
+                                <img style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={newsImage}/>
+                            </Col>
                         </Row>
                     </Container>
                 </div>}

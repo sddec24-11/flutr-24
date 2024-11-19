@@ -13,7 +13,7 @@ export default function ShowLogs(){
     useEffect(() => {
         const fetchLogs = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/logs/allLogs/${window.sessionStorage.getItem("houseID")}`, {
+              const response = await fetch(`http://206.81.3.155:8282/api/logs/allLogs`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',

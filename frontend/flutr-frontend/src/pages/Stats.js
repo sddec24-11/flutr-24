@@ -8,6 +8,8 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { Chart } from "react-google-charts";
 
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+
 
 export default function Stats({data, kioskMode}){
     const [locationData, setLocationData] = useState({});
@@ -109,14 +111,8 @@ export default function Stats({data, kioskMode}){
               response.json().then(json => {
                 if(json.success){
                   console.log(json.payload);
-                    json.payload.map((entry)=> {
-                      console.log(entry);
-                      setFamilies([...families, [entry.family, entry.totalInFlight]]);
-                      // setFamilies(families.push([entry.family, entry.totalInFlight]));
-                      console.log(families);
-                    })
+                  setFamilies(json.payload.filter(item => item.family));
                 }
-                // console.log(families);
               });
             } catch (error) {
               console.error("Failed to fetch family stats:", error);
@@ -185,6 +181,9 @@ export default function Stats({data, kioskMode}){
     },
     colors: ["#8AD1C2", "#9F8AD1", "#D18A99", "#BCD18A", "#D1C28A"],
   }
+  const COLORS = ["#8AD1C2", "#9F8AD1", "#D18A99", "#BCD18A", "#D1C28A","#8AD1C2", "#9F8AD1", "#D18A99", "#BCD18A", "#D1C28A"];
+  const datatest = [{ value: 1 }, { value: 1 }, { value: 1 }]; // Simple data
+
     if(loaded){
     return(
         <div style={{backgroundColor: locationData.colors[0]}}>
@@ -217,14 +216,33 @@ export default function Stats({data, kioskMode}){
 
                         </Row>
                         <Row>
-                          <Col>
-                            <Chart
-                              chartType="PieChart"
-                              data={families}
-                              options={chartOptions}
-                              width={"100%"}
-                              height={"400px"}
-                              />
+                          <Col style={{ width: '100%', margin: 'auto' }}>
+                            <div style={{ width: '100%', height: '500px', margin: 'auto', alignContent: 'center' }}>
+                              <ResponsiveContainer width="100%" height="100%">
+                                <PieChart>
+                                  <Pie
+                                    data={families} 
+                                    nameKey="family" 
+                                    dataKey="totalInFlight" 
+                                    cx="30%" 
+                                    cy="50%" 
+                                    outerRadius={100} 
+                                    innerRadius={30} 
+                                    label
+                                  >
+                                    {families.map((_, index) => (
+                                      <Cell key={index} fill={COLORS[index]} />
+                                    ))}
+                                  </Pie>
+                                  <Tooltip />
+                                  <Legend
+                                    layout="vertical"  // Arrange items vertically
+                                    align="right"      // Align to the right
+                                    verticalAlign="middle" // Center vertically
+                                  />
+                                </PieChart>
+                              </ResponsiveContainer>
+                            </div>
                           </Col>
                         </Row>
                         <Row>

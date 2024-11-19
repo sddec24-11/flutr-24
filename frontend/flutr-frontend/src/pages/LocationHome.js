@@ -165,7 +165,7 @@ export default function LocationHome({data, kioskMode}){
                         <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={3} butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
                         <Col style={{paddingTop: '16px'}}>
                             <div>
-                                {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent}/>}
+                                {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent} image={locationData.news.newsImageUrl}/>}
                                 {locationData.statsActive && 
                                 <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
                                     <h3 style={{color: locationData.colors[0], paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
