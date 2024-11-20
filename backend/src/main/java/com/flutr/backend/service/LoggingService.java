@@ -71,15 +71,15 @@ public class LoggingService {
     }
 
     public void log(String operation, String status, String details) {
-        MongoTemplate mongoTemplate = getMongoTemplate();
+        /* MongoTemplate mongoTemplate = getMongoTemplate();
         LogEntry logEntry = new LogEntry(operation, status, getUsernameFromToken() + ": " + details);
-        mongoTemplate.save(logEntry, "logs");
+        mongoTemplate.save(logEntry, "logs"); */
     }
 
     public void log(String operation, String status, String details, String houseId) {
-        MongoTemplate mongoTemplate = getMongoTemplate(houseId);
+        /* MongoTemplate mongoTemplate = getMongoTemplate(houseId);
         LogEntry logEntry = new LogEntry(operation, status, "System: " + details);
-        mongoTemplate.save(logEntry, "logs");
+        mongoTemplate.save(logEntry, "logs"); */
     }
 
     public List<LogEntry> getAllLogsSorted() {
