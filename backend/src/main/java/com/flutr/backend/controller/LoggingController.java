@@ -19,7 +19,7 @@ public class LoggingController {
     @Autowired
     private LoggingService loggingService;
 
-    @GetMapping("/allLogs")
+    /* @GetMapping("/allLogs")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Response<List<LogEntry>>> getAllLogs() {
         try {
@@ -28,5 +28,5 @@ public class LoggingController {
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
         }
-    }
+    } */
 }
