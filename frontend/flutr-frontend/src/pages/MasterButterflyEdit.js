@@ -27,6 +27,20 @@ export default function MasterButterflyEdit(){
         setClosed(URL.createObjectURL(file));
         setClosedFile(file);
     }
+    const [extraOne, setExtraOne] = useState(null);
+    const [extraOneFile, setExtraOneFile] = useState();
+    const handleExtraOneUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraOne(URL.createObjectURL(file));
+      setExtraOneFile(file);
+    }
+    const [extraTwo, setExtraTwo] = useState(null);
+    const [extraTwoFile, setExtraTwoFile] = useState();
+    const handleExtraTwoUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraTwo(URL.createObjectURL(file));
+      setExtraTwoFile(file);
+    }
 
       const location = useLocation();
       const butterflyToEdit = location.state;
@@ -79,6 +93,8 @@ export default function MasterButterflyEdit(){
                   });
                   setClosed(json.payload.imgWingsClosed);
                   setOpen(json.payload.imgWingsOpen);
+                  setExtraOne(json.payload.extraImg1);
+                  setExtraTwo(json.payload.extraImg2);
                   
               }
             });
@@ -124,12 +140,26 @@ export default function MasterButterflyEdit(){
             range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
             plant: hostPlant,
             habitat: habitat,
-            funFacts: funFacts
+            funFacts: funFacts,
+            imgWingsOpen: open,
+            imgWingsClosed: closed,
+            extraImg1: extraOne,
+            extraImg2: extraTwo,
           }
           const formdata = new FormData();
           formdata.append('butterfly', new Blob([JSON.stringify(body)], {type: "application/json"}));
-          formdata.append('imgWingsOpen', openFile);
-          formdata.append('imgWingsClosed', closedFile);
+          if(openFile !== undefined){
+            formdata.append('imgWingsOpen', openFile);
+          }
+          if(closedFile !== undefined){
+            formdata.append('imgWingsClosed', closedFile);
+          }
+          if(extraOneFile !== undefined){
+            formdata.append('extraImg1', extraOneFile);
+          }
+          if(extraTwoFile !== undefined){
+            formdata.append('extraImg2', extraTwoFile);
+          }
             const response = await fetch("http://206.81.3.155:8282/api/master/editButterfly",{
                 method: 'POST',
                 headers: {
@@ -253,6 +283,16 @@ export default function MasterButterflyEdit(){
                         <Col xs={3} style={{color: '#469FCE'}}><div id="label">Wings Closed:</div></Col>
                         <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
                         <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}>Extra Image 1 (Optional):</Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraOneUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraOne}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}><div id="label">Extra Image 2 (Optional):</div></Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraTwoUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraTwo}/></Col>
                     </Row>
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handleSubmit}>Submit</button>

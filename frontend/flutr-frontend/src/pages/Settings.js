@@ -299,12 +299,27 @@ export default function Settings(){
     const handleUsername = (e) => {
         setUsername(e.target.value);
     }
-    const handlePassword = async (username) => {
+    const handlePassword = async (user) => {
         try{
-            console.log(username);
+            const response = await fetch('http://206.81.3.155:8282/api/users/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                },
+                body: {
+                    id: user.id,
+                    username: user.username,
+                    password: 'butterfly123',
+                    houseId: user.houseId,
+                    subdomain: user.subdomain,
+                    role: user.role,
+                    isActive: user.active
+                }
+            })
 
         } catch(error){
-            console.log('Failed to fetch', error);
+            console.log('Failed to reset password', error);
         }
     }
     const handleDeactivate = async (username) => {
@@ -498,7 +513,7 @@ export default function Settings(){
                                         <td>{r.role}</td>
                                         <td>{(r.active) ? "Yes" : "No"}</td>
                                         <td>{r.houseId}</td>
-                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r.username)}>Reset Password</div></td>
+                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r)}>Reset Password</div></td>
                                         {r.active && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Deactivate</div></td>}
                                         {!(r.active) && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Activate</div></td>}
 
