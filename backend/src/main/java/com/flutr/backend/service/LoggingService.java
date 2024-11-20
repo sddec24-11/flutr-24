@@ -89,7 +89,7 @@ public class LoggingService {
         return mongoTemplate.find(query, LogEntry.class, "logs");
     }
 
-    @Scheduled(cron = "0 0 1 1 * ?") // at 01:00 on the first day of every month
+    /* @Scheduled(cron = "0 0 1 1 * ?") // at 01:00 on the first day of every month
     public void deleteOldLogs() {
         List<Org> allOrgs = orgRepository.findAll();
         allOrgs.forEach(org -> {
@@ -106,5 +106,5 @@ public class LoggingService {
                 log("DELETE_OLD_LOGS", "FAILURE", "Error deleting old logs for house ID: " + org.getHouseId() + ": " + e.getMessage(), org.getHouseId());
             }
         });
-    }
+    } */
 }
