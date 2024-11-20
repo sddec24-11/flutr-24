@@ -99,7 +99,7 @@ public class MasterService {
             openUrl = storageService.uploadFile("flutr-butt-images", openKey, imgWingsOpenFile);
             masterUpdate.set("imgWingsOpen", openUrl);
         } else {
-            openUrl = updatedButterfly.getImgWingsOpen();
+            openUrl = existingButterfly.getImgWingsOpen();
         }
     
         if (imgWingsClosedFile != null && !imgWingsClosedFile.isEmpty()) {
@@ -107,7 +107,7 @@ public class MasterService {
             closedUrl = storageService.uploadFile("flutr-butt-images", closedKey, imgWingsClosedFile);
             masterUpdate.set("imgWingsOpen", openUrl);
         } else {
-            closedUrl = updatedButterfly.getImgWingsClosed();
+            closedUrl = existingButterfly.getImgWingsClosed();
         }
 
         if (extraImg1File != null && !extraImg1File.isEmpty()) {
