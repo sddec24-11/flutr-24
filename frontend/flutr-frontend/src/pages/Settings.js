@@ -119,6 +119,7 @@ export default function Settings(){
                 setNews(json.payload.news.active);
                 setNewsContent(json.payload.news.newsContent);
                 setNewsImage(json.payload.news.newsImageUrl);
+                setNewsTitle(json.payload.news.newsTitle);
 
             })
         }
@@ -176,6 +177,13 @@ export default function Settings(){
     const [statsState, setStats] = useState(false);
     const [newsState, setNews] = useState(false);
     const [newsContent, setNewsContent] = useState("");
+    const [newsTitle, setNewsTitle] = useState("");
+
+    const handleNewsTitleChange = (e) => {
+        console.log(e.target.value);
+        setNewsTitle(e.target.value);
+        console.log("Just updated to: " + newsTitle);
+    }
 
 
 
@@ -210,7 +218,8 @@ export default function Settings(){
                 news: {
                     active: newsState,
                     newsContent: newsContent,
-                    newsImageUrl: newsImage
+                    newsImageUrl: newsImage,
+                    newsTitle: newsTitle
                 },
                 timezone: "CST",
                 statsActive: statsState
@@ -239,6 +248,7 @@ export default function Settings(){
             });
             response.json().then(json => {
                 if(json.payload !== null){
+                    console.log(newsTitle);
                 console.log(json.payload);
                 alert("Successfully updated organization!");
                 window.location.reload();
@@ -472,9 +482,6 @@ export default function Settings(){
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={primaryColor} onChange={(e) => {setPrimaryColor(e.target.value)}}></input></Col>
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={secondaryColor} onChange={(e) => {setSecondaryColor(e.target.value)}}></input></Col>
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px' }} value={backgroundColor} onChange={(e) => {setBackgroundColor(e.target.value)}}></input></Col>
-                            {/* <Col><ColorPicker currentColor={primaryColor} setColor={setPrimaryColor}/></Col>
-                            <Col><ColorPicker currentColor={secondaryColor} setColor={setSecondaryColor}/></Col>
-                            <Col><ColorPicker currentColor={backgroundColor} setColor={setBackgroundColor}/></Col> */}
                         </Row>
                     </Container>
                 </div>}
@@ -484,6 +491,7 @@ export default function Settings(){
                         <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
                         <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={statsState} setState={setStats}/></Col><Col>Statistics</Col></Row>
                         <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
+                        <Row><Col><label for="newsTitle">News Title:     </label><input id="newsTitle" value={newsTitle} onChange={handleNewsTitleChange}  style={{width: '50%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col></Row>
                         <Row style={{width: '100%', marginTop: '10px'}}>
                             <Col xs={3} style={{width: '75%'}}><textarea style={{width: '100%', height: '300px', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={newsContent} onChange={handleNewsContentChange} placeholder="news..."></textarea></Col>
                             <Col xs={3}><div style={{width: '100%', height: '150px'}}><input type="file" onChange={handleNewsImageUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div>

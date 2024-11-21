@@ -161,7 +161,7 @@ export default function MasterButterflyEdit(){
             formdata.append('extraImg2', extraTwoFile);
           }
             const response = await fetch("http://206.81.3.155:8282/api/master/editButterfly",{
-                method: 'POST',
+                method: 'PUT',
                 headers: {
                   'Authorization': window.sessionStorage.getItem("accessKey"),
                 },
@@ -169,6 +169,7 @@ export default function MasterButterflyEdit(){
             });
             response.json().then(json => {
               if(json.success !== null && json.success){
+                // console.log(json.payload);
                 window.history.back();
               }
             })
