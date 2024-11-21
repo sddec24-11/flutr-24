@@ -27,6 +27,21 @@ export default function MasterButterflyCreate(){
         setClosedFile(file);
     }
 
+    const [extraOne, setExtraOne] = useState();
+    const [extraOneFile, setExtraOneFile] = useState();
+    const handleExtraOneUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraOne(URL.createObjectURL(file));
+      setExtraOneFile(file);
+    }
+    const [extraTwo, setExtraTwo] = useState();
+    const [extraTwoFile, setExtraTwoFile] = useState();
+    const handleExtraTwoUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraTwo(URL.createObjectURL(file));
+      setExtraTwoFile(file);
+    }
+
       const handleSubmit = async () => {
         try{
           const body = {
@@ -44,6 +59,12 @@ export default function MasterButterflyCreate(){
           formdata.append('butterfly', new Blob([JSON.stringify(body)], {type: "application/json"}));
           formdata.append('imgWingsOpen', openFile);
           formdata.append('imgWingsClosed', closedFile);
+          if(extraOneFile !== undefined){
+            formdata.append('extraImg1', extraOneFile);
+          }
+          if(extraTwoFile !== undefined){
+            formdata.append('extraImg2', extraTwoFile);
+          }
             const response = await fetch("http://206.81.3.155:8282/api/master/addButterfly",{
                 method: 'POST',
                 headers: {
@@ -190,6 +211,16 @@ export default function MasterButterflyCreate(){
                         <Col xs={3} style={{color: '#469FCE'}}><div id="label">Wings Closed:</div></Col>
                         <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
                         <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}>Extra Image 1 (Optional):</Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraOneUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraOne}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}><div id="label">Extra Image 2 (Optional):</div></Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraTwoUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraTwo}/></Col>
                     </Row>
                     <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px", marginRight:"8px"}} onClick={handleCancel}>Cancel</button>
                     <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleSubmit}>Submit</button>

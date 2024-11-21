@@ -10,6 +10,8 @@ import Footer from "../components/footer";
 import SocialModal from "../components/SocialModal";
 import {Link} from "react-router-dom"
 
+import Switch from "react-switch";
+
 
 
 const butterflies = [
@@ -38,6 +40,11 @@ const butterflies = [
 export default function Gallery({data, kioskMode}){
     const [searchInput, setSearchInput] = useState("");
     const [showExtras, setExtras] = useState(false);
+    const [inFlightToggle, setInFlightToggle] = useState(true);
+
+    const handleInFlightToggle = (e) => {
+      setInFlightToggle(!inFlightToggle);
+    }
 
     const [locationData, setLocationData] = useState({});
     const [butterflies, setButterflies] = useState([]);
@@ -121,19 +128,16 @@ export default function Gallery({data, kioskMode}){
             </div>
             <div style={{borderRadius: '15px', backgroundColor: '#FFFFFF', width: '86%', margin: 'auto', paddingTop: '16px', marginBottom: '16px', marginTop: '16px'}}>
                 <Container>
-                    <Row xs={1}>
-                        <Col style={{width: '33%', margin: 'auto'}}><input style={{width: '85%', borderRadius: '20px'}} onChange={handleChangeSearch}></input><Button id="extrasButton" variant='outline-primary' style={{borderRadius: '228px'}} onClick={toggleTools}>
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-sliders" viewBox="0 0 16 16">
-                                    <path fill-rule="evenodd" d="M11.5 2a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M9.05 3a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0V3zM4.5 7a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3M2.05 8a2.5 2.5 0 0 1 4.9 0H16v1H6.95a2.5 2.5 0 0 1-4.9 0H0V8zm9.45 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m-2.45 1a2.5 2.5 0 0 1 4.9 0H16v1h-2.05a2.5 2.5 0 0 1-4.9 0H0v-1z"/>
-                                </svg>
-                            </Button></Col>
+                    <Row xs={2}>
+                        <Col style={{width: '33%', margin: 'auto'}}><input style={{width: '85%', borderRadius: '20px'}} onChange={handleChangeSearch}></input></Col>
+                        <Col><p>Only Show In Flight: </p><Switch onChange={handleInFlightToggle} checked={inFlightToggle}/></Col>
                     </Row>
                     <Row xs={1} sm={2} md={3} lg={4}>
                         {butterflies
-                        .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
+                        .filter((r) =>( r.buttId.toLowerCase().includes(searchInput.toLowerCase()) || r.commonName.toLowerCase().includes(searchInput.toLowerCase())) && (!inFlightToggle || r.noInFlight > 0))
                         .map((r, index) => {
                             return(
-                                <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId}}><ButterflyCard index={index} butterfly={r} /></Link>
+                                <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId, locationData: locationData, kioskMode: kioskMode}}><ButterflyCard index={index} butterfly={r} /></Link>
                             )
                         })}
                     </Row>

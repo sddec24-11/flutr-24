@@ -26,6 +26,18 @@ export default function Settings(){
         setFacilityImage(URL.createObjectURL(file));
         setFacilityImageFile(file);
     }
+    const [newsImage, setNewsImage] = useState();
+    const [newsImageFile, setNewsImageFile] = useState();
+    const handleNewsImageUpload = (e) => {
+        const file = e.target.files[0];
+        setNewsImage(URL.createObjectURL(file));
+        setNewsImageFile(file);
+    }
+    const handleNewsImageClear = (e) => {
+        e.preventDefault();
+        setNewsImage("");
+        setNewsImageFile(undefined);
+    }
     const [suppliers, setSuppliers] = useState([]);
     const [accounts, setAccounts] = useState([]);
 
@@ -89,7 +101,6 @@ export default function Settings(){
                 setOrgAddress(json.payload.address);
                 setLogo(json.payload.logoUrl);
                 setFacilityImage(json.payload.facilityImgUrl);
-
                 setInsta(json.payload.socials.instagramActive);
                 setOrgInsta(json.payload.socials.instagramLink);
                 setFace(json.payload.socials.facebookActive);
@@ -107,6 +118,8 @@ export default function Settings(){
                 setStats(json.payload.statsActive);
                 setNews(json.payload.news.active);
                 setNewsContent(json.payload.news.newsContent);
+                setNewsImage(json.payload.news.newsImageUrl);
+                setNewsTitle(json.payload.news.newsTitle);
 
             })
         }
@@ -164,12 +177,23 @@ export default function Settings(){
     const [statsState, setStats] = useState(false);
     const [newsState, setNews] = useState(false);
     const [newsContent, setNewsContent] = useState("");
+    const [newsTitle, setNewsTitle] = useState("");
+
+    const handleNewsTitleChange = (e) => {
+        console.log(e.target.value);
+        setNewsTitle(e.target.value);
+        console.log("Just updated to: " + newsTitle);
+    }
 
 
 
     const handleSubmit = async () => {
         console.log("Attempting PUT");
         try{
+            const formdata = new FormData();
+            if(newsImageFile !== undefined){
+                formdata.append("newsImageFile", newsImageFile);
+            }
             const body = {
                 houseId: window.sessionStorage.getItem('houseID'),
                 name: orgName,
@@ -193,12 +217,14 @@ export default function Settings(){
                 },
                 news: {
                     active: newsState,
-                    newsContent: newsContent
+                    newsContent: newsContent,
+                    newsImageUrl: newsImage,
+                    newsTitle: newsTitle
                 },
                 timezone: "CST",
                 statsActive: statsState
             }
-            const formdata = new FormData();
+            console.log(body);
             formdata.append('orgInfo', new Blob([JSON.stringify(body)], {type: "application/json"}));
             if(logoFile !== undefined){
                 formdata.append("logoFile", logoFile);
@@ -206,6 +232,7 @@ export default function Settings(){
             if(facilityImageFile !== undefined){
                 formdata.append("facilityImageFile", facilityImageFile);
             }
+
             
             for (const [key, value] of formdata.entries()) {
                 console.log(key,value);
@@ -221,6 +248,7 @@ export default function Settings(){
             });
             response.json().then(json => {
                 if(json.payload !== null){
+                    console.log(newsTitle);
                 console.log(json.payload);
                 alert("Successfully updated organization!");
                 window.location.reload();
@@ -281,12 +309,27 @@ export default function Settings(){
     const handleUsername = (e) => {
         setUsername(e.target.value);
     }
-    const handlePassword = async (username) => {
+    const handlePassword = async (user) => {
         try{
-            console.log(username);
+            const response = await fetch('http://206.81.3.155:8282/api/users/update', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey"),
+                },
+                body: {
+                    id: user.id,
+                    username: user.username,
+                    password: 'butterfly123',
+                    houseId: user.houseId,
+                    subdomain: user.subdomain,
+                    role: user.role,
+                    isActive: user.active
+                }
+            })
 
         } catch(error){
-            console.log('Failed to fetch', error);
+            console.log('Failed to reset password', error);
         }
     }
     const handleDeactivate = async (username) => {
@@ -362,11 +405,11 @@ export default function Settings(){
             </div>
             <div className="tab-holder">
                 <div className="tabs">
-                    <div className={`tabButtons ${activeTab === 1 ? 'activeTab' : ''}`} onClick={handleInfo}>Info</div>
-                    <div className={`tabButtons ${activeTab === 2 ? 'activeTab' : ''}`} onClick={handleStyles}>Styles</div>
-                    <div className={`tabButtons ${activeTab === 3 ? 'activeTab' : ''}`} onClick={handleHome}>Home</div>
-                    <div className={`tabButtons ${activeTab === 4 ? 'activeTab' : ''}`} onClick={handleEmployees}>Employees</div>
-                    <div className={`tabButtons ${activeTab === 5 ? 'activeTab' : ''}`} onClick={handleSuppliers}>Suppliers</div>
+                    <div className="tabButtons" onClick={handleInfo} style={{backgroundColor: activeTab === 1? '#469FCE': "#8ABCD7", border: activeTab === 1? '4px solid #469FCE': "4px solid #8ABCD7"}}>Info</div>
+                    <div className="tabButtons" onClick={handleStyles} style={{backgroundColor: activeTab === 2? '#469FCE': "#8ABCD7", border: activeTab === 2? '4px solid #469FCE': "4px solid #8ABCD7"}}>Styles</div>
+                    <div className="tabButtons" onClick={handleHome} style={{backgroundColor: activeTab === 3? '#469FCE': "#8ABCD7", border: activeTab === 3? '4px solid #469FCE': "4px solid #8ABCD7"}}>Home</div>
+                    <div className="tabButtons" onClick={handleEmployees} style={{backgroundColor: activeTab === 4? '#469FCE': "#8ABCD7", border: activeTab === 4? '4px solid #469FCE': "4px solid #8ABCD7"}}>Employees</div>
+                    <div className="tabButtons" onClick={handleSuppliers} style={{backgroundColor: activeTab === 5? '#469FCE': "#8ABCD7", border: activeTab === 5? '4px solid #469FCE': "4px solid #8ABCD7"}}>Suppliers</div>
                 </div>
             </div>
             
@@ -375,19 +418,19 @@ export default function Settings(){
                 <div id="info" style={{width: '62%', margin: 'auto'}}>
                     <Container>
                         <Row>
-                            <Col><h4 style={{color: '#469FCE', marginTop:"8px", marginBottom:"3%", marginTop:"2%"}}>Organization Information</h4></Col>
+                            <div style={{color: '#469FCE', marginTop: '59px'}}><strong>Organization Information</strong></div>
                         </Row>
-                        <Row>
+                        <Row style={{marginTop: '20px'}}>
                             <Col xs={3} style={{color: '#469FCE'}}>Organization name:</Col>
-                            <Col xs={9}><input value={orgName} onChange={handleNameChange} style={{width: '100%'}}></input></Col>
+                            <Col xs={9}><input value={orgName} onChange={handleNameChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
                         </Row>
-                        <Row>
+                        <Row style={{marginTop: '20px'}}>
                             <Col xs={3} style={{color: '#469FCE'}}>Organization website: </Col>
-                            <Col xs={9}><input value={orgWebsite} onChange={handleWebsiteChange} style={{width: '100%'}}></input></Col>
+                            <Col xs={9}><input value={orgWebsite} onChange={handleWebsiteChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
                         </Row>
-                        <Row>
+                        <Row style={{marginTop: '20px'}}>
                             <Col xs={3} style={{color: '#469FCE'}}>Organization address: </Col>
-                            <Col xs={9}><input value={orgAddress} onChange={handleAddressChange} style={{width: '100%'}}></input></Col>
+                            <Col xs={9}><input value={orgAddress} onChange={handleAddressChange} style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col>
                         </Row>
                         <Row style={{width: '100%', paddingTop: '10px'}}>
                                 <Col xs={3} style={{color: '#469FCE'}}>Facility image:</Col>
@@ -395,32 +438,32 @@ export default function Settings(){
                                 <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={facilityImage}/></Col>
                         </Row>
                         <Row style={{width: '100%', paddingTop: '10px'}}>
-                                <Col xs={3} style={{color: '#469FCE'}}><div id="label">Logo: <p style={{fontSize: "12px"}}>Please upload a PNG with a transparent background no greater than 250 x 150 pixels.</p></div></Col>
+                                <Col xs={3} style={{color: '#469FCE'}}><div id="label">Logo: <p style={{fontSize: '15px'}}>Please upload a PNG with a transparent background no greater than 250 x 150 pixels.</p></div></Col>
                                 <Col xs={4}><div><input type="file" onChange={handleLogoUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
-                                <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={logo}/></Col>
+                                <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px', backgroundColor: primaryColor}} src={logo}/></Col>
                         </Row>
-                        <Row>
-                            <Col style={{color: '#469FCE'}}>Social Media Links</Col>
+                        <Row style={{paddingTop: '10px'}}>
+                            <Col style={{color: '#469FCE'}}><strong>Social Media Links</strong></Col>
                         </Row>
-                        <Row>
+                        <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={instaState} setState={setInsta}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>Instagram: </Col>
-                            <Col xs={9}><input style={{width: '100%'}} value={orgInsta} onChange={handleInstaChange}></input></Col>
+                            <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgInsta} onChange={handleInstaChange}></input></Col>
                         </Row>
-                        <Row>
+                        <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={faceState} setState={setFace}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>Facebook: </Col>
-                            <Col xs={9}><input style={{width: '100%'}} value={orgFaceBook} onChange={handleFacebookChange}></input></Col>
+                            <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgFaceBook} onChange={handleFacebookChange}></input></Col>
                         </Row>
-                        <Row>
+                        <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={xState} setState={setX}/></Col>
-                            <Col xs={2} style={{color: '#469FCE'}}>Twitter/X: </Col>
-                            <Col xs={9}><input style={{width: '100%'}} value={orgX} onChange={handleXChange}></input></Col>
+                            <Col xs={2} style={{color: '#469FCE'}}>X: </Col>
+                            <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgX} onChange={handleXChange}></input></Col>
                         </Row>
-                        <Row>
+                        <Row style={{paddingTop: '10px'}}>
                             <Col xs={1}><Checkbox state={ytState} setState={setYT}/></Col>
                             <Col xs={2} style={{color: '#469FCE'}}>YouTube: </Col>
-                            <Col xs={9}><input style={{width: '100%'}} value={orgYouTube} onChange={handleYTChange}></input></Col>
+                            <Col xs={9}><input style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={orgYouTube} onChange={handleYTChange}></input></Col>
                         </Row>
                     </Container>
                 </div>}
@@ -439,33 +482,23 @@ export default function Settings(){
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={primaryColor} onChange={(e) => {setPrimaryColor(e.target.value)}}></input></Col>
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px'}} value={secondaryColor} onChange={(e) => {setSecondaryColor(e.target.value)}}></input></Col>
                             <Col><input type="color" style={{width: '100%', height: '200px', borderRadius: '10px' }} value={backgroundColor} onChange={(e) => {setBackgroundColor(e.target.value)}}></input></Col>
-                            {/* <Col><ColorPicker currentColor={primaryColor} setColor={setPrimaryColor}/></Col>
-                            <Col><ColorPicker currentColor={secondaryColor} setColor={setSecondaryColor}/></Col>
-                            <Col><ColorPicker currentColor={backgroundColor} setColor={setBackgroundColor}/></Col> */}
                         </Row>
                     </Container>
                 </div>}
                 {activeTab === 3 && <div id="home">
-                    <Container>
-                        <Row><Col><h4 style={{color: '#469FCE', marginTop:"2%"}}>Panels</h4></Col></Row>
-                        <Row><Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col style={{marginRight: "8%", marginTop:"1.75%", marginBottom:"3%", color: '#469FCE'}}>Butterfly of the Day </Col>
-                            <Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={statsState} setState={setStats}/></Col><Col style={{marginRight: "8%", marginTop:"2.5%", marginBottom:"3%", color: '#469FCE'}}>Statistics</Col>
-                            <Col style={{marginLeft: "8%", marginTop:"2%", marginBottom:"3%"}}><Checkbox state={newsState} setState={setNews}/></Col><Col style={{marginRight: "8%", marginTop:"2.5%", marginBottom:"3%", color: '#469FCE'}}>News</Col></Row>
-                        <div className="row">
-                        <div className="col-md-6">
-                            <textarea
-                                className="form-control"
-                                id="newsContent"
-                                rows="5"
-                                placeholder="News Content"
-                                value={newsContent}
-                                onChange={(e) => setNewsContent(e.target.value)}
-                            />
-                        </div>
-                            <div className="col-md-6 text-center">
-                                <label style={{color: '#469FCE'}} htmlFor="newsImage" className="form-label">Upload Image (Optional)</label>
-                            </div>
-                        </div>
+                    <Container style={{width: '75%', margin: 'auto', marginTop: '15px'}}>
+                        <Row><Col><h4>Panels</h4></Col></Row>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={botdState} setState={setBOTD}/> </Col><Col>Butterfly of the Day </Col></Row>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={statsState} setState={setStats}/></Col><Col>Statistics</Col></Row>
+                        <Row style={{marginTop: '10px'}}><Col xs={1}><Checkbox state={newsState} setState={setNews}/></Col><Col>News</Col></Row>
+                        <Row><Col><label for="newsTitle">News Title:     </label><input id="newsTitle" value={newsTitle} onChange={handleNewsTitleChange}  style={{width: '50%', border: '4px solid #8ABCD7', borderRadius: '10px'}}></input></Col></Row>
+                        <Row style={{width: '100%', marginTop: '10px'}}>
+                            <Col xs={3} style={{width: '75%'}}><textarea style={{width: '100%', height: '300px', backgroundColor: '#F5F5F5', border: '4px solid #8ABCD7', borderRadius: '10px'}} value={newsContent} onChange={handleNewsContentChange} placeholder="news..."></textarea></Col>
+                            <Col xs={3}><div style={{width: '100%', height: '150px'}}><input type="file" onChange={handleNewsImageUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div>
+                                <button onClick={handleNewsImageClear}>Remove Image</button>
+                                <img style={{width: '100%', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={newsImage}/>
+                            </Col>
+                        </Row>
                     </Container>
                 </div>}
                 {activeTab === 4 &&
@@ -488,7 +521,7 @@ export default function Settings(){
                                         <td>{r.role}</td>
                                         <td>{(r.active) ? "Yes" : "No"}</td>
                                         <td>{r.houseId}</td>
-                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r.username)}>Reset Password</div></td>
+                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r)}>Reset Password</div></td>
                                         {r.active && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Deactivate</div></td>}
                                         {!(r.active) && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Activate</div></td>}
 
@@ -529,10 +562,10 @@ export default function Settings(){
                     </table>
             </div>}
                 {outerTab === 1 &&
-                <div className="bottomButtons">
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginRight:"10px", marginBottom:"8px", marginLeft:"8px"}} onClick={handleCancel}>Cancel</button>
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginRight:"10px", marginBottom:"8px"}} onClick={handlePreview}>Preview</button>
-                    <button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleSubmit}>Save and Submit</button>
+                <div className="bottomButtons" style={{margin: 'auto', width: '70%', marginTop: '50px', marginBottom: '50px'}}>
+                    <button onClick={handleCancel} style={{backgroundColor: '#8ABCD7', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>Cancel</button>
+                    <button onClick={handlePreview} style={{backgroundColor: '#469FCE', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px', marginRight: '5%'}}>View Page</button>
+                    <button onClick={handleSubmit} style={{backgroundColor: '#E4976C', color: '#FFFFFF', fontSize: '20px', width: '30%', borderRadius: '15px', height: '50px', border: '0px'}}>Save and Submit</button>
                 </div>}
                 
                 
