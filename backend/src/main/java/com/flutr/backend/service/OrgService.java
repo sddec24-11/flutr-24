@@ -272,7 +272,7 @@ public class OrgService {
         existingOrgInfo.setOtd(updatedOrgInfo.getOtd());
 
         existingOrgInfo.getNews().setActive(updatedOrgInfo.getNews().isActive());
-        existingOrgInfo.getNews().setNewsContent(updatedOrgInfo.getNews().getNewsTitle());
+        existingOrgInfo.getNews().setNewsTitle(updatedOrgInfo.getNews().getNewsTitle());
         existingOrgInfo.getNews().setNewsContent(updatedOrgInfo.getNews().getNewsContent());
 
         existingOrgInfo.setStatsActive(updatedOrgInfo.getStatsActive());
