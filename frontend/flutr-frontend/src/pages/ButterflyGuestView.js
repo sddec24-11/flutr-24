@@ -58,14 +58,69 @@ export default function ButterflyGuestView(){
                 setFirstString(`${firstMonth} ${firstDate.getDate()}, ${firstYear}`);
                 setLastString(`${lastMonth} ${lastDate.getDate()}, ${lastYear}`)
                 setLoaded(true);
+                if (json.payload.firstFlownOn === null) {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      firstFlownOn: 'Never flown at this house!',
+                      lastFlownOn: 'Never flown at this house!',
+                    }));
+                  }
+                  if (json.payload.plant === null || json.payload.plant === "") {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      plant: 'No current host plants',
+                    }));
+                  }
+                  if (json.payload.range === null || json.payload.range === "") {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      range: 'No set continent range',
+                    }));
+                  }
+                  if (json.payload.funFacts === null || json.payload.funFacts === "") {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      funFacts: 'No current fun facts',
+                    }));
+                  }
+                  if (json.payload.family === null || json.payload.family === "") {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      family: 'Family unknown',
+                    }));
+                  }
+                  if (json.payload.subFamily === null || json.payload.subFamily === "") {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      subFamily: 'Sub-family unknown',
+                    }));
+                  }
+                  if (json.payload.lifespan === 1) {
+                    setButterfly((prevButterfly) => ({
+                      ...prevButterfly,
+                      lifespan: prevButterfly.lifespan + " day",
+                    }));
+                  }
+                  else{
+                    setButterfly((prevButterfly) => ({
+                        ...prevButterfly,
+                        lifespan: prevButterfly.lifespan + " days",
+                      }));
+                  }
               })
             } catch (error) {
-    
             }
           };
           fetchButterfly();
     },[])
     const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
+
+    const images = [
+        butterfly.imgWingsOpen,
+        butterfly.imgWingsClosed,
+        butterfly.extraImg1,
+        butterfly.extraImg2,
+      ].filter(Boolean); // Filter out null or empty strings
 
     if(loaded){
     return(
@@ -84,11 +139,9 @@ export default function ButterflyGuestView(){
                 </div>
                 <div style={{width:'50%', margin: 'auto'}}>
                     <CustomSlider style={{margin: 'auto'}}>
-                        <img src={butterfly.imgWingsOpen} alt={`${butterfly.buttId} Open Wings`} />
-                        <img src={butterfly.imgWingsClosed} alt={`${butterfly.buttId} Closed Wings`} />
-
-
-
+                    {images.map((image, index) => (
+                        <img key={index} src={image} alt={`Butterfly Image ${index + 1}`} />
+                    ))}
                     </CustomSlider>
                 </div>
                 <Container style={{width: '75%', margin: 'auto', textAlign: 'left', alignContent: 'center'}}>

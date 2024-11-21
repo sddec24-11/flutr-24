@@ -71,15 +71,15 @@ public class LoggingService {
     }
 
     public void log(String operation, String status, String details) {
-        MongoTemplate mongoTemplate = getMongoTemplate();
+        /* MongoTemplate mongoTemplate = getMongoTemplate();
         LogEntry logEntry = new LogEntry(operation, status, getUsernameFromToken() + ": " + details);
-        mongoTemplate.save(logEntry, "logs");
+        mongoTemplate.save(logEntry, "logs"); */
     }
 
     public void log(String operation, String status, String details, String houseId) {
-        MongoTemplate mongoTemplate = getMongoTemplate(houseId);
+        /* MongoTemplate mongoTemplate = getMongoTemplate(houseId);
         LogEntry logEntry = new LogEntry(operation, status, "System: " + details);
-        mongoTemplate.save(logEntry, "logs");
+        mongoTemplate.save(logEntry, "logs"); */
     }
 
     public List<LogEntry> getAllLogsSorted() {
@@ -89,7 +89,7 @@ public class LoggingService {
         return mongoTemplate.find(query, LogEntry.class, "logs");
     }
 
-    @Scheduled(cron = "0 0 1 1 * ?") // at 01:00 on the first day of every month
+    /* @Scheduled(cron = "0 0 1 1 * ?") // at 01:00 on the first day of every month
     public void deleteOldLogs() {
         List<Org> allOrgs = orgRepository.findAll();
         allOrgs.forEach(org -> {
@@ -106,5 +106,5 @@ public class LoggingService {
                 log("DELETE_OLD_LOGS", "FAILURE", "Error deleting old logs for house ID: " + org.getHouseId() + ": " + e.getMessage(), org.getHouseId());
             }
         });
-    }
+    } */
 }

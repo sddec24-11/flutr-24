@@ -13,6 +13,7 @@ import com.flutr.backend.util.JwtUtil;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -57,6 +58,12 @@ public class OrgService {
 
     @Autowired
     private StorageService storageService;
+
+    @Value("${facility.placeholder.url}")
+    private String defaultFacilityImgUrl;
+
+    @Value("${logo.placeholder.url}")
+    private String defaultLogoImgUrl;
 
     private MongoTemplate getMongoTemplate() {
         String houseId = getCurrentHouseId();
@@ -107,7 +114,8 @@ public class OrgService {
         if (orgRepository.existsBySubdomainOrHouseId(org.getSubdomain(), org.getHouseId())) {
             throw new IllegalStateException("An organization already exists with this subdomain or houseId");
         }
-
+        org.setFacilityImage(defaultFacilityImgUrl);
+        org.setLogo(defaultLogoImgUrl);
         orgRepository.save(org);
         initializeNewOrgDatabase(org);
         createInitialAdminUser(org);
@@ -141,7 +149,7 @@ public class OrgService {
             new OrgInfo.SocialMediaLinks(),
             "",
             new OrgInfo.Otd(false, ""),
-            new OrgInfo.News(false, "", ""),
+            new OrgInfo.News(false, "News", "", ""),
             true,
             "CST"
         );
@@ -217,8 +225,13 @@ public class OrgService {
                 existingOrgInfo.setLogoUrl(logoUrl);
                 existingOrg.setLogo(logoUrl);
             } else {
-                existingOrgInfo.setLogoUrl(updatedOrgInfo.getLogoUrl());
-                existingOrg.setLogo(updatedOrgInfo.getLogoUrl());
+                if (updatedOrgInfo.getLogoUrl() == "") {
+                    existingOrgInfo.setLogoUrl(defaultLogoImgUrl);
+                    existingOrg.setLogo(defaultLogoImgUrl);
+                } else {
+                    existingOrgInfo.setLogoUrl(updatedOrgInfo.getLogoUrl());
+                    existingOrg.setLogo(updatedOrgInfo.getLogoUrl());
+                }
             }
     
             if (facilityImageFile != null && !facilityImageFile.isEmpty()) {
@@ -228,8 +241,13 @@ public class OrgService {
                 existingOrgInfo.setFacilityImgUrl(facilityUrl);
                 existingOrg.setFacilityImage(facilityUrl);
             } else {
-                existingOrgInfo.setFacilityImgUrl(updatedOrgInfo.getFacilityImgUrl());
-                existingOrg.setFacilityImage(updatedOrgInfo.getFacilityImgUrl());
+                if (updatedOrgInfo.getFacilityImgUrl() == "") {
+                    existingOrgInfo.setFacilityImgUrl(defaultFacilityImgUrl);
+                    existingOrg.setFacilityImage(defaultFacilityImgUrl);
+                } else {
+                    existingOrgInfo.setFacilityImgUrl(updatedOrgInfo.getFacilityImgUrl());
+                    existingOrg.setFacilityImage(updatedOrgInfo.getFacilityImgUrl());
+                }
             }
 
             if (newsImageFile != null && !newsImageFile.isEmpty()) {
@@ -237,6 +255,8 @@ public class OrgService {
                 loggingService.log("EDIT_ORG", "UPLOAD", "Uploading news image file for Org: " + updatedOrgInfo.getHouseId());
                 String newsImageUrl = storageService.uploadFile(bucketName, newsKey, newsImageFile);
                 existingOrgInfo.getNews().setNewsImageUrl(newsImageUrl);
+            } else {
+                existingOrgInfo.getNews().setNewsImageUrl(updatedOrgInfo.getNews().getNewsImageUrl());
             }
         } catch (IOException e) {
             loggingService.log("EDIT_ORG", "FAILURE", "Failed to upload images: " + e.getMessage());
@@ -250,7 +270,11 @@ public class OrgService {
         existingOrgInfo.setSocials(updatedOrgInfo.getSocials());
         existingOrgInfo.setSubheading(updatedOrgInfo.getSubheading());
         existingOrgInfo.setOtd(updatedOrgInfo.getOtd());
-        existingOrgInfo.setNews(updatedOrgInfo.getNews());
+
+        existingOrgInfo.getNews().setActive(updatedOrgInfo.getNews().isActive());
+        existingOrgInfo.getNews().setNewsTitle(updatedOrgInfo.getNews().getNewsTitle());
+        existingOrgInfo.getNews().setNewsContent(updatedOrgInfo.getNews().getNewsContent());
+
         existingOrgInfo.setStatsActive(updatedOrgInfo.getStatsActive());
         existingOrgInfo.setTimezone(updatedOrgInfo.getTimezone());
     

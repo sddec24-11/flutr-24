@@ -27,6 +27,10 @@ public class SecurityConfig {
                 config.addAllowedOriginPattern("https://flutr.org");
                 config.addAllowedOriginPattern("https://*.flutr.org");
                 config.addAllowedOrigin("http://206.81.3.155");
+                config.addAllowedOrigin("https://206.81.3.155");
+                config.addAllowedOrigin("http://flutr.org");
+                config.addAllowedOrigin("flutr.org");
+                config.addAllowedOrigin("206.81.3.155");
                 config.addAllowedMethod("*");
                 config.addAllowedHeader("*");
                 config.setMaxAge(3600L);

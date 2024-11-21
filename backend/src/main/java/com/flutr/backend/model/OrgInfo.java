@@ -267,13 +267,15 @@ public class OrgInfo {
 
     public static class News {
         private boolean active;
+        private String newsTitle;
         private String newsContent;
         private String newsImageUrl;
         
         public News() {
         }
-        public News(boolean active, String newsContent, String newsImageUrl) {
+        public News(boolean active, String newsTitle, String newsContent, String newsImageUrl) {
             this.active = active;
+            this.newsTitle = newsTitle;
             this.newsContent = newsContent;
             this.newsImageUrl = newsImageUrl;
         }
@@ -282,6 +284,12 @@ public class OrgInfo {
         }
         public void setActive(boolean active) {
             this.active = active;
+        }
+        public String getNewsTitle() {
+            return newsTitle;
+        }
+        public void setNewsTitle(String newsTitle) {
+            this.newsTitle = newsTitle;
         }
         public String getNewsContent() {
             return newsContent;

@@ -13,7 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addMapping("/**")
                 .allowedOrigins(
                     "http://flutr.org", 
-                    "http://206.81.3.155"
+                    "http://206.81.3.155",
+                    "206.81.3.155",
+                    "flutr.org",
+                    "http://flutr.org/",
+                    "https://flutr.org/"
                 )
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
