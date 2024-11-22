@@ -44,6 +44,22 @@ public class MasterController {
         }
     }
 
+    @PostMapping("/checkAndAddButterfly")
+    @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
+    public ResponseEntity<Response<String>> checkAndAddButterfly(
+            @RequestPart("butterfly") Butterfly butterfly, 
+            @RequestPart(value = "imgWingsOpen", required = false) MultipartFile imgWingsOpen,
+            @RequestPart(value = "imgWingsClosed", required = false) MultipartFile imgWingsClosed,
+            @RequestPart(value = "extraImg1", required = false) MultipartFile extraImg1,
+            @RequestPart(value = "extraImg2", required = false) MultipartFile extraImg2) {
+        try {
+            masterService.checkAndAddButterfly(butterfly, imgWingsOpen, imgWingsClosed, extraImg1, extraImg2);
+            return ResponseEntity.ok(new Response<>(true, "Butterfly added successfully to Master DB and all houses.", null));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+        }
+    }
+
     @PutMapping("/editButterfly")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER')")
     public ResponseEntity<Response<String>> editButterfly(
