@@ -17,7 +17,9 @@ export default function ButterflyCard({butterfly, index}){
                 <Card.Img
                 variant="top"
                 style={{ width: "100%", padding: "0", borderRadius: "11px" }}
-                src={butterfly.imgWingsOpen}
+                src={butterfly.imgWingsOpen === null || butterfly.imgWingsOpen === "https://flutr-butt-images.nyc3.cdn.digitaloceanspaces.com/unknown.png"
+                ? butterfly.imgWingsClosed
+                : butterfly.imgWingsOpen}
                 />
                 <Card.Body>
                 <Card.Title style={{ alignContent: "center" }}><i>{butterfly.buttId}</i></Card.Title>
