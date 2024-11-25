@@ -259,11 +259,11 @@ export default function Stats({data, kioskMode}){
                         </Row>
                         <Row>
                             <Col style={{textAlign: 'center'}}>
-                              {most.imgWingsOpen !== null && <img style={{width: '50%'}} src={most.imgWingsOpen}/>}
+                              {most.imgWingsOpen !== null && <img style={{width: '50%', borderRadius: '10px'}} src={most.imgWingsOpen}/>}
                               <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are currently {most.noInFlight} of the {most.buttId} currently in flight, making them the most represented species in flight.</p></div></div>
                             </Col>
                             <Col style={{textAlign: 'center'}}>
-                              {least.imgWingsOpen !== null && <img style={{width: '50%'}} src={least.imgWingsOpen}/>}
+                              {least.imgWingsOpen !== null && <img style={{width: '50%', borderRadius: '10px'}} src={least.imgWingsOpen}/>}
                               <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are only {least.noInFlight} of the {least.buttId} currently in flight. See if you can spot one!</p></div></div>
                             </Col>
                         </Row>
