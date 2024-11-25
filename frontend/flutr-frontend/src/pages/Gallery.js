@@ -52,7 +52,7 @@ export default function Gallery({data, kioskMode}){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+          const response = await fetch(`https://flutr.org:8282/api/orgs/view/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -71,7 +71,7 @@ export default function Gallery({data, kioskMode}){
       };
       const fetchButterflies = async () => {
         try{
-          const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${data}`, {
+          const response = await fetch(`https://flutr.org:8282/api/butterflies/details/${data}`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',

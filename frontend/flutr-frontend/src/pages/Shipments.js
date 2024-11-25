@@ -26,7 +26,7 @@ export default function Shipments() {
 
         const fetchShipments = async (retries = maxRetries) => {
             try {
-                const response = await fetch("http://206.81.3.155:8282/api/shipments/view/all", {
+                const response = await fetch("https://flutr.org:8282/api/shipments/view/all", {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

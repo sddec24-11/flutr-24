@@ -40,7 +40,7 @@ export default function ButterflyGuestView(){
     useEffect(() => {
         const fetchButterfly = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/butterflies/fullDetails/${stateInfo.houseId}/${stateInfo.buttId}`, {
+              const response = await fetch(`https://flutr.org:8282/api/butterflies/fullDetails/${stateInfo.houseId}/${stateInfo.buttId}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
