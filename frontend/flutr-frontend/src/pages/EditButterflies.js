@@ -26,7 +26,7 @@ export default function EditButterflies() {
 useEffect(() => {
   const fetchButterflies = async () => {
     try{
-      const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
+      const response = await fetch(`https://flutr.org:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -69,7 +69,7 @@ useEffect(() => {
   try {
     const body = JSON.stringify({buttId: buttId,...updatedValues});
     console.log(body);
-    await fetch(`http://206.81.3.155:8282/api/butterflies/edit`, {
+    await fetch(`https://flutr.org:8282/api/butterflies/edit`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -65,7 +65,7 @@ export default function MasterButterflyCreate(){
           if(extraTwoFile !== undefined){
             formdata.append('extraImg2', extraTwoFile);
           }
-            const response = await fetch("http://206.81.3.155:8282/api/master/addButterfly",{
+            const response = await fetch("https://flutr.org:8282/api/master/addButterfly",{
                 method: 'POST',
                 headers: {
                         'Authorization': window.sessionStorage.getItem("accessKey"),

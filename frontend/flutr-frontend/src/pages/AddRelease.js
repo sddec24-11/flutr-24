@@ -199,7 +199,7 @@ export default function AddRelease(){
         while (retries > 0) {
             try {
                 let id = shipmentData.shipmentId;
-                const response = await fetch("http://206.81.3.155:8282/api/releases/release", {
+                const response = await fetch("https://flutr.org:8282/api/releases/release", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

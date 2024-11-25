@@ -23,7 +23,7 @@ export default function Stats({data, kioskMode}){
     useEffect(() => {
         const fetchData = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/orgs/view/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchStats = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/releases/inflight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchMost = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/stats/mostInFlight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/stats/mostInFlight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -82,7 +82,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchLeast = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/stats/leastInFlight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/stats/leastInFlight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -102,7 +102,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchFamilies = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/stats/familyInflight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/stats/familyInflight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -122,7 +122,7 @@ export default function Stats({data, kioskMode}){
           };
           const fetchContinents = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/stats/continentInFlight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/stats/continentInFlight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',

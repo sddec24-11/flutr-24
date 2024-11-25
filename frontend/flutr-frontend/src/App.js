@@ -41,7 +41,7 @@ export default function App() {
     const fetchData = async () => {
       console.log("Trying fetch");
       try{
-        const response = await fetch("http://206.81.3.155:8282/api/orgs/all", {
+        const response = await fetch("https://flutr.org:8282/api/orgs/all", {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

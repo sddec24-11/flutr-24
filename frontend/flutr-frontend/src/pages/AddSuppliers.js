@@ -28,7 +28,7 @@ export default function AddSupplier(){
 
     const handleSubmit = async () => {
         try{
-            const response = await fetch('http://206.81.3.155206.81.3.155/api/suppliers/add', {
+            const response = await fetch('https://flutr.org:8282/api/suppliers/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
