@@ -32,7 +32,7 @@ function Navbar({location, kioskMode}) {
             <nav className={`${styles.navbar}`}style={{backgroundColor: location.colors[0]}}>
               {}
               
-              <a href={opener + location.website} className={`${styles.logo}`}><img src={location.logoUrl} alt={location.logoUrl}/></a>
+              <a href={opener + location.website} className={`${styles.logo}`}>{location.logoUrl !== null? <img src={location.logoUrl} alt={location.logoUrl}/>:<h1 style={{color: 'white'}}><strong>{location.name}</strong></h1>}</a>
               <ul className={`${styles.navMenu} ${isActive ? styles.active : ''}`}>
                 <li onClick={removeActive}>
                   <a href={opener + location.website + '/stats'} className={`${styles.navLink}`}><strong>Statistics</strong></a>
