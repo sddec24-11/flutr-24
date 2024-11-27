@@ -197,8 +197,8 @@ export default function Stats({data, kioskMode}){
                     <h2 style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', color: locationData.colors[0]}}><strong>Statistics</strong></h2>
                 </div>
                 <div style={{backgroundColor: "#FFFFFF", borderRadius: "15px", width: "86.45%", margin: 'auto', marginTop: '16px'}}>
-                    <Container>
-                        <Row>
+                    <Container style={{paddingTop: '20px'}}>
+                        <Row style={{marginTop: '16px'}}>
                             <Col>
                                 <div style={{width: '100%', margin: 'auto', textAlign: "center"}}>
                                     <h1 style={{color: locationData.colors[0]}}>{statData.totalInFlight}</h1>
@@ -215,7 +215,7 @@ export default function Stats({data, kioskMode}){
                         <Row>
 
                         </Row>
-                        <Row>
+                        <Row style={{marginTop: '16px'}}>
                           <Col><div style={{width: "100%", margin: 'auto', textAlign: 'center'}}><h4>Butterfly Family Breakdown</h4></div></Col>
                         </Row>
                         <Row>
@@ -257,16 +257,66 @@ export default function Stats({data, kioskMode}){
                         <Row>
                             <Col><div style={{width: "100%", margin: 'auto', textAlign: 'center'}}><h4>Current Populations</h4></div></Col>
                         </Row>
-                        <Row>
-                            <Col style={{textAlign: 'center'}}>
+                        {/* <Row xs={1} sm={1} md={2} >
+                            <Col style={{textAlign: 'center', alignItems: 'center'}}>
                               {most.imgWingsOpen !== null && <img style={{width: '50%', borderRadius: '10px'}} src={most.imgWingsOpen}/>}
-                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are currently {most.noInFlight} of the {most.buttId} currently in flight, making them the most represented species in flight.</p></div></div>
+                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><p>There are currently {most.noInFlight} of the {most.buttId} currently in flight, making them the most represented species in flight.</p></div></div>
                             </Col>
                             <Col style={{textAlign: 'center'}}>
                               {least.imgWingsOpen !== null && <img style={{width: '50%', borderRadius: '10px'}} src={least.imgWingsOpen}/>}
-                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><img></img><p>There are only {least.noInFlight} of the {least.buttId} currently in flight. See if you can spot one!</p></div></div>
+                              <div style={{width: '100%',textAlign: "center", margin: 'auto'}}><div style={{width: '61.78%'}}><p>There are only {least.noInFlight} of the {least.buttId} currently in flight. See if you can spot one!</p></div></div>
                             </Col>
-                        </Row>
+                        </Row> */}
+                        <Row xs={1} sm={1} md={2}>
+  <Col style={{ textAlign: 'center', alignItems: 'center' }}>
+    {most.imgWingsOpen !== null && (
+      <img
+        style={{ width: '50%', borderRadius: '10px', margin: 'auto' }}
+        src={most.imgWingsOpen}
+      />
+    )}
+    <div
+      style={{
+        width: '100%',
+        textAlign: 'center',
+        margin: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <div style={{ width: '61.78%' }}>
+        <p>
+          There are currently {most.noInFlight} of the <strong>{most.buttId}</strong> currently
+          in flight, making them the most represented species in flight.
+        </p>
+      </div>
+    </div>
+  </Col>
+  <Col style={{ textAlign: 'center', alignItems: 'center' }}>
+    {least.imgWingsOpen !== null && (
+      <img
+        style={{ width: '50%', borderRadius: '10px', margin: 'auto' }}
+        src={least.imgWingsOpen}
+      />
+    )}
+    <div
+      style={{
+        width: '100%',
+        textAlign: 'center',
+        margin: 'auto',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <div style={{ width: '61.78%' }}>
+        <p>
+          There are only {least.noInFlight} of the <strong>{least.buttId}</strong> currently in
+          flight. See if you can spot one!
+        </p>
+      </div>
+    </div>
+  </Col>
+</Row>
                     </Container>
                     <div style={{width: '100%', margin: 'auto'}}>
                         
