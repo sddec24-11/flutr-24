@@ -1,6 +1,7 @@
 package com.flutr.backend.controller;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,17 +25,17 @@ public class ReportController {
 
     @GetMapping("/export")
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
-    public ResponseEntity<Response<String>> exportShipments(HttpServletResponse response,
+    public ResponseEntity<Response<List<List<String>>>> exportShipments(HttpServletResponse response,
                                 @RequestParam(required = false) Integer startYear,
                                 @RequestParam(required = false) Integer endYear,
                                 @RequestParam(required = false) String houseId) throws IOException {
         
         try {
-            reportService.exportShipmentData(response, startYear, endYear, houseId);
-            return ResponseEntity.ok(new Response<>(true, "Export completed successfully.", null));
+            List<List<String>> csvData = reportService.exportShipmentData(startYear, endYear, houseId);
+            return ResponseEntity.ok(new Response<>(true, csvData, null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error")));
+                    .body(new Response<>(false, null, new Response.ErrorDetails(500, "Internal server error:" + e)));
         }
     }
 }
