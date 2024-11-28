@@ -1,8 +1,7 @@
 package com.flutr.backend.service;
 
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -21,10 +19,8 @@ import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.util.JwtUtil;
 import com.mongodb.client.MongoClients;
-import com.opencsv.CSVWriter;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 
 @Service
 public class ReportService {
@@ -69,7 +65,7 @@ public class ReportService {
                             .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_SUPERUSER"));
     }
 
-    public void exportShipmentData(HttpServletResponse response, @RequestParam(required = false) Integer startYear, @RequestParam(required = false) Integer endYear, @RequestParam(required = false) String houseId) throws IOException {
+    public List<List<String>> exportShipmentData(@RequestParam(required = false) Integer startYear, @RequestParam(required = false) Integer endYear, @RequestParam(required = false) String houseId) {
         MongoTemplate mongoTemplate;
         if (houseId != null && isSuperUser()){
             mongoTemplate = getMongoTemplate(houseId);
@@ -93,36 +89,34 @@ public class ReportService {
         Query query = new Query(criteria).with(Sort.by(Sort.Direction.DESC, "arrivalDate"));
         List<Shipment> shipments = mongoTemplate.find(query, Shipment.class, "shipments");
 
-        response.setContentType("text/csv");
-        response.setHeader(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"shipment_report.csv\"");
+        List<List<String>> csvData = new ArrayList<>();
+        // Add headers
+        csvData.add(List.of("Species", "Common name", "No. rec", "Supplier", "Ship date", "Arrival date", "Emerg. in transit", "Damag in transit", "No. disea", "No. parasit", "No emerg", "Poor emerg"));
 
-        try (CSVWriter csvWriter = new CSVWriter(new PrintWriter(response.getWriter()))) {
-            csvWriter.writeNext(new String[]{"Species", "Common name", "No. rec", "Supplier", "Ship date", "Arrival date", "Emerg. in transit", "Damag in transit", "No. disea", "No. parasit", "No emerg", "Poor emerg"});
+        // Populate data
+        for (Shipment shipment : shipments) {
+            for (ButterflyDetail detail : shipment.getButterflyDetails()) {
+                HouseButterflies houseButterfly = mongoTemplate.findOne(Query.query(Criteria.where("buttId").is(detail.getButtId())), HouseButterflies.class, "house_butterflies");
 
-            for (Shipment shipment : shipments) {
-                for (ButterflyDetail detail : shipment.getButterflyDetails()) {
-                    HouseButterflies houseButterfly = mongoTemplate.findOne(Query.query(Criteria.where("buttId").is(detail.getButtId())), HouseButterflies.class, "house_butterflies");
-
-                    String[] row = new String[]{
-                            detail.getButtId(),
-                            houseButterfly != null ? houseButterfly.getCommonName() : "Unknown",
-                            String.valueOf(detail.getNumberReceived()),
-                            shipment.getAbbreviation(),
-                            new SimpleDateFormat("MM-dd-yyyy").format(shipment.getShipmentDate()),
-                            new SimpleDateFormat("MM-dd-yyyy").format(shipment.getArrivalDate()),
-                            String.valueOf(detail.getEmergedInTransit()),
-                            String.valueOf(detail.getDamaged()),
-                            String.valueOf(detail.getDiseased()),
-                            String.valueOf(detail.getParasite()),
-                            String.valueOf(detail.getNoEmergence()),
-                            String.valueOf(detail.getPoorEmergence())
-                    };
-                    csvWriter.writeNext(row);
-                }
+                List<String> row = List.of(
+                    detail.getButtId(),
+                    houseButterfly != null ? houseButterfly.getCommonName() : "Unknown",
+                    String.valueOf(detail.getNumberReceived()),
+                    shipment.getAbbreviation(),
+                    new SimpleDateFormat("MM-dd-yyyy").format(shipment.getShipmentDate()),
+                    new SimpleDateFormat("MM-dd-yyyy").format(shipment.getArrivalDate()),
+                    String.valueOf(detail.getEmergedInTransit()),
+                    String.valueOf(detail.getDamaged()),
+                    String.valueOf(detail.getDiseased()),
+                    String.valueOf(detail.getParasite()),
+                    String.valueOf(detail.getNoEmergence()),
+                    String.valueOf(detail.getPoorEmergence())
+                );
+                csvData.add(row);
             }
-            loggingService.log("HANDLE_EXPORT", "SUCCESS", "Finished report export successfully");
-        } catch (Exception e){
-            loggingService.log("HANDLE_EXPORT", "FAILURE", e.getMessage());
         }
+
+        loggingService.log("HANDLE_EXPORT", "SUCCESS", "Finished report export successfully");
+        return csvData;
     }
 }
