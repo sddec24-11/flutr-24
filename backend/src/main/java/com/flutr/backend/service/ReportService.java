@@ -1,8 +1,13 @@
 package com.flutr.backend.service;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
+import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -13,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.flutr.backend.model.ButterflyDetail;
 import com.flutr.backend.model.HouseButterflies;
@@ -90,10 +96,8 @@ public class ReportService {
         List<Shipment> shipments = mongoTemplate.find(query, Shipment.class, "shipments");
 
         List<List<String>> csvData = new ArrayList<>();
-        // Add headers
         csvData.add(List.of("Species", "Common name", "No. rec", "Supplier", "Ship date", "Arrival date", "Emerg. in transit", "Damag in transit", "No. disea", "No. parasit", "No emerg", "Poor emerg"));
 
-        // Populate data
         for (Shipment shipment : shipments) {
             for (ButterflyDetail detail : shipment.getButterflyDetails()) {
                 HouseButterflies houseButterfly = mongoTemplate.findOne(Query.query(Criteria.where("buttId").is(detail.getButtId())), HouseButterflies.class, "house_butterflies");
@@ -103,8 +107,8 @@ public class ReportService {
                     houseButterfly != null ? houseButterfly.getCommonName() : "Unknown",
                     String.valueOf(detail.getNumberReceived()),
                     shipment.getAbbreviation(),
-                    new SimpleDateFormat("MM-dd-yyyy").format(shipment.getShipmentDate()),
-                    new SimpleDateFormat("MM-dd-yyyy").format(shipment.getArrivalDate()),
+                    new SimpleDateFormat("MM/dd/yyyy").format(shipment.getShipmentDate()),
+                    new SimpleDateFormat("MM/dd/yyyy").format(shipment.getArrivalDate()),
                     String.valueOf(detail.getEmergedInTransit()),
                     String.valueOf(detail.getDamaged()),
                     String.valueOf(detail.getDiseased()),
@@ -118,5 +122,107 @@ public class ReportService {
 
         loggingService.log("HANDLE_EXPORT", "SUCCESS", "Finished report export successfully");
         return csvData;
+    }
+
+    public List<String> importShipmentsFromCsv(MultipartFile file) throws Exception {
+        MongoTemplate mongoTemplate = getMongoTemplate();
+        List<Shipment> shipments = new ArrayList<>();
+        List<String> errors = new ArrayList<>();
+        Shipment currentShipment = null;
+        String currentSupplier = null;
+        Date currentShipDate = null;
+        Date currentArrivalDate = null;
+        int lineNumber = 1; 
+
+        try (Scanner scanner = new Scanner(file.getInputStream())) {
+            scanner.nextLine();
+
+            while (scanner.hasNextLine()) {
+                lineNumber++;
+                String line = scanner.nextLine();
+                String[] details = line.split(",");
+                
+                if (details.length < 12) {
+                    errors.add("Line " + lineNumber + ": Incomplete or malformed line.");
+                    continue;
+                }
+
+                try {
+                    Date shipDate = parseDate(details[4].trim());
+                    Date arrivalDate = parseDate(details[5].trim());
+                    String supplier = details[3].trim();
+
+                    if (currentShipment == null || !supplier.equals(currentSupplier) || !shipDate.equals(currentShipDate) || !arrivalDate.equals(currentArrivalDate)) {
+                        currentShipment = new Shipment();
+                        currentShipment.setShipmentDate(shipDate);
+                        currentShipment.setArrivalDate(arrivalDate);
+                        currentShipment.setAbbreviation(supplier);
+                        currentShipment.setButterflyDetails(new ArrayList<>());
+                        shipments.add(currentShipment);
+
+                        currentSupplier = supplier;
+                        currentShipDate = shipDate;
+                        currentArrivalDate = arrivalDate;
+                    }
+
+                    ButterflyDetail detail = new ButterflyDetail();
+                    detail.setButtId(details[0].trim());
+                    detail.setNumberReceived(parseInt(details[2].trim()));
+                    detail.setNumberReleased(detail.getNumberReceived()); // released = received
+                    detail.setTotalRemaining(0); // Always set to 0 initially
+                    detail.setEmergedInTransit(parseInt(details[6].trim()));
+                    detail.setDamaged(parseInt(details[7].trim()));
+                    detail.setDiseased(parseInt(details[8].trim()));
+                    detail.setParasite(parseInt(details[9].trim()));
+                    detail.setNoEmergence(parseInt(details[10].trim()));
+                    detail.setPoorEmergence(parseInt(details[11].trim()));
+
+                    currentShipment.getButterflyDetails().add(detail);
+                } catch (ParseException | NumberFormatException e) {
+                    errors.add("Line " + lineNumber + ": " + e.getMessage());
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            return errors;
+        }
+
+        for (Shipment shipment : shipments) {
+            mongoTemplate.save(shipment, "shipments");
+        }
+        return Collections.emptyList(); 
+    }
+
+    private Date parseDate(String dateString) throws ParseException {
+        List<SimpleDateFormat> dateFormats = new ArrayList<>(Arrays.asList(
+            new SimpleDateFormat("MM/dd/yyyy"),
+            new SimpleDateFormat("MM-dd-yyyy")
+        ));
+
+        ParseException lastException = null;
+        for (SimpleDateFormat format : dateFormats) {
+            try {
+                return format.parse(dateString);
+            } catch (ParseException e) {
+                lastException = e;
+            }
+        }
+        if (lastException != null) {
+            throw lastException;
+        } else {
+            throw new ParseException("No valid date format found for: " + dateString, 0);
+        }
+    }
+
+    private int parseInt(String value) {
+        if (value == null || value.trim().isEmpty()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
     }
 }
