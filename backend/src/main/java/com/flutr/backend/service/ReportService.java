@@ -140,7 +140,7 @@ public class ReportService {
             while (scanner.hasNextLine()) {
                 lineNumber++;
                 String line = scanner.nextLine();
-                String[] details = line.split(",");
+                String[] details = line.split(",", -1);
                 
                 if (details.length < 12) {
                     errors.add("Line " + lineNumber + ": Incomplete or malformed line.");
