@@ -11,25 +11,26 @@ const csvData = [
   ];
 
 export default function ImportExport(){
-    // const [csvData, setCSVData] = useState([]);
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const response = await fetch("https://flutr.org:8282/api/reports/export",{
-    //             method: 'GET',
-    //             headers: {
-    //                 'Content-Type': 'application/json',
-    //                 'Authorization': window.sessionStorage.getItem("accessKey")
-    //             }
-    //         });
-    //         response.json().then(json => {
-    //             setCSVData(json)
-    //         console.log(csvData);
+    const [csvData, setCSVData] = useState([]);
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await fetch("https://flutr.org:8282/api/reports/export",{
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': window.sessionStorage.getItem("accessKey")
+                }
+            });
+            response.json().then(json => {
+                if(json.success){
+                    setCSVData(json.payload);
+                }
 
-    //         })
-    //     }
-    //     fetchData();
+            })
+        }
+        fetchData();
         
-    // }, []);
+    }, []);
     return(
         <div>
             <Navbar/>
