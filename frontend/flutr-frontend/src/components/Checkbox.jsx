@@ -1,8 +1,17 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import "./Checkbox.css"
 
 export default function Checkbox({state, setState}){
     const [boxColor, setColor] = useState((color) => state === true ? "#469FCE" : "#8ABCD7");
+
+    useEffect(() => {
+        if(state){
+            setColor("#469FCE");
+        }
+        else{
+            setColor("#8ABCD7");
+        }
+    });
 
     const handleChange = (e) =>{
         e.preventDefault();

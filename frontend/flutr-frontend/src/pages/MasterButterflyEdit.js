@@ -9,9 +9,12 @@ import Checkbox from "../components/Checkbox";
 import { useLocation } from "react-router-dom";
 
 export default function MasterButterflyEdit(){
-    const onDrop = useCallback(acceptedFiles => {
-        // Do something with the files
-      }, [])
+  const [naState, setNAState] = useState(false);
+      const [euState, setEUState] = useState(false);
+      const [saState, setSAState] = useState(false);
+      const [ausState, setAUSState] = useState(false);
+      const [asiaState, setAsiaState] = useState(false);
+      const [afState, setAFState] = useState(false);
 
     const [open, setOpen] = useState();
     const [openFile, setOpenFile] = useState();
@@ -74,21 +77,27 @@ export default function MasterButterflyEdit(){
                 json.payload.range.map((r) => {
                     if(r === "North America"){
                       setNAState(true);
+                      console.log("North America");
                     }
                     else if(r === "Europe"){
                       setEUState(true);
+                      console.log("Europe");
                     }
                     else if(r === "South America"){
                       setSAState(true);
+                      console.log("South America");
                     }
                     else if(r === "Australia"){
                       setAUSState(true);
+                      console.log("Australia");
                     }
                     else if(r === "Asia"){
                       setAsiaState(true);
+                      console.log("Asia");
                     }
                     else if(r === "Africa"){
                       setAFState(true);
+                      console.log("Africa");
                     }
                   });
                   setClosed(json.payload.imgWingsClosed);
@@ -137,7 +146,7 @@ export default function MasterButterflyEdit(){
             family: family,
             subFamily: subFam,
             lifespan: longevity,
-            range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
+            range: [naState ? "North America" : null, euState ? "Europe" : null, saState ? "South America" : null, ausState ? "Australia" : null, asiaState ? "Asia" : null, afState ? "Africa" : null].filter(Boolean),
             plant: hostPlant,
             habitat: habitat,
             funFacts: funFacts,
@@ -178,12 +187,7 @@ export default function MasterButterflyEdit(){
         }
       }
     
-      const [naState, setNAState] = useState(false);
-      const [euState, setEUState] = useState(false);
-      const [saState, setSAState] = useState(false);
-      const [ausState, setAUSState] = useState(false);
-      const [asiaState, setAsiaState] = useState(false);
-      const [afState, setAFState] = useState(false);
+      
 
       const [scientific, setScientific] = useState("");
       const [common, setCommon] = useState("");
