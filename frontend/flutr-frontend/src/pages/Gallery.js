@@ -46,6 +46,11 @@ export default function Gallery({data, kioskMode}){
       setInFlightToggle(!inFlightToggle);
     }
 
+    const [alphabetSwitch, setAlphabetSwitch] = useState(false); // false is buttId, true is common name
+    const handleAlphabetSwitch = (e) => {
+      setAlphabetSwitch(!alphabetSwitch);
+    }
+
     const [locationData, setLocationData] = useState({});
     const [butterflies, setButterflies] = useState([]);
     const [loaded, setLoaded] = useState(false);
@@ -130,11 +135,29 @@ export default function Gallery({data, kioskMode}){
                 <Container>
                     <Row xs={2}>
                         <Col style={{width: '33%', margin: 'auto'}}><input style={{width: '85%', borderRadius: '20px'}} onChange={handleChangeSearch}></input></Col>
-                        <Col><p>Only Show In Flight: </p><Switch onChange={handleInFlightToggle} checked={inFlightToggle}/></Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                          <Container>
+                            <Row>
+                              <Col><p>Only Show In Flight: </p></Col>
+                              <Col><Switch onChange={handleInFlightToggle} checked={inFlightToggle}/></Col>
+                            </Row>
+                          </Container>
+                        </Col>
+                        <Col>
+                          <Container>
+                            <Row>
+                              <Col><p>Sort By Scientific or Common Name: </p></Col>
+                              <Col><Switch onChange={handleAlphabetSwitch} checked={alphabetSwitch}/></Col>
+                            </Row>
+                          </Container>
+                        </Col>
                     </Row>
                     <Row xs={1} sm={2} md={3} lg={4}>
                         {butterflies
                         .filter((r) =>( r.buttId.toLowerCase().includes(searchInput.toLowerCase()) || r.commonName.toLowerCase().includes(searchInput.toLowerCase())) && (!inFlightToggle || r.noInFlight > 0))
+                        .sort((a, b) => (!alphabetSwitch? a.buttId.localeCompare(b.buttId) : a.commonName.localeCompare(b.commonName)))
                         .map((r, index) => {
                             return(
                                 <Link to="/butterfly/view" state={{houseId: data, buttId: r.buttId, locationData: locationData, kioskMode: kioskMode}}><ButterflyCard index={index} butterfly={r} /></Link>
