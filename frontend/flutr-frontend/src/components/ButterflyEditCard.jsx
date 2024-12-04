@@ -27,16 +27,25 @@ export default function ButterflyEditCard({
       <Card
         style={{
           backgroundColor: "#E1EFFE",
-          borderRadius: "15px",
-          border: "4px solid #8ABCD7",
-          alignItems: "center",
-          justifyContent: "center",
-          margin: "10px",
+            borderRadius: '15px',
+            border: '4px solid #8ABCD7',
+            margin: '10px',
+            height: '450px', // Consistent card height
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'space-between', // Ensures content stays spaced
+            alignItems: 'center',
+            overflow: 'hidden',
         }}
       >
         <Card.Img
           variant="top"
-          style={{ width: "100%", padding: "0", borderRadius: "11px" }}
+          style={{
+            width: '100%',
+            height: '250px', // Fixed height for images
+            objectFit: 'cover', // Ensures images fill the area without distortion
+            borderRadius: '11px 11px 0 0'
+          }}
           src={butterfly.imgWingsOpen}
         />
         <Card.Body>

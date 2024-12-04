@@ -9,9 +9,12 @@ import Checkbox from "../components/Checkbox";
 import { useLocation } from "react-router-dom";
 
 export default function MasterButterflyEdit(){
-    const onDrop = useCallback(acceptedFiles => {
-        // Do something with the files
-      }, [])
+  const [naState, setNAState] = useState(false);
+      const [euState, setEUState] = useState(false);
+      const [saState, setSAState] = useState(false);
+      const [ausState, setAUSState] = useState(false);
+      const [asiaState, setAsiaState] = useState(false);
+      const [afState, setAFState] = useState(false);
 
     const [open, setOpen] = useState();
     const [openFile, setOpenFile] = useState();
@@ -27,6 +30,20 @@ export default function MasterButterflyEdit(){
         setClosed(URL.createObjectURL(file));
         setClosedFile(file);
     }
+    const [extraOne, setExtraOne] = useState(null);
+    const [extraOneFile, setExtraOneFile] = useState();
+    const handleExtraOneUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraOne(URL.createObjectURL(file));
+      setExtraOneFile(file);
+    }
+    const [extraTwo, setExtraTwo] = useState(null);
+    const [extraTwoFile, setExtraTwoFile] = useState();
+    const handleExtraTwoUpload = (e) => {
+      const file = e.target.files[0];
+      setExtraTwo(URL.createObjectURL(file));
+      setExtraTwoFile(file);
+    }
 
       const location = useLocation();
       const butterflyToEdit = location.state;
@@ -39,7 +56,7 @@ export default function MasterButterflyEdit(){
       useEffect(() => {
         const fetchData = async () => {
           try{
-            const response = await fetch(`http://206.81.3.155:8282/api/butterflies/fullDetails/${window.sessionStorage.getItem("houseID")}/${butterflyToEdit}`,{
+            const response = await fetch(`https://flutr.org:8282/api/butterflies/fullDetails/${window.sessionStorage.getItem("houseID")}/${butterflyToEdit}`,{
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -60,25 +77,33 @@ export default function MasterButterflyEdit(){
                 json.payload.range.map((r) => {
                     if(r === "North America"){
                       setNAState(true);
+                      console.log("North America");
                     }
                     else if(r === "Europe"){
                       setEUState(true);
+                      console.log("Europe");
                     }
-                    else if(r === "South America"){
+                    else if(r === "South America" || r === "Central/South America"){
                       setSAState(true);
+                      console.log("Central/South America");
                     }
                     else if(r === "Australia"){
                       setAUSState(true);
+                      console.log("Australia");
                     }
                     else if(r === "Asia"){
                       setAsiaState(true);
+                      console.log("Asia");
                     }
                     else if(r === "Africa"){
                       setAFState(true);
+                      console.log("Africa");
                     }
                   });
                   setClosed(json.payload.imgWingsClosed);
                   setOpen(json.payload.imgWingsOpen);
+                  setExtraOne(json.payload.extraImg1);
+                  setExtraTwo(json.payload.extraImg2);
                   
               }
             });
@@ -121,17 +146,31 @@ export default function MasterButterflyEdit(){
             family: family,
             subFamily: subFam,
             lifespan: longevity,
-            range: [("North America" && naState),("Europe" && euState),("South America" && saState), ("Australia" && ausState),("Asia" && asiaState), ("Africa" && afState)],
+            range: [naState ? "North America" : null, euState ? "Europe" : null, saState ? "Central/South America" : null, ausState ? "Australia" : null, asiaState ? "Asia" : null, afState ? "Africa" : null].filter(Boolean),
             plant: hostPlant,
             habitat: habitat,
-            funFacts: funFacts
+            funFacts: funFacts,
+            imgWingsOpen: open,
+            imgWingsClosed: closed,
+            extraImg1: extraOne,
+            extraImg2: extraTwo,
           }
           const formdata = new FormData();
           formdata.append('butterfly', new Blob([JSON.stringify(body)], {type: "application/json"}));
-          formdata.append('imgWingsOpen', openFile);
-          formdata.append('imgWingsClosed', closedFile);
-            const response = await fetch("http://206.81.3.155:8282/api/master/editButterfly",{
-                method: 'POST',
+          if(openFile !== undefined){
+            formdata.append('imgWingsOpen', openFile);
+          }
+          if(closedFile !== undefined){
+            formdata.append('imgWingsClosed', closedFile);
+          }
+          if(extraOneFile !== undefined){
+            formdata.append('extraImg1', extraOneFile);
+          }
+          if(extraTwoFile !== undefined){
+            formdata.append('extraImg2', extraTwoFile);
+          }
+            const response = await fetch("https://flutr.org:8282/api/master/editButterfly",{
+                method: 'PUT',
                 headers: {
                   'Authorization': window.sessionStorage.getItem("accessKey"),
                 },
@@ -139,6 +178,7 @@ export default function MasterButterflyEdit(){
             });
             response.json().then(json => {
               if(json.success !== null && json.success){
+                // console.log(json.payload);
                 window.history.back();
               }
             })
@@ -147,12 +187,7 @@ export default function MasterButterflyEdit(){
         }
       }
     
-      const [naState, setNAState] = useState(false);
-      const [euState, setEUState] = useState(false);
-      const [saState, setSAState] = useState(false);
-      const [ausState, setAUSState] = useState(false);
-      const [asiaState, setAsiaState] = useState(false);
-      const [afState, setAFState] = useState(false);
+      
 
       const [scientific, setScientific] = useState("");
       const [common, setCommon] = useState("");
@@ -253,6 +288,16 @@ export default function MasterButterflyEdit(){
                         <Col xs={3} style={{color: '#469FCE'}}><div id="label">Wings Closed:</div></Col>
                         <Col xs={4}><div><input type="file" onChange={handleClosedUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
                         <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={closed}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}>Extra Image 1 (Optional):</Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraOneUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraOne}/></Col>
+                    </Row>
+                    <Row style={{width: '100%', paddingTop: '10px'}}>
+                        <Col xs={3} style={{color: '#469FCE'}}><div id="label">Extra Image 2 (Optional):</div></Col>
+                        <Col xs={4}><div><input type="file" onChange={handleExtraTwoUpload} style={{width: '100%' ,color: '#469FCE'}}></input></div></Col>
+                        <Col xs={4}><img style={{width: '240px', height: '123px', border: '4px solid #8ABCD7', borderRadius: '10px'}} src={extraTwo}/></Col>
                     </Row>
                     <button onClick={handleCancel}>Cancel</button>
                     <button onClick={handleSubmit}>Submit</button>

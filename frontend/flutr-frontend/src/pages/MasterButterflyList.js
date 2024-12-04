@@ -10,6 +10,8 @@ import Footer from "../components/footer";
 import SocialModal from "../components/SocialModal";
 import {Link} from "react-router-dom";
 
+import Switch from "react-switch";
+
 const butterflies = [
     {
       id: 1,
@@ -37,6 +39,11 @@ export default function MasterButterflyList(){
     const [searchInput, setSearchInput] = useState("");
     const [showExtras, setExtras] = useState(false);
 
+    const [alphabetSwitch, setAlphabetSwitch] = useState(false); // false is buttId, true is common name
+    const handleAlphabetSwitch = (e) => {
+      setAlphabetSwitch(!alphabetSwitch);
+    }
+
     const [locationData, setLocationData] = useState({});
     const [butterflies, setButterflies] = useState([]);
     const [loaded, setLoaded] = useState(false);
@@ -49,7 +56,7 @@ export default function MasterButterflyList(){
     useEffect(() => {
       const fetchData = async () => {
         try{
-          const response = await fetch(`http://206.81.3.155:8282/api/master/allButterflies`, {
+          const response = await fetch(`https://flutr.org:8282/api/master/allButterflies`, {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
@@ -95,12 +102,24 @@ export default function MasterButterflyList(){
             <div style={{borderRadius: '15px', backgroundColor: '#FFFFFF', width: '86%', margin: 'auto', paddingTop: '16px', marginBottom: '16px', marginTop: '16px'}}>
                 <Container>
                     <Row xs={1}>
-                        <Col style={{width: '33%', margin: 'auto'}}><input style={{width: '100%', borderRadius: '20px'}} onChange={handleChangeSearch} /></Col>
-                            <Col><button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleNew}>Add New Butterfly</button></Col>
+                        <Col style={{width: '50%', margin: 'auto'}}><input style={{width: '100%', borderRadius: '20px'}} onChange={handleChangeSearch} /></Col>
+                    </Row>
+                    <Row>
+                      <Col style={{width: '25%', margin: 'auto'}}><button style={{backgroundColor:"#E1EFFE", border: "2px", borderRadius:"3px", color: "#469FCE", padding: "6px 6px", cursor: "pointer", marginTop:"12px", marginBottom:"8px"}} onClick={handleNew}>Add New Butterfly</button></Col>
+                      <Col style={{width: '75%', margin: 'auto'}}>
+                          <Container>
+                            <Row>
+                              <Col><p>Sort By Scientific Name</p></Col>
+                              <Col><Switch onChange={handleAlphabetSwitch} checked={alphabetSwitch}/></Col>
+                              <Col><p>Sort By Common Name</p></Col>
+                            </Row>
+                          </Container>
+                        </Col>
                     </Row>
                     <Row xs={1} sm={2} md={3} lg={4}>
                         {butterflies
                         .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
+                        .sort((a, b) => (!alphabetSwitch? a.buttId.localeCompare(b.buttId) : a.commonName.localeCompare(b.commonName)))
                         .map((r, index) => {
                             console.log(r);
                             return(

@@ -36,12 +36,13 @@ export default function LocationHome({data, kioskMode}){
     const [botdData, setBotdData] = useState({});
     const [statData, setStats] = useState({});
     const [loaded, setLoaded] = useState(false);
-    const [butterflies, setButterflies] = useState([]);
+    const [butterflies, setButterflies] = useState({});
+    const [successfulBOTD, setBOTDSuccess] = useState(false);
     
     useEffect(() => {
         const fetchData = async () => {
           try{
-            const response = await fetch(`http://206.81.3.155:8282/api/orgs/view/${data}`, {
+            const response = await fetch(`https://flutr.org:8282/api/orgs/view/${data}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
@@ -58,16 +59,21 @@ export default function LocationHome({data, kioskMode}){
           
         };
         const fetchBOTD = async () => {
+          console.log("Trying BOTD Fetch");
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/releases/botd/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/releases/botd/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
               },
               });
+              console.log("Trying BOTD Fetch 2");
               response.json().then(json => {
+                console.log("Trying BOTD Fetch 3");
                 if(json.success){
+                  console.log("Trying BOTD Fetch Success");
                     setBotdData(json.payload);
+                    setBOTDSuccess(true);
                 }
               });
             } catch (error) {
@@ -79,7 +85,7 @@ export default function LocationHome({data, kioskMode}){
           };
           const fetchStats = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/releases/inflight/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/releases/inflight/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -99,7 +105,7 @@ export default function LocationHome({data, kioskMode}){
           };
           const fetchButterflies = async () => {
             try{
-              const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${data}`, {
+              const response = await fetch(`https://flutr.org:8282/api/butterflies/details/${data}`, {
                 method: 'GET',
                 headers: {
                   'Content-Type': 'application/json',
@@ -116,7 +122,7 @@ export default function LocationHome({data, kioskMode}){
         fetchData();
         fetchBOTD();
         fetchStats();
-        fetchButterflies();
+        // fetchButterflies();
     }, []);
 
     const handleStats = (e) => {
@@ -155,13 +161,13 @@ export default function LocationHome({data, kioskMode}){
             <div style={{width: "90%", margin: "auto"}}>
                 <Container>
                     <Row xs={1} sm={2} md={2}>
-                        {locationData.otd.active &&
-                        <Col style={{paddingTop: '16px'}}><BOTD numberInFlight={botdData.numberInFlight} butterfly={butterfly} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
+                        {(locationData.otd.active && successfulBOTD) &&
+                        <Col style={{paddingTop: '16px'}}><BOTD butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
                         <Col style={{paddingTop: '16px'}}>
                             <div>
-                                {locationData.news.active && <News colorScheme={locationData.colors} content={locationData.news.newsContent}/>}
+                                {locationData.news.active && <News style={{marginBottom: '16px'}} colorScheme={locationData.colors} content={locationData.news}/>}
                                 {locationData.statsActive && 
-                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px'}}>
+                                <div style={{borderRadius: '10px', backgroundColor: '#FFFFFF', textAlign: 'center', marginBottom: '16px', marginTop: '16px'}}>
                                     <h3 style={{color: locationData.colors[0], paddingTop: '16px', paddingBottom: '16px'}}>Statistics</h3>
                                     <div style={{backgroundColor: locationData.colors[1], width: '75%', margin: 'auto'}}>
                                         <h1 style={{color: locationData.colors[0], fontSize: '150px'}}>{statData.totalInFlight}</h1>

@@ -6,11 +6,18 @@ import Col from "react-bootstrap/esm/Col";
 import React, { useState, useEffect, useRef} from "react";
 import Footer from "../components/footer";
 
+import Switch from "react-switch";
+
 
 export default function EditButterflies() {
   const [searchInput, setSearchInput] = useState("");
   const [butterflies, setButterflies] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
+
+  const [alphabetSwitch, setAlphabetSwitch] = useState(false); // false is buttId, true is common name
+    const handleAlphabetSwitch = (e) => {
+      setAlphabetSwitch(!alphabetSwitch);
+    }
 
 
   const debounceTimer = useRef(null);
@@ -19,7 +26,7 @@ export default function EditButterflies() {
 useEffect(() => {
   const fetchButterflies = async () => {
     try{
-      const response = await fetch(`http://206.81.3.155:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
+      const response = await fetch(`https://flutr.org:8282/api/butterflies/details/${window.sessionStorage.getItem("houseID")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -62,7 +69,7 @@ useEffect(() => {
   try {
     const body = JSON.stringify({buttId: buttId,...updatedValues});
     console.log(body);
-    await fetch(`http://206.81.3.155:8282/api/butterflies/edit`, {
+    await fetch(`https://flutr.org:8282/api/butterflies/edit`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -111,9 +118,19 @@ useEffect(() => {
                       <span style={{ color: 'red' }}>{isSaving && <p>Saving...</p>}</span>
                     </div>
                     </Row>
+                    <Row>
+                        <Container>
+                            <Row>
+                              <Col><p>Sort By Scientific Name</p></Col>
+                              <Col><Switch onChange={handleAlphabetSwitch} checked={alphabetSwitch}/></Col>
+                              <Col><p>Sort By Common Name</p></Col>
+                            </Row>
+                          </Container>
+                    </Row>
                     <Row xs={1} sm={2} md={2} lg={3}>
                       {butterflies
                         .filter((r) => r.buttId.toLowerCase().includes(searchInput.toLowerCase()))
+                        .sort((a, b) => (!alphabetSwitch? a.buttId.localeCompare(b.buttId) : a.commonName.localeCompare(b.commonName)))
                         .map((r) => {
                             return (
                               <div key={r.buttId}>
