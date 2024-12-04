@@ -50,7 +50,7 @@ export default function MasterButterflyCreate(){
             family: family,
             subFamily: subFam,
             lifespan: longevity,
-            range: [naState ? "North America" : null, euState ? "Europe" : null, saState ? "South America" : null, ausState ? "Australia" : null, asiaState ? "Asia" : null, afState ? "Africa" : null].filter(Boolean),
+            range: [naState ? "North America" : null, euState ? "Europe" : null, saState ? "Central/South America" : null, ausState ? "Australia" : null, asiaState ? "Asia" : null, afState ? "Africa" : null].filter(Boolean),
             plant: hostPlant,
             habitat: habitat,
             funFacts: funFacts
