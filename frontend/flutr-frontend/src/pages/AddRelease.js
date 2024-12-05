@@ -158,10 +158,10 @@ export default function AddRelease(){
             if (item.buttId === butterflyId) {
                 if (item.runningRemaining <= 0) {return item;}
                 else {
+                    item[key] = item[key] + 1;
+                    item.runningRemaining = item.runningRemaining - 1;
                     return {
-                        ...item,
-                        [key]: item[key] + 1,
-                        runningRemaining: item.runningRemaining - 1
+                        ...item
                     }
                 }
             }
@@ -175,16 +175,37 @@ export default function AddRelease(){
                 if (item[key] <= 0) {
                     return item;
                 }
-
+                item[key] = item[key] - 1;
+                item.runningRemaining = item.runningRemaining + 1;
                 return {
-                    ...item,
-                    [key]: item[key] - 1,
-                    runningRemaining: item.runningRemaining + 1
+                    ...item
                 }
             }
             return item;
         }));
     };
+
+    const setButterflyVal = (butterflyId, key, value) => {
+        setButterflyUpdates(butterflyUpdates.map(item => {
+            if (item.buttId === butterflyId) {
+                var totalRuns = value - item[key];
+                if(totalRuns > 0){
+                    for(let i = 0; i < totalRuns; i++){
+                        incrementVal(butterflyId, key);
+                    }
+                }
+                else if(totalRuns < 0){
+                    for(let i = 0; i < Math.abs(totalRuns); i++){
+                        decrementVal(butterflyId, key);
+                    }
+                }
+                else if(totalRuns === 0){
+                    incrementVal(butterflyId, key);
+                }
+            }
+            return item;
+        }));
+    }
 
     //create json obj of current shipment and submit to backend
     const handleSubmit = async () => {
@@ -254,12 +275,20 @@ export default function AddRelease(){
                             </td>
                             <td>{/* emerged */}
                                 <button onClick={() => incrementVal(item.buttId, 'numberReleased')}>+</button>
-                                <div className="value-box">{item.numberReleased}</div>
+                                <input className="value-box" type="text"  value={item.numberReleased} onChange={(e) => {
+                                    // Handle the change in value here, e.g., update item.numberReleased
+                                     setButterflyVal(item.buttId, 'numberReleased',  e.target.value);
+                                    }}
+                                />
                                 <button onClick={() => decrementVal(item.buttId, 'numberReleased')}>-</button>
                             </td>
                             <td>{/* poor emergence */}
                                 <button onClick={() => incrementVal(item.buttId, 'poorEmergence')}>+</button>
-                                <div className="value-box">{item.poorEmergence}</div>
+                                <input className="value-box" type="text"  value={item.poorEmergence} onChange={(e) => {
+                                    // Handle the change in value here, e.g., update item.numberReleased
+                                     setButterflyVal(item.buttId, 'poorEmergence',  e.target.value);
+                                    }}
+                                />
                                 <button onClick={() => decrementVal(item.buttId, 'poorEmergence')}>-</button>
                             </td>
                             <td style = {{color:'#E1EFFE', backgroundColor:'#469FCE'}}>
@@ -278,7 +307,7 @@ export default function AddRelease(){
         <table className="add-table" style={{borderTopLeftRadius: '0px'}}>
                     <thead>
                         <tr>
-                            <th style={{width:"35%"}}>Species</th>
+                            <th style={{width:"25%"}}>Species</th>
                             <th>Diseased</th>
                             <th>Parasites</th>
                             <th>No Emergence</th>
@@ -294,17 +323,29 @@ export default function AddRelease(){
                             </td>
                             <td>
                                 <button onClick={() => incrementVal(item.buttId, 'diseasedDuringRelease')}>+</button>
-                                <div className="value-box">{item.diseasedDuringRelease}</div>
+                                <input className="value-box" type="text"  value={item.diseasedDuringRelease} onChange={(e) => {
+                                    // Handle the change in value here, e.g., update item.numberReleased
+                                     setButterflyVal(item.buttId, 'diseasedDuringRelease',  e.target.value);
+                                    }}
+                                />
                                 <button onClick={() => decrementVal(item.buttId, 'diseasedDuringRelease')}>-</button>
                             </td>
                             <td>
                                 <button onClick={() => incrementVal(item.buttId, 'parasiteDuringRelease')}>+</button>
-                                <div className="value-box">{item.parasiteDuringRelease}</div>
+                                <input className="value-box" type="text"  value={item.parasiteDuringRelease} onChange={(e) => {
+                                    // Handle the change in value here, e.g., update item.numberReleased
+                                     setButterflyVal(item.buttId, 'parasiteDuringRelease',  e.target.value);
+                                    }}
+                                />
                                 <button onClick={() => decrementVal(item.buttId, 'parasiteDuringRelease')}>-</button>
                             </td>
                             <td>
                                 <button onClick={() => incrementVal(item.buttId, 'noEmergence')}>+</button>
-                                <div className="value-box">{item.noEmergence}</div>
+                                <input className="value-box" type="text"  value={item.noEmergence} onChange={(e) => {
+                                    // Handle the change in value here, e.g., update item.numberReleased
+                                     setButterflyVal(item.buttId, 'noEmergence',  e.target.value);
+                                    }}
+                                />
                                 <button onClick={() => decrementVal(item.buttId, 'noEmergence')}>-</button>
                             </td>
                             <td style = {{color:'#E1EFFE', backgroundColor:'#469FCE'}}>

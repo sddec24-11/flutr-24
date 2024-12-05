@@ -14,8 +14,75 @@ export default function ChangePassword(){
     const [password, setPassword] = useState("");
     const [errorMessage, setError] = useState("");
     const [oldPassword, setOld] = useState("");
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
+
+    const NotificationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+
+        const handleSubmit = async () => {
+            if(password === repeatPassword){
+                try{
+                    const response = await fetch("https://flutr.org:8282/api/users/change-password", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': window.sessionStorage.getItem('accessKey')
+                        },
+                        body: JSON.stringify({
+                            oldPassword: oldPassword,
+                            newPassword: password
+                        }),
+                    });
+                    const message = await response.json();
+                    if(message.error == null){
+                        console.log("Password Changed")
+                        window.confirm("Success!: Successfully changed password");
+                        document.location.href = '/login';
+                    }
+                    else{
+                        setError(message.error);
+                        window.alert("Error: Old Password Incorrect");
+                        document.location.href = '/changePassword';
+                    }
+        
+                } catch (error) {
+                    console.log('Failed to fetch', error);
+                }
+            }
+            else{
+                window.alert("Error: Passwords do not match");
+            }
+            
+        }
     
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Change Password</h2>
+                    <p>Are you sure you want to change your password?</p>
+                    <button onClick={handleModalCancel}>Cancel</button>
+                    <button onClick={handleSubmit}>Confirm</button>
+                </div>
+            </div>
+        );
+    };
+    
+    
+    const closeModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const openModal = () => {
+        if(password === repeatPassword){
+            setIsModalVisible(true);
+        }
+        else{
+            window.alert("Passwords do not match");
+        }
+    }
+
+
     const handlePassword = (e) => {
         setPassword(e.target.value);
     }
@@ -26,34 +93,10 @@ export default function ChangePassword(){
         setOld(e.target.value);   
     }
 
-    const handleSubmit = async () => {
-        if(password === repeatPassword){
-            try{
-                const response = await fetch("https://flutr.org:8282/api/users/change-password", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': window.sessionStorage.getItem('accessKey')
-                    },
-                    body: JSON.stringify({
-                        oldPassword: oldPassword,
-                        newPassword: password
-                    }),
-                });
-                const message = await response.json();
-                if(message.error == null){
-                    console.log("Password Changed")
-                    document.location.href = '/login';
-                }
-                else{
-                    setError(message.error);
-                }
-    
-            } catch (error) {
-                console.log('Failed to fetch', error);
-            }
-        }
-        
+    const handleModalCancel = (e) => {
+        e.preventDefault();
+        setIsModalVisible(false);
+        //document.location.href = "/changePassword";
     }
 
     const handleCancel = (e) => {
@@ -75,31 +118,13 @@ export default function ChangePassword(){
                             {/* <Row><p>{errorMessage}</p></Row> */}
                             <Row style={{marginTop: '10px', width: '85%', margin: 'auto'}}>
                                 <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
-                                <Col ><button onClick={handleSubmit} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Confirm</button></Col>
+                                <Col ><button onClick={openModal} type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Confirm</button></Col>
                             </Row>
                         </Container>
-
-
-                        {/* <form onSubmit={handleSubmit(onSubmit)} className="container mt-5">
-                        <div className="form-group"><input name="username" style={{border: '4px solid #8ABCD7'}} {...register("email", { required: true})} placeholder="username" className="form-control" />
-                        {errors.username && <p className="text-danger">Username is required.</p>}</div>
-                        
-                        <div className="form-group" style={{marginTop: '10px'}}><input type="password" style={{border: '4px solid #8ABCD7'}} name="password" {...register("password", { required: true})} placeholder="password" className="form-control"/>
-                        {errors.password && <p className="text-danger">Password is required.</p>}</div>
-                        
-                        <div className={styles.buttons} style={{marginTop: '15px'}}>
-                            <Container>
-                                <Row style={{textAlign: 'center'}}>
-                                    <Col ><button onClick={handleCancel} style={{backgroundColor: '#469FCE', padding: '10px 20px'}} className="btn btn-secondary">Cancel</button></Col>
-                                    <Col ><button type="submit" style={{backgroundColor: "#E4976C", padding: '10px 20px'}} className="btn btn-primary">Login</button></Col>
-                                </Row>
-                            </Container>
-                        </div>
-                    
-                </form> */}
             </div>
                 </div>
             </div>
+            <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
             <Footer />
         </div>
     )
