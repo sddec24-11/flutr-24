@@ -46,6 +46,7 @@ export default function Login(){
                 document.location.href = `/${jose.decodeJwt(message.payload).subdomain}`;
             }
             else{
+                alert("Incorrect Username or Password");
                 setError(message.error);
             }
 

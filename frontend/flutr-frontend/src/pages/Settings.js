@@ -40,6 +40,8 @@ export default function Settings(){
     }
     const [suppliers, setSuppliers] = useState([]);
     const [accounts, setAccounts] = useState([]);
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [resetUser, setResetUser] = useState();
 
 
 
@@ -309,29 +311,67 @@ export default function Settings(){
     const handleUsername = (e) => {
         setUsername(e.target.value);
     }
-    const handlePassword = async (user) => {
-        try{
-            const response = await fetch('https://flutr.org:8282/api/users/update', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': window.sessionStorage.getItem("accessKey"),
-                },
-                body: {
-                    id: user.id,
-                    username: user.username,
-                    password: 'butterfly123',
-                    houseId: user.houseId,
-                    subdomain: user.subdomain,
-                    role: user.role,
-                    isActive: user.active
-                }
-            })
 
-        } catch(error){
-            console.log('Failed to reset password', error);
+    const NotificationModal = ({ isVisible, onClose }) => {
+        if (!isVisible) return null;
+
+        const handlePassword = async () => {
+            try{
+                const response = await fetch('https://flutr.org:8282/api/users/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': window.sessionStorage.getItem("accessKey"),
+                    },
+                    body: {
+                        username: resetUser.username,
+                        password: 'butterfly123',
+                        houseId: resetUser.houseId,
+                        role: resetUser.role
+                    }
+                })
+                alert("Successfully reset password");
+                setResetUser();
+                document.location.href = '/settings';
+    
+            } catch(error){
+                console.log('Failed to reset password', error);
+                alert("Failed to reset password");
+                setResetUser();
+                document.location.href = '/settings';
+            }
         }
+    
+        return (
+            <div className='notification-modal'>
+                <div className='modal-content'>
+                    <h2>Reset Employee Password</h2>
+                    <p>Are you sure you want to reset this employee's password?</p>
+                    <button onClick={handleModalCancel}>Cancel</button>
+                    <button onClick={handlePassword}>Confirm</button>
+                </div>
+            </div>
+        );
+    };
+
+    const handleModalCancel = (e) => {
+        e.preventDefault();
+        setIsModalVisible(false);
+        //document.location.href = "/changePassword";
     }
+    
+    
+    const closeModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const openModal = (r) => {
+        setResetUser(r);
+        setIsModalVisible(true);
+    }
+
+
+
     const handleDeactivate = async (username) => {
         try{
             const response = await fetch(`https://flutr.org:8282/api/users/deactivate/${username}`,{
@@ -521,7 +561,7 @@ export default function Settings(){
                                         <td>{r.role}</td>
                                         <td>{(r.active) ? "Yes" : "No"}</td>
                                         <td>{r.houseId}</td>
-                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => handlePassword(r)}>Reset Password</div></td>
+                                        <td style={{backgroundColor: '#E4976C'}}><div style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}} onClick={() => openModal(r)}>Reset Password</div></td>
                                         {r.active && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleDeactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Deactivate</div></td>}
                                         {!(r.active) && <td style={{backgroundColor: '#469FCE'}}><div onClick={() => {handleReactivate(r.username)}} style={{width: '100%', color: "#E1EFFE", textAlign: 'center'}}>Activate</div></td>}
 
@@ -533,6 +573,8 @@ export default function Settings(){
                                 </tr>
                             </tbody>
                         </table>
+
+                        <NotificationModal isVisible={isModalVisible} onClose={closeModal} />
                     
             </div>}
                 {activeTab === 5 &&
