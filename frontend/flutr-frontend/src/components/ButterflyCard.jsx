@@ -22,13 +22,16 @@ export default function ButterflyCard({butterfly, index}){
           variant="top"
           style={{
             width: '100%',
-                            height: '200px', // Fixed height for images
-                            objectFit: 'cover', // Ensures images fill the area without distortion
-                            borderRadius: '11px 11px 0 0',
+            height: '200px', // Fixed height for images
+            objectFit: 'cover', // Ensures images fill the area without distortion
+            borderRadius: '11px 11px 0 0',
           }}
-          src={butterfly.imgWingsOpen === null
-          ? butterfly.imgWingsClosed
-          : butterfly.imgWingsOpen}
+          src={
+            butterfly.imgWingsOpen === null || butterfly.imgWingsOpen === "https://flutr-butt-images.nyc3.cdn.digitaloceanspaces.com/unknown.png"
+              ? butterfly.imgWingsClosed
+              : butterfly.imgWingsOpen
+          }
+          
         />
         <Card.Body>
           <Card.Title style={{ alignContent: "center" }}>
