@@ -30,11 +30,13 @@ public class ReportController {
     @PreAuthorize("hasAuthority('ROLE_SUPERUSER') or hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Response<List<List<String>>>> exportShipments(HttpServletResponse response,
                                 @RequestParam(required = false) Integer startYear,
+                                @RequestParam(required = false) Integer startMonth,
                                 @RequestParam(required = false) Integer endYear,
+                                @RequestParam(required = false) Integer endMonth,
                                 @RequestParam(required = false) String houseId) throws IOException {
         
         try {
-            List<List<String>> csvData = reportService.exportShipmentData(startYear, endYear, houseId);
+            List<List<String>> csvData = reportService.exportShipmentData(startYear, startMonth, endYear, endMonth, houseId);
             return ResponseEntity.ok(new Response<>(true, csvData, null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
