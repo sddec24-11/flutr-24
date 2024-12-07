@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -71,7 +72,13 @@ public class ReportService {
                             .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_SUPERUSER"));
     }
 
-    public List<List<String>> exportShipmentData(@RequestParam(required = false) Integer startYear, @RequestParam(required = false) Integer endYear, @RequestParam(required = false) String houseId) {
+    public List<List<String>> exportShipmentData(
+        @RequestParam(required = false) Integer startYear, 
+        @RequestParam(required = false) Integer startMonth, 
+        @RequestParam(required = false) Integer endYear, 
+        @RequestParam(required = false) Integer endMonth, 
+        @RequestParam(required = false) String houseId) {
+
         MongoTemplate mongoTemplate;
         if (houseId != null && isSuperUser()){
             mongoTemplate = getMongoTemplate(houseId);
@@ -81,12 +88,22 @@ public class ReportService {
         Criteria criteria = new Criteria();
         loggingService.log("HANDLE_EXPORT", "START", "Starting report export");
         try {
-            if (startYear != null && endYear != null) {
-                criteria.and("arrivalDate").gte(new SimpleDateFormat("yyyy").parse(startYear + ""))
-                        .lte(new SimpleDateFormat("yyyy").parse((endYear + 1) + ""));
-            } else if (startYear != null) {
-                criteria.and("arrivalDate").gte(new SimpleDateFormat("yyyy").parse(startYear + ""))
-                        .lt(new SimpleDateFormat("yyyy").parse((startYear + 1) + ""));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            if (startYear != null && startMonth != null && endYear != null && endMonth != null) {
+                Date startDate = sdf.parse(startYear + "-" + startMonth);
+                Date endDate = sdf.parse(endYear + "-" + endMonth);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(endDate);
+                cal.add(Calendar.MONTH, 1);
+                endDate = cal.getTime();
+                criteria.and("arrivalDate").gte(startDate).lt(endDate);
+            } else if (startYear != null && startMonth != null) {
+                Date startDate = sdf.parse(startYear + "-" + startMonth);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(startDate);
+                cal.add(Calendar.MONTH, 1);
+                Date endDate = cal.getTime();
+                criteria.and("arrivalDate").gte(startDate).lt(endDate);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error parsing date: " + e.getMessage());
