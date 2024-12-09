@@ -255,22 +255,26 @@ public class ReportService {
 
     private void updateOrCreateButterfly(ButterflyDetail detail, Date arrivalDate, String commonName, MongoTemplate mongoTemplate) {
         Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+
+        HouseButterflies existingButterfly = mongoTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
         Update update = new Update()
             .inc("totalFlown", detail.getNumberReleased())
-            .inc("totalReceived", detail.getNumberReceived())
-            .setOnInsert("commonName", commonName)
-            .setOnInsert("firstFlownOn", arrivalDate)
-            .setOnInsert("lastFlownOn", arrivalDate);
+            .inc("totalReceived", detail.getNumberReceived());
 
-        update.setOnInsert("noInFlight", 0);
-        update.setOnInsert("BOTD", false);
-        update.setOnInsert("imgWingsOpen", defaultImageUrl);
-        update.setOnInsert("imgWingsClosed", defaultImageUrl);
-        update.setOnInsert("extraImg1", "");
-        update.setOnInsert("extraImg2", "");
-
-        update.max("firstFlownOn", arrivalDate); // sets it if null or date is earlier than existing
-        update.min("lastFlownOn", arrivalDate); 
+        if (existingButterfly == null) {
+            update.setOnInsert("commonName", commonName);
+            update.setOnInsert("firstFlownOn", arrivalDate);
+            update.setOnInsert("lastFlownOn", arrivalDate);
+            update.setOnInsert("noInFlight", 0);
+            update.setOnInsert("BOTD", false);
+            update.setOnInsert("imgWingsOpen", defaultImageUrl);
+            update.setOnInsert("imgWingsClosed", defaultImageUrl);
+            update.setOnInsert("extraImg1", "");
+            update.setOnInsert("extraImg2", "");
+        } else {
+            update.max("firstFlownOn", arrivalDate);
+            update.min("lastFlownOn", arrivalDate);
+        }
         mongoTemplate.upsert(query, update, HouseButterflies.class, "house_butterflies");
     }
 }
