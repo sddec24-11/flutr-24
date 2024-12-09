@@ -135,13 +135,14 @@ public class MasterService {
         allOrgs.forEach(org -> {
             MongoTemplate houseMongoTemplate = new MongoTemplate(MongoClients.create(), org.getHouseId() + "_DB");
             
-            boolean butterflyExistsInHouse = houseMongoTemplate.exists(
+            HouseButterflies houseButterfly = houseMongoTemplate.findOne(
                 Query.query(Criteria.where("buttId").is(newButterfly.getButtId())), 
+                HouseButterflies.class, 
                 "house_butterflies"
             );
     
-            if (!butterflyExistsInHouse) {
-                HouseButterflies houseButterfly = new HouseButterflies();
+            if (houseButterfly == null) {
+                houseButterfly = new HouseButterflies();
                 BeanUtils.copyProperties(newButterfly, houseButterfly);
                 houseButterfly.setNoInFlight(0);
                 houseButterfly.setTotalFlown(0);
@@ -150,6 +151,20 @@ public class MasterService {
                 houseButterfly.setFirstFlownOn(null);
                 houseButterfly.setLastFlownOn(null);
                 houseMongoTemplate.insert(houseButterfly, "house_butterflies");
+            } else {
+                Update update = new Update()
+                    .set("imgWingsOpen", newButterfly.getImgWingsOpen())
+                    .set("imgWingsClosed", newButterfly.getImgWingsClosed())
+                    .set("extraImg1", newButterfly.getExtraImg1())
+                    .set("extraImg2", newButterfly.getExtraImg2())
+                    .set("family", newButterfly.getFamily())
+                    .set("subFamily", newButterfly.getSubFamily())
+                    .set("lifespan", newButterfly.getLifespan())
+                    .set("range", newButterfly.getRange())
+                    .set("plant", newButterfly.getPlant())
+                    .set("habitat", newButterfly.getHabitat())
+                    .set("funFacts", newButterfly.getFunFacts());
+                houseMongoTemplate.updateFirst(Query.query(Criteria.where("buttId").is(houseButterfly.getButtId())), update, HouseButterflies.class);
             }
         });
     }

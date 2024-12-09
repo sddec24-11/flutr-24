@@ -1,5 +1,7 @@
 package com.flutr.backend.service;
 
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,13 +10,14 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.util.JwtUtil;
 import com.mongodb.client.MongoClients;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -42,6 +47,9 @@ public class ReportService {
         this.request = request;
         this.jwtUtil = jwtUtil;
     }
+
+    @Value("${butterfly.placeholder.url}")
+    private String defaultImageUrl;
 
     private MongoTemplate getMongoTemplate() {
         String houseId = getCurrentHouseId();
@@ -149,15 +157,15 @@ public class ReportService {
         String currentSupplier = null;
         Date currentShipDate = null;
         Date currentArrivalDate = null;
-        int lineNumber = 1; 
+        int lineNumber = 0;
 
-        try (Scanner scanner = new Scanner(file.getInputStream())) {
-            scanner.nextLine();
+        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
+                .withSkipLines(1)
+                .build()) {
 
-            while (scanner.hasNextLine()) {
+            String[] details;
+            while ((details = reader.readNext()) != null) {
                 lineNumber++;
-                String line = scanner.nextLine();
-                String[] details = line.split(",", -1);
                 
                 if (details.length < 12) {
                     errors.add("Line " + lineNumber + ": Incomplete or malformed line.");
@@ -195,6 +203,8 @@ public class ReportService {
                     detail.setPoorEmergence(parseInt(details[11].trim()));
 
                     currentShipment.getButterflyDetails().add(detail);
+
+                    updateOrCreateButterfly(detail, arrivalDate, details[1].trim(), mongoTemplate);
                 } catch (ParseException | NumberFormatException e) {
                     errors.add("Line " + lineNumber + ": " + e.getMessage());
                 }
@@ -241,5 +251,26 @@ public class ReportService {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private void updateOrCreateButterfly(ButterflyDetail detail, Date arrivalDate, String commonName, MongoTemplate mongoTemplate) {
+        Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+        Update update = new Update()
+            .inc("totalFlown", detail.getNumberReleased())
+            .inc("totalReceived", detail.getNumberReceived())
+            .setOnInsert("commonName", commonName)
+            .setOnInsert("firstFlownOn", arrivalDate)
+            .setOnInsert("lastFlownOn", arrivalDate);
+
+        update.setOnInsert("noInFlight", 0);
+        update.setOnInsert("BOTD", false);
+        update.setOnInsert("imgWingsOpen", defaultImageUrl);
+        update.setOnInsert("imgWingsClosed", defaultImageUrl);
+        update.setOnInsert("extraImg1", "");
+        update.setOnInsert("extraImg2", "");
+
+        update.max("firstFlownOn", arrivalDate); // sets it if null or date is earlier than existing
+        update.min("lastFlownOn", arrivalDate); 
+        mongoTemplate.upsert(query, update, HouseButterflies.class, "house_butterflies");
     }
 }
