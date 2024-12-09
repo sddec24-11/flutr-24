@@ -272,8 +272,8 @@ public class ReportService {
             update.setOnInsert("extraImg1", "");
             update.setOnInsert("extraImg2", "");
         } else {
-            update.max("firstFlownOn", arrivalDate);
-            update.min("lastFlownOn", arrivalDate);
+            update.min("firstFlownOn", arrivalDate);
+            update.max("lastFlownOn", arrivalDate);
         }
         mongoTemplate.upsert(query, update, HouseButterflies.class, "house_butterflies");
     }
