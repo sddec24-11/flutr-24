@@ -74,28 +74,29 @@ export default function MasterButterflyEdit(){
                 setHostPlant(json.payload.plant);
                 setHabitat(json.payload.habitat);
                 setFacts(json.payload.funFacts);
-                json.payload.range.map((r) => {
-                    if(r === "North America"){
+                json.payload.range.map((r, index) => {
+                    if(r === "North America" || (index === 0 && r === 'true')){
                       setNAState(true);
                       console.log("North America");
                     }
-                    else if(r === "Europe"){
+                    else if(r === "Europe" || (index === 1 && r === 'true')){
                       setEUState(true);
                       console.log("Europe");
                     }
-                    else if(r === "South America" || r === "Central/South America"){
+                    else if(r === "South America" || r === "Central/South America" || (index === 2 && r === 'true')){
+                      console.log(index);
                       setSAState(true);
                       console.log("Central/South America");
                     }
-                    else if(r === "Australia"){
+                    else if(r === "Australia" || (index === 3 && r === 'true')){
                       setAUSState(true);
                       console.log("Australia");
                     }
-                    else if(r === "Asia"){
+                    else if(r === "Asia" || (index === 4 && r === 'true')){
                       setAsiaState(true);
                       console.log("Asia");
                     }
-                    else if(r === "Africa"){
+                    else if(r === "Africa" || (index === 5 && r === 'true')){
                       setAFState(true);
                       console.log("Africa");
                     }

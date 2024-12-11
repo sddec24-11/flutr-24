@@ -127,12 +127,20 @@ export default function LocationHome({data, kioskMode}){
 
     const handleStats = (e) => {
         e.preventDefault();
-        document.location.href = `/${locationData.website}/stats`;
+        let preface = "";
+        if(kioskMode){
+          preface = "/kiosk";
+        }
+        document.location.href = `${preface}/${locationData.website}/stats`;
     }
 
     const handleGallery = (e) => {
         e.preventDefault();
-        document.location.href = `/${locationData.website}/gallery`;
+        let preface = "";
+        if(kioskMode){
+          preface = "/kiosk";
+        }
+        document.location.href = `${preface}/${locationData.website}/gallery`;
     }
 
 
@@ -162,7 +170,7 @@ export default function LocationHome({data, kioskMode}){
                 <Container>
                     <Row xs={1} sm={2} md={2}>
                         {(locationData.otd.active && successfulBOTD) &&
-                        <Col style={{paddingTop: '16px'}}><BOTD butterfly={botdData} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
+                        <Col style={{paddingTop: '16px'}}><BOTD butterfly={botdData} kioskMode={kioskMode} colorScheme={locationData.colors} buttonFunction={handleGallery}/></Col>}
                         <Col style={{paddingTop: '16px'}}>
                             <div>
                                 {locationData.news.active && <News style={{marginBottom: '16px'}} colorScheme={locationData.colors} content={locationData.news}/>}

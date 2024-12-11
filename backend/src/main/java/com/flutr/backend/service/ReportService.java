@@ -1,19 +1,23 @@
 package com.flutr.backend.service;
 
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Scanner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -25,6 +29,8 @@ import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.util.JwtUtil;
 import com.mongodb.client.MongoClients;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -41,6 +47,9 @@ public class ReportService {
         this.request = request;
         this.jwtUtil = jwtUtil;
     }
+
+    @Value("${butterfly.placeholder.url}")
+    private String defaultImageUrl;
 
     private MongoTemplate getMongoTemplate() {
         String houseId = getCurrentHouseId();
@@ -71,7 +80,13 @@ public class ReportService {
                             .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_SUPERUSER"));
     }
 
-    public List<List<String>> exportShipmentData(@RequestParam(required = false) Integer startYear, @RequestParam(required = false) Integer endYear, @RequestParam(required = false) String houseId) {
+    public List<List<String>> exportShipmentData(
+        @RequestParam(required = false) Integer startYear, 
+        @RequestParam(required = false) Integer startMonth, 
+        @RequestParam(required = false) Integer endYear, 
+        @RequestParam(required = false) Integer endMonth, 
+        @RequestParam(required = false) String houseId) {
+
         MongoTemplate mongoTemplate;
         if (houseId != null && isSuperUser()){
             mongoTemplate = getMongoTemplate(houseId);
@@ -81,12 +96,22 @@ public class ReportService {
         Criteria criteria = new Criteria();
         loggingService.log("HANDLE_EXPORT", "START", "Starting report export");
         try {
-            if (startYear != null && endYear != null) {
-                criteria.and("arrivalDate").gte(new SimpleDateFormat("yyyy").parse(startYear + ""))
-                        .lte(new SimpleDateFormat("yyyy").parse((endYear + 1) + ""));
-            } else if (startYear != null) {
-                criteria.and("arrivalDate").gte(new SimpleDateFormat("yyyy").parse(startYear + ""))
-                        .lt(new SimpleDateFormat("yyyy").parse((startYear + 1) + ""));
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+            if (startYear != null && startMonth != null && endYear != null && endMonth != null) {
+                Date startDate = sdf.parse(startYear + "-" + startMonth);
+                Date endDate = sdf.parse(endYear + "-" + endMonth);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(endDate);
+                cal.add(Calendar.MONTH, 1);
+                endDate = cal.getTime();
+                criteria.and("arrivalDate").gte(startDate).lt(endDate);
+            } else if (startYear != null && startMonth != null) {
+                Date startDate = sdf.parse(startYear + "-" + startMonth);
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(startDate);
+                cal.add(Calendar.MONTH, 1);
+                Date endDate = cal.getTime();
+                criteria.and("arrivalDate").gte(startDate).lt(endDate);
             }
         } catch (Exception e) {
             throw new RuntimeException("Error parsing date: " + e.getMessage());
@@ -132,15 +157,15 @@ public class ReportService {
         String currentSupplier = null;
         Date currentShipDate = null;
         Date currentArrivalDate = null;
-        int lineNumber = 1; 
+        int lineNumber = 0;
 
-        try (Scanner scanner = new Scanner(file.getInputStream())) {
-            scanner.nextLine();
+        try (CSVReader reader = new CSVReaderBuilder(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))
+                .withSkipLines(1)
+                .build()) {
 
-            while (scanner.hasNextLine()) {
+            String[] details;
+            while ((details = reader.readNext()) != null) {
                 lineNumber++;
-                String line = scanner.nextLine();
-                String[] details = line.split(",", -1);
                 
                 if (details.length < 12) {
                     errors.add("Line " + lineNumber + ": Incomplete or malformed line.");
@@ -178,6 +203,8 @@ public class ReportService {
                     detail.setPoorEmergence(parseInt(details[11].trim()));
 
                     currentShipment.getButterflyDetails().add(detail);
+
+                    updateOrCreateButterfly(detail, arrivalDate, details[1].trim(), mongoTemplate);
                 } catch (ParseException | NumberFormatException e) {
                     errors.add("Line " + lineNumber + ": " + e.getMessage());
                 }
@@ -224,5 +251,30 @@ public class ReportService {
         } catch (NumberFormatException e) {
             return 0;
         }
+    }
+
+    private void updateOrCreateButterfly(ButterflyDetail detail, Date arrivalDate, String commonName, MongoTemplate mongoTemplate) {
+        Query query = new Query(Criteria.where("buttId").is(detail.getButtId()));
+
+        HouseButterflies existingButterfly = mongoTemplate.findOne(query, HouseButterflies.class, "house_butterflies");
+        Update update = new Update()
+            .inc("totalFlown", detail.getNumberReleased())
+            .inc("totalReceived", detail.getNumberReceived());
+
+        if (existingButterfly == null) {
+            update.setOnInsert("commonName", commonName);
+            update.setOnInsert("firstFlownOn", arrivalDate);
+            update.setOnInsert("lastFlownOn", arrivalDate);
+            update.setOnInsert("noInFlight", 0);
+            update.setOnInsert("BOTD", false);
+            update.setOnInsert("imgWingsOpen", defaultImageUrl);
+            update.setOnInsert("imgWingsClosed", defaultImageUrl);
+            update.setOnInsert("extraImg1", "");
+            update.setOnInsert("extraImg2", "");
+        } else {
+            update.min("firstFlownOn", arrivalDate);
+            update.max("lastFlownOn", arrivalDate);
+        }
+        mongoTemplate.upsert(query, update, HouseButterflies.class, "house_butterflies");
     }
 }
