@@ -15,10 +15,10 @@ export default function About(){
                             <br />
                             <br />The Flutr application was created by a Senior Design group from Iowa State University in 2024
                             <br />Amanda Friis - Full Stack Developer, Documentation
-                            <br />Tayler Barnhart - Team Leader
+                            <br />Tayler Barnhart - Team Leader, Cloud Integration
                             <br />Nathan Geater - Full Stack Developer (Front End)
-                            <br />Alex Brown - Full Stack Developer (Front End)
-                            <br />Muralikrishna Patibandla - Integration & Back End Developer
+                            <br />Alex Brown - Front End Development Lead
+                            <br />Muralikrishna Patibandla - Integration & Back End Lead
                             <br />Piper Ideker - Test & Quality Control Engineer
                         </p>
                     </div>
