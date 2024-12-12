@@ -1,5 +1,6 @@
 package com.flutr.backend.service;
 
+import com.flutr.backend.model.ButterflyDetail;
 import com.flutr.backend.model.HouseButterflies;
 import com.flutr.backend.model.Shipment;
 import com.flutr.backend.model.Supplier;
@@ -21,7 +22,9 @@ import static org.springframework.data.mongodb.core.query.Query.query;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ShipmentService {
@@ -112,11 +115,28 @@ public class ShipmentService {
     
             // Update the butterfly details
             if (updatedShipment.getButterflyDetails() != null) {
-                existingShipment.getButterflyDetails().forEach(existingDetail -> {
-                    updatedShipment.getButterflyDetails().stream()
-                        .filter(updatedDetail -> updatedDetail.getButtId().equals(existingDetail.getButtId()))
-                        .findFirst()
-                        .ifPresent(updatedDetail -> {
+                Map<String, ButterflyDetail> existingDetailsMap = existingShipment.getButterflyDetails().stream()
+                    .collect(Collectors.toMap(ButterflyDetail::getButtId, bd -> bd));
+
+                for (ButterflyDetail updatedDetail : updatedShipment.getButterflyDetails()) {
+                    ButterflyDetail existingDetail = existingDetailsMap.get(updatedDetail.getButtId());
+                    if (existingDetail == null) {
+                        existingShipment.getButterflyDetails().add(updatedDetail);
+
+                        Query query = new Query(Criteria.where("buttId").is(updatedDetail.getButtId()));
+                        Update update = new Update().inc("totalReceived", updatedDetail.getNumberReceived());
+                        mongoTemplate.findAndModify(query, update, HouseButterflies.class, "house_butterflies");
+
+                        updatedDetail.setTotalRemaining(
+                                updatedDetail.getNumberReceived()
+                                - (updatedDetail.getNumberReleased()
+                                + updatedDetail.getEmergedInTransit()
+                                + updatedDetail.getDamaged()
+                                + updatedDetail.getDiseased()
+                                + updatedDetail.getParasite()
+                                + updatedDetail.getPoorEmergence()
+                                + updatedDetail.getNoEmergence()));
+                    } else {
                             int receivedDiff = updatedDetail.getNumberReceived() - existingDetail.getNumberReceived();
                             existingDetail.setNumberReceived(updatedDetail.getNumberReceived());
                             existingDetail.setNumberReleased(updatedDetail.getNumberReleased());
@@ -140,8 +160,8 @@ public class ShipmentService {
                                     updatedDetail.getParasite() +
                                     updatedDetail.getPoorEmergence() +
                                     updatedDetail.getNoEmergence()));
-                        });
-                });
+                        }
+                }
             }
     
             // Save the updated shipment
