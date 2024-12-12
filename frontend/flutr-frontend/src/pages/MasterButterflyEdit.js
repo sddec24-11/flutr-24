@@ -56,7 +56,7 @@ export default function MasterButterflyEdit(){
       useEffect(() => {
         const fetchData = async () => {
           try{
-            const response = await fetch(`https://flutr.org:8282/api/butterflies/fullDetails/${window.sessionStorage.getItem("houseID")}/${butterflyToEdit}`,{
+            const response = await fetch(`https://flutr.org:8282/api/master/butterflyDetails/${butterflyToEdit}`,{
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json',
