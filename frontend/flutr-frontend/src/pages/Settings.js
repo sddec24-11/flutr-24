@@ -274,7 +274,7 @@ export default function Settings(){
         setOrgName(e.target.value);
     }
     const handleAddressChange = (e) => {
-        setOrgAddress(e.taget.value);
+        setOrgAddress(e.target.value);
     }
     const handleWebsiteChange = (e) => {
         setOrgWebsite(e.target.value);
