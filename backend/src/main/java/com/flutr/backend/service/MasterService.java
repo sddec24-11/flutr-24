@@ -276,7 +276,8 @@ public class MasterService {
     }
     
     public Butterfly getFullButterflyDetails(String buttId) {
-        return masterMongoTemplate.findById(buttId, Butterfly.class, "butterflies");
+        Query query = Query.query(Criteria.where("buttId").is(buttId));
+        return masterMongoTemplate.findOne(query, Butterfly.class, "butterflies");
     }
 
     private String getFileExtension(String fileName) {
