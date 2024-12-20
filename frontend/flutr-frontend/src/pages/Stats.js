@@ -8,7 +8,6 @@ import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 import { Chart } from "react-google-charts";
 import { scaleLinear } from "d3-scale";
-import { csv } from "d3-fetch";
 import {
   ComposableMap,
   Geographies,
@@ -19,8 +18,6 @@ import {
 } from "react-simple-maps";
 
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import * as d3 from 'd3';
-import Papa from 'papaparse';
 
 
 export default function Stats({data, kioskMode}){
@@ -371,7 +368,7 @@ export default function Stats({data, kioskMode}){
 
   const colorScale = scaleLinear()
   .domain([0, 1])
-  .range(["#ffedea", "#ff5233"]);
+  .range(["#abd6ed", "#6393ad"]);
 
 
   function combineData(countryContinentMap, scaledData) {
@@ -458,8 +455,6 @@ export default function Stats({data, kioskMode}){
 
 
   /*End of Map Stuff*/
-
-
 
 
 
