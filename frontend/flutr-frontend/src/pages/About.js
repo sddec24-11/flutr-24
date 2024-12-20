@@ -13,13 +13,10 @@ export default function About(){
                             <br />
                             <br />For houses, you are able to input the butterflies received from suppliers and track when each butterfly released into the pavilion. The system will automatically track which butterflies are in flight and provide unique stats for guests to see. Houses are also able to import and export previous shipment data for reports and tracking.
                             <br />
+                            <br />For new houses looking to add your pavilion, contact flutr@iastate.edu for more information
+                            <br />
                             <br />The Flutr application was created by a Senior Design group from Iowa State University in 2024
-                            <br />Amanda Friis - Full Stack Developer, Documentation
-                            <br />Tayler Barnhart - Team Leader
-                            <br />Nathan Geater - Full Stack Developer (Front End)
-                            <br />Alex Brown - Full Stack Developer (Front End)
-                            <br />Muralikrishna Patibandla - Integration & Back End Developer
-                            <br />Piper Ideker - Test & Quality Control Engineer
+                            <br /> <a href="https://sddec24-11.sd.ece.iastate.edu/">Check out the team!</a>
                         </p>
                     </div>
                 </div>
